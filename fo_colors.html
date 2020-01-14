@@ -355,7 +355,10 @@
       <div class="popup" onclick="info()" style="background-color: #000000;"><a href="#index255"><span class="color"></span></a></div>
       
       <br/><br/>
-      
+      <div id="mouse-idx" style="display: block;">Mouse index: <span></span></div>
+	  <br/>
+	  	   <button onclick="toggle();">Stop color cycling</button>
+	  <br/><br/>
       <!--
          DATA STARTS HERE
       -->
@@ -648,6 +651,107 @@
       <div class="color_info" id="index254" style="display:none">Index: 254<br/>#200000<br/>R: 32 G: 0 B: 0</div>
       <div class="color_info" id="index255" style="display:none">Index: 255<br/>#000000<br/>R: 0 G: 0 B: 0</div>
        
+	   <br/>
+	   <br/>
+	  <script>
+		var last_clicked;
+		var a = document.getElementsByTagName('a');
+		var elm = document.getElementById('mouse-idx');
+		var cycle = 0;
+		var active = true;
+		
+		for(var i=0;i<a.length;i++) {
+			a[i].onmouseenter = idx_enter;
+			a[i].onmouseleave = idx_leave;
+			a[i].onclick = idx_click;
+			a[i].parentNode.style.border = '2px solid transparent';
+		}
+		
+		function idx_click() {
+			if(window.last_clicked != undefined)
+				window.last_clicked.style.border = '2px solid transparent';
+			this.parentNode.style.border = '2px solid #fff';
+			window.last_clicked = this.parentNode;
+		}
+		
+		function idx_leave() {
+			elm.style = 'visibility: hidden;';
+		}
+		
+		function idx_enter() {
+			elm.children[0].innerHTML = this.href.split('#')[1].substr(5);
+			elm.style = 'display: block;';
+		}
+		
+		// offset in cycle palette
+		function calc(idx, max) {
+			return ((cycle+idx) % max)*3;
+		}
+		
+		function cycle_palette(base, max, arr) {
+			for(var idx=0;idx<max;idx++) {
+				var o = calc(idx, max);
+				a[base+idx].parentElement.style.backgroundColor='rgb('+arr[o]+','+arr[o+1]+','+arr[o+2]+')';
+			}
+		}
+		
+		function toggle() {
+			var button = document.getElementsByTagName('button')[0];
+			window.active=!window.active; 
+			button.innerHTML=((window.active?'Stop':'Start')+ ' color cycling');
+			if(!window.active) {
+				// reset colors to their original values.
+				window.cycle=0;
+				cycle_palettes();
+			}
+		}
+		
+		function cycle_palettes() {
+			cycle_palette(229, 4, waste_green);
+			cycle_palette(233, 5, comp_blue);
+			cycle_palette(238, 10, fire);
+			cycle_palette(248, 6, brown);
+		}
+		
+		function animate() {
+			if(!active) {
+				return;
+			}
+			cycle_palettes();
+			window.cycle = window.cycle+1 % 15;
+		}
+				   
+		waste_green  = [ 24,120, 12,  
+						 40,128, 24,
+						 0, 108, 0,
+						 8, 112, 4];
+						 
+		comp_blue    = [ 104, 104, 108,
+						 96,  100, 124, 
+						 84,  104, 140,
+						 0,   144, 160,
+						 104, 184, 252]
+						 
+		fire         = [ 252, 56,  0,
+					     252, 0,   0,
+                         212, 0,   0,
+                         144, 40,  8,
+						 252, 116, 0,
+						 68,  0,   0,
+						 120, 0,   0,
+						 176, 0,   0,
+						 120, 0 ,  0,
+						 68,  0 ,  0];
+						 
+		brown        =  [80,60,40,
+						 72,56,40,
+						 64,52,36,
+						 60,48,36,
+						 52,44,32,
+						 48,40,32];
+		timer = setInterval(function() { animate(); }, 100);
+	  </script>
+	   
       </center>
    </body>
 </html>
