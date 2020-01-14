@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Symbols</title>
+		<link rel="stylesheet" href="style.css" type="text/css" />
+      
+      <style>
+         .popup {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+         }
+         
+         .color { 
+            position:absolute; 
+            width:100%;
+            height:100%;
+            top:0;
+            left: 0;
+
+            z-index: 1;
+
+            /* fixes overlap error in IE7/8 */
+            background-image: url('img/empty.png');
+         }  
+
+         .color_info:target{
+            display:block !important;
+         }
+      </style>
+	</head>
+   <body>
+
+      <h3>Fallout - Default color pallet (color.pal)</h3>
+
+      <!-- Color Row #1 -->
+      <div class="popup" onclick="info()" style="background-color: #0000FF;"><a href="#index0"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #ECECEC;"><a href="#index1"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #DCDCDC;"><a href="#index2"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #CCCCCC;"><a href="#index3"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #BCBCBC;"><a href="#index4"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #B0B0B0;"><a href="#index5"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A0A0A0;"><a href="#index6"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #909090;"><a href="#index7"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #808080;"><a href="#index8"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #747474;"><a href="#index9"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #646464;"><a href="#index10"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #545454;"><a href="#index11"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #484848;"><a href="#index12"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #383838;"><a href="#index13"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #282828;"><a href="#index14"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #202020;"><a href="#index15"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #2 -->
+      <div class="popup" onclick="info()" style="background-color: #FCECEC;"><a href="#index16"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #ECD8D8;"><a href="#index17"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #DCC4C4;"><a href="#index18"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #D0B0B0;"><a href="#index19"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C0A0A0;"><a href="#index20"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #B09090;"><a href="#index21"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A48080;"><a href="#index22"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #947070;"><a href="#index23"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #846060;"><a href="#index24"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #785454;"><a href="#index25"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #684444;"><a href="#index26"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #583838;"><a href="#index27"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #4C2C2C;"><a href="#index28"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #3C2424;"><a href="#index29"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #2C1818;"><a href="#index30"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #201010;"><a href="#index31"><span class="color"></span></a></div>
+
+      <br/>
+      
+      <!-- Color Row #3 -->
+      <div class="popup" onclick="info()" style="background-color: #ECECFC;"><a href="#index32"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #D8D8EC;"><a href="#index33"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C4C4DC;"><a href="#index34"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #B0B0D0;"><a href="#index35"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A0A0C0;"><a href="#index36"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #9090B0;"><a href="#index37"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #8080A4;"><a href="#index38"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #707094;"><a href="#index39"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #606084;"><a href="#index40"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #545478;"><a href="#index41"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #444468;"><a href="#index42"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #383858;"><a href="#index43"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #2C2C4C;"><a href="#index44"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #24243C;"><a href="#index45"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #18182C;"><a href="#index46"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #101020;"><a href="#index47"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #4 -->
+      <div class="popup" onclick="info()" style="background-color: #FCB0F0;"><a href="#index48"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C460A8;"><a href="#index49"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #682460;"><a href="#index50"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #4C1448;"><a href="#index51"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #380C34;"><a href="#index52"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #281024;"><a href="#index53"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #240424;"><a href="#index54"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #1C0C18;"><a href="#index55"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCFCC8;"><a href="#index56"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCFC7C;"><a href="#index57"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #E4D80C;"><a href="#index58"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #CCB81C;"><a href="#index59"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #B89C28;"><a href="#index60"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A48830;"><a href="#index61"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #907824;"><a href="#index62"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #7C6818;"><a href="#index63"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #5 -->
+      <div class="popup" onclick="info()" style="background-color: #6C5810;"><a href="#index64"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #584808;"><a href="#index65"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #483804;"><a href="#index66"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #342800;"><a href="#index67"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #201800;"><a href="#index68"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #D8FC9C;"><a href="#index69"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #B4D884;"><a href="#index70"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #98B870;"><a href="#index71"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #78985C;"><a href="#index72"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #5C7848;"><a href="#index73"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #405834;"><a href="#index74"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #283820;"><a href="#index75"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #706050;"><a href="#index76"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #544834;"><a href="#index77"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #383020;"><a href="#index78"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #687850;"><a href="#index79"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #6 -->
+      <div class="popup" onclick="info()" style="background-color: #707820;"><a href="#index80"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #706828;"><a href="#index81"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #606024;"><a href="#index82"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #4C4424;"><a href="#index83"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #383020;"><a href="#index84"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #9CAC9C;"><a href="#index85"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #789478;"><a href="#index86"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #587C58;"><a href="#index87"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #406840;"><a href="#index88"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #385858;"><a href="#index89"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #304C48;"><a href="#index90"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #28443C;"><a href="#index91"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #203C2C;"><a href="#index92"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #1C3024;"><a href="#index93"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #142818;"><a href="#index94"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #102010;"><a href="#index95"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #7 -->
+      <div class="popup" onclick="info()" style="background-color: #183018;"><a href="#index96"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #10240C;"><a href="#index97"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #081C04;"><a href="#index98"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #041400;"><a href="#index99"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #040C00;"><a href="#index100"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #8C9C9C;"><a href="#index101"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #789498;"><a href="#index102"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #648894;"><a href="#index103"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #507C90;"><a href="#index104"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #406C8C;"><a href="#index105"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #30588C;"><a href="#index106"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #2C4C7C;"><a href="#index107"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #28446C;"><a href="#index108"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #20385C;"><a href="#index109"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #1C304C;"><a href="#index110"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #182840;"><a href="#index111"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #8 -->
+      <div class="popup" onclick="info()" style="background-color: #9CA4A4;"><a href="#index112"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #384868;"><a href="#index113"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #505858;"><a href="#index114"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #586884;"><a href="#index115"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #384050;"><a href="#index116"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #BCBCBC;"><a href="#index117"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #ACA498;"><a href="#index118"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A0907C;"><a href="#index119"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #947C60;"><a href="#index120"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #88684C;"><a href="#index121"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #7C5834;"><a href="#index122"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #704824;"><a href="#index123"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #643C14;"><a href="#index124"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #583008;"><a href="#index125"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCCCCC;"><a href="#index126"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCB0B0;"><a href="#index127"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #9 -->
+      <div class="popup" onclick="info()" style="background-color: #FC9898;"><a href="#index128"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC7C7C;"><a href="#index129"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC6464;"><a href="#index130"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC4848;"><a href="#index131"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC3030;"><a href="#index132"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC0000;"><a href="#index133"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #E00000;"><a href="#index134"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C40000;"><a href="#index135"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A80000;"><a href="#index136"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #900000;"><a href="#index137"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #740000;"><a href="#index138"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #580000;"><a href="#index139"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #400000;"><a href="#index140"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCE0C8;"><a href="#index141"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCC494;"><a href="#index142"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCB878;"><a href="#index143"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #10 -->
+      <div class="popup" onclick="info()" style="background-color: #FCAC60;"><a href="#index144"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC9C48;"><a href="#index145"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC942C;"><a href="#index146"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC8814;"><a href="#index147"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC7C00;"><a href="#index148"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #DC6C00;"><a href="#index149"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C06000;"><a href="#index150"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A45000;"><a href="#index151"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #844400;"><a href="#index152"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #683400;"><a href="#index153"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #4C2400;"><a href="#index154"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #301800;"><a href="#index155"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #F8D4A4;"><a href="#index156"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #D8B078;"><a href="#index157"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C8A064;"><a href="#index158"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #BC9054;"><a href="#index159"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #11 -->
+      <div class="popup" onclick="info()" style="background-color: #AC8044;"><a href="#index160"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #9C7434;"><a href="#index161"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #8C6428;"><a href="#index162"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #7C581C;"><a href="#index163"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #704C14;"><a href="#index164"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #604008;"><a href="#index165"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #503404;"><a href="#index166"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #402800;"><a href="#index167"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #342000;"><a href="#index168"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCE4B8;"><a href="#index169"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #E8C898;"><a href="#index170"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #D4AC7C;"><a href="#index171"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C49064;"><a href="#index172"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #B0744C;"><a href="#index173"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A05C38;"><a href="#index174"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #904C2C;"><a href="#index175"><span class="color"></span></a></div>
+      
+      <br/>
+            
+      <!-- Color Row #12 -->
+      <div class="popup" onclick="info()" style="background-color: #843C20;"><a href="#index176"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #782C18;"><a href="#index177"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #6C2010;"><a href="#index178"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #5C1408;"><a href="#index179"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #480C04;"><a href="#index180"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #3C0400;"><a href="#index181"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCE8DC;"><a href="#index182"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #F8D4BC;"><a href="#index183"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #F4C0A0;"><a href="#index184"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #F0B084;"><a href="#index185"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #F0A06C;"><a href="#index186"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #F0945C;"><a href="#index187"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #D88054;"><a href="#index188"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #C07048;"><a href="#index189"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #A86040;"><a href="#index190"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #905038;"><a href="#index191"><span class="color"></span></a></div>
+      
+      <br/>
+                  
+     <!-- Color Row #13 -->
+      <div class="popup" onclick="info()" style="background-color: #784030;"><a href="#index192"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #603024;"><a href="#index193"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #48241C;"><a href="#index194"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #381814;"><a href="#index195"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #64E464;"><a href="#index196"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #149814;"><a href="#index197"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #00A400;"><a href="#index198"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #505048;"><a href="#index199"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #006C00;"><a href="#index200"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #8C8C84;"><a href="#index201"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #1C1C1C;"><a href="#index202"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #685038;"><a href="#index203"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #302820;"><a href="#index204"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #8C7060;"><a href="#index205"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #483828;"><a href="#index206"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #0C0C0C;"><a href="#index207"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #14 -->
+      <div class="popup" onclick="info()" style="background-color: #3C3C3C;"><a href="#index208"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #6C746C;"><a href="#index209"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #788478;"><a href="#index210"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #889488;"><a href="#index211"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #94A494;"><a href="#index212"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #586860;"><a href="#index213"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #607068;"><a href="#index214"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #3CF800;"><a href="#index215"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #38D408;"><a href="#index216"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #34B410;"><a href="#index217"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #309414;"><a href="#index218"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #287418;"><a href="#index219"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FCFCFC;"><a href="#index220"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #F0ECD0;"><a href="#index221"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #D0B888;"><a href="#index222"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #987C50;"><a href="#index223"><span class="color"></span></a></div>
+
+      <br/>
+      
+      <!-- Color Row #15 -->
+      <div class="popup" onclick="info()" style="background-color: #68583C;"><a href="#index224"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #504024;"><a href="#index225"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #34281C;"><a href="#index226"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #18100C;"><a href="#index227"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #000000;"><a href="#index228"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #18780C;"><a href="#index229"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #288018;"><a href="#index230"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #006C00;"><a href="#index231"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #087004;"><a href="#index232"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #68686C;"><a href="#index233"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #60647C;"><a href="#index234"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #54688C;"><a href="#index235"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #0090A0;"><a href="#index236"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #68B8FC;"><a href="#index237"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC3800;"><a href="#index238"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC0000;"><a href="#index239"><span class="color"></span></a></div>
+      
+      <br/>
+      
+      <!-- Color Row #16 -->
+      <div class="popup" onclick="info()" style="background-color: #D40000;"><a href="#index240"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #902808;"><a href="#index241"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #FC7400;"><a href="#index242"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #440000;"><a href="#index243"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #780000;"><a href="#index244"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #B00000;"><a href="#index245"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #780000;"><a href="#index246"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #440000;"><a href="#index247"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #503C28;"><a href="#index248"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #483828;"><a href="#index249"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #403424;"><a href="#index250"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #3C3024;"><a href="#index251"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #342C20;"><a href="#index252"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #302820;"><a href="#index253"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #200000;"><a href="#index254"><span class="color"></span></a></div>
+      <div class="popup" onclick="info()" style="background-color: #000000;"><a href="#index255"><span class="color"></span></a></div>
+      
+      <br/><br/>
+      
+      <!--
+         DATA STARTS HERE
+      -->
+      
+      <!-- Info Row #1 -->
+      <div class="color_info" id="index0" style="display:none">Index: 0<br/>#0000FF<br/>R: 0 G: 0 B: 0<br/>Index 0 is transparent!</div>
+      <div class="color_info" id="index1" style="display:none">Index: 1<br/>#ECECEC<br/>R: 236 G: 236 B: 236</div>
+      <div class="color_info" id="index2" style="display:none">Index: 2<br/>#DCDCDC<br/>R: 220 G: 220 B: 220</div>
+      <div class="color_info" id="index3" style="display:none">Index: 3<br/>#CCCCCC<br/>R: 204 G: 204 B: 204</div>
+      <div class="color_info" id="index4" style="display:none">Index: 4<br/>#BCBCBC<br/>R: 188 G: 188 B: 188</div>
+      <div class="color_info" id="index5" style="display:none">Index: 5<br/>#B0B0B0<br/>R: 176 G: 176 B: 176</div>
+      <div class="color_info" id="index6" style="display:none">Index: 6<br/>#A0A0A0<br/>R: 160 G: 160 B: 160</div>
+      <div class="color_info" id="index7" style="display:none">Index: 7<br/>#909090<br/>R: 144 G: 144 B: 144</div>
+      <div class="color_info" id="index8" style="display:none">Index: 8<br/>#808080<br/>R: 128 G: 128 B: 128</div>
+      <div class="color_info" id="index9" style="display:none">Index: 9<br/>#747474<br/>R: 116 G: 116 B: 116</div>
+      <div class="color_info" id="index10" style="display:none">Index: 10<br/>#646464<br/>R: 100 G: 100 B: 100</div>
+      <div class="color_info" id="index11" style="display:none">Index: 11<br/>#545454<br/>R: 84 G: 84 B: 84</div>
+      <div class="color_info" id="index12" style="display:none">Index: 12<br/>#484848<br/>R: 72 G: 72 B: 72</div>
+      <div class="color_info" id="index13" style="display:none">Index: 13<br/>#383838<br/>R: 56 G: 56 B: 56</div>
+      <div class="color_info" id="index14" style="display:none">Index: 14<br/>#282828<br/>R: 40 G: 40 B: 40</div>
+      <div class="color_info" id="index15" style="display:none">Index: 15<br/>#202020<br/>R: 32 G: 32 B: 32</div>
+      
+      <!-- Info Row #2 -->
+      <div class="color_info" id="index16" style="display:none">Index: 16<br/>#FCECEC<br/>R: 252 G: 236 B: 236</div>
+      <div class="color_info" id="index17" style="display:none">Index: 17<br/>#ECD8D8<br/>R: 236 G: 216 B: 216</div>
+      <div class="color_info" id="index18" style="display:none">Index: 18<br/>#DCC4C4<br/>R: 220 G: 196 B: 196</div>
+      <div class="color_info" id="index19" style="display:none">Index: 19<br/>#D0B0B0<br/>R: 208 G: 176 B: 176</div>
+      <div class="color_info" id="index20" style="display:none">Index: 20<br/>#C0A0A0<br/>R: 192 G: 160 B: 160</div>
+      <div class="color_info" id="index21" style="display:none">Index: 21<br/>#B09090<br/>R: 176 G: 144 B: 144</div>
+      <div class="color_info" id="index22" style="display:none">Index: 22<br/>#A48080<br/>R: 164 G: 128 B: 128</div>
+      <div class="color_info" id="index23" style="display:none">Index: 23<br/>#947070<br/>R: 148 G: 112 B: 112</div>
+      <div class="color_info" id="index24" style="display:none">Index: 24<br/>#846060<br/>R: 132 G: 96 B: 96</div>
+      <div class="color_info" id="index25" style="display:none">Index: 25<br/>#785454<br/>R: 120 G: 84 B: 84</div>
+      <div class="color_info" id="index26" style="display:none">Index: 26<br/>#684444<br/>R: 104 G: 68 B: 68</div>
+      <div class="color_info" id="index27" style="display:none">Index: 27<br/>#583838<br/>R: 88 G: 56 B: 56</div>
+      <div class="color_info" id="index28" style="display:none">Index: 28<br/>#4C2C2C<br/>R: 76 G: 44 B: 44</div>
+      <div class="color_info" id="index29" style="display:none">Index: 29<br/>#3C2424<br/>R: 60 G: 35 B: 35</div>
+      <div class="color_info" id="index30" style="display:none">Index: 30<br/>#2C1818<br/>R: 44 G: 24 B: 24</div>
+      <div class="color_info" id="index31" style="display:none">Index: 31<br/>#201010<br/>R: 32 G: 16 B: 16</div>
+      
+      <!-- Info Row #3 -->
+      <div class="color_info" id="index32" style="display:none">Index: 32<br/>#ECECFC<br/>R: 236 G: 236 B: 252</div>
+      <div class="color_info" id="index33" style="display:none">Index: 33<br/>#D8D8EC<br/>R: 216 G: 216 B: 236</div>
+      <div class="color_info" id="index34" style="display:none">Index: 34<br/>#C4C4DC<br/>R: 196 G: 196 B: 220</div>
+      <div class="color_info" id="index35" style="display:none">Index: 35<br/>#B0B0D0<br/>R: 176 G: 176 B: 208</div>
+      <div class="color_info" id="index36" style="display:none">Index: 36<br/>#A0A0C0<br/>R: 160 G: 160 B: 192</div>
+      <div class="color_info" id="index37" style="display:none">Index: 37<br/>#9090B0<br/>R: 144 G: 144 B: 176</div>
+      <div class="color_info" id="index38" style="display:none">Index: 38<br/>#8080A4<br/>R: 128 G: 128 B: 164</div>
+      <div class="color_info" id="index39" style="display:none">Index: 39<br/>#707094<br/>R: 112 G: 112 B: 148</div>
+      <div class="color_info" id="index40" style="display:none">Index: 40<br/>#606084<br/>R: 96 G: 96 B: 132</div>
+      <div class="color_info" id="index41" style="display:none">Index: 41<br/>#545478<br/>R: 84 G: 84 B: 120</div>
+      <div class="color_info" id="index42" style="display:none">Index: 42<br/>#444468<br/>R: 68 G: 68 B: 104</div>
+      <div class="color_info" id="index43" style="display:none">Index: 43<br/>#383858<br/>R: 56 G: 56 B: 8</div>
+      <div class="color_info" id="index44" style="display:none">Index: 44<br/>#2C2C4C<br/>R: 44 G: 44 B: 76</div>
+      <div class="color_info" id="index45" style="display:none">Index: 45<br/>#24243C<br/>R: 36 G: 36 B: 60</div>
+      <div class="color_info" id="index46" style="display:none">Index: 46<br/>#18182C<br/>R: 24 G: 24 B: 44</div>
+      <div class="color_info" id="index47" style="display:none">Index: 47<br/>#101020<br/>R: 16 G: 16 B: 32</div>
+      
+      <!-- Info Row #4 -->
+      <div class="color_info" id="index48" style="display:none">Index: 48<br/>#FCB0F0<br/>R: 252 G: 176 B: 140</div>
+      <div class="color_info" id="index49" style="display:none">Index: 49<br/>#C460A8<br/>R: 196 G: 96 B: 168</div>
+      <div class="color_info" id="index50" style="display:none">Index: 50<br/>#682460<br/>R: 104 G: 36 B: 96</div>
+      <div class="color_info" id="index51" style="display:none">Index: 51<br/>#4C1448<br/>R: 76 G: 20 B: 72</div>
+      <div class="color_info" id="index52" style="display:none">Index: 52<br/>#380C34<br/>R: 56 G: 12 B: 52</div>
+      <div class="color_info" id="index53" style="display:none">Index: 53<br/>#281024<br/>R: 40 G: 16 B: 36</div>
+      <div class="color_info" id="index54" style="display:none">Index: 54<br/>#240424<br/>R: 36 G: 4 B: 36</div>
+      <div class="color_info" id="index55" style="display:none">Index: 55<br/>#1C0C18<br/>R: 28 G: 12 B: 24</div>
+      <div class="color_info" id="index56" style="display:none">Index: 56<br/>#FCFCC8<br/>R: 252 G: 252 B: 200</div>
+      <div class="color_info" id="index57" style="display:none">Index: 57<br/>#FCFC7C<br/>R: 252 G: 252 B: 124</div>
+      <div class="color_info" id="index58" style="display:none">Index: 58<br/>#E4D80C<br/>R: 228 G: 216 B: 12</div>
+      <div class="color_info" id="index59" style="display:none">Index: 59<br/>#CCB81C<br/>R: 204 G: 184 B: 28</div>
+      <div class="color_info" id="index60" style="display:none">Index: 60<br/>#B89C28<br/>R: 184 G: 156 B: 40</div>
+      <div class="color_info" id="index61" style="display:none">Index: 61<br/>#A48830<br/>R: 164 G: 136 B: 48</div>
+      <div class="color_info" id="index62" style="display:none">Index: 62<br/>#907824<br/>R: 144 G: 120 B: 36</div>
+      <div class="color_info" id="index63" style="display:none">Index: 63<br/>#7C6818<br/>R: 124 G: 104 B: 24</div>
+                              
+      <!-- Info Row #5 -->
+      <div class="color_info" id="index64" style="display:none">Index: 64<br/>#6C5810<br/>R: 108 G: 88 B: 16</div>
+      <div class="color_info" id="index65" style="display:none">Index: 65<br/>#584808<br/>R: 88 G: 72 B: 8</div>
+      <div class="color_info" id="index66" style="display:none">Index: 66<br/>#483804<br/>R: 72 G: 56 B: 4</div>
+      <div class="color_info" id="index67" style="display:none">Index: 67<br/>#342800<br/>R: 52 G: 40 B: 0</div>
+      <div class="color_info" id="index68" style="display:none">Index: 68<br/>#201800<br/>R: 32 G: 24 B: 0</div>
+      <div class="color_info" id="index69" style="display:none">Index: 69<br/>#D8FC9C<br/>R: 216 G: 252 B: 156</div>
+      <div class="color_info" id="index70" style="display:none">Index: 70<br/>#B4D884<br/>R: 180 G: 216 B: 132</div>
+      <div class="color_info" id="index71" style="display:none">Index: 71<br/>#98B870<br/>R: 152 G: 184 B: 112</div>
+      <div class="color_info" id="index72" style="display:none">Index: 72<br/>#78985C<br/>R: 120 G: 152 B: 92</div>
+      <div class="color_info" id="index73" style="display:none">Index: 73<br/>#5C7848<br/>R: 92 G: 120 B: 72</div>
+      <div class="color_info" id="index74" style="display:none">Index: 74<br/>#405834<br/>R: 64 G: 88 B: 52</div>
+      <div class="color_info" id="index75" style="display:none">Index: 75<br/>#283820<br/>R: 40 G: 56 B: 32</div>
+      <div class="color_info" id="index76" style="display:none">Index: 76<br/>#706050<br/>R: 112 G: 96 B: 80</div>
+      <div class="color_info" id="index77" style="display:none">Index: 77<br/>#544834<br/>R: 84 G: 72 B: 52</div>
+      <div class="color_info" id="index78" style="display:none">Index: 78<br/>#383020<br/>R: 56 G: 84 B: 32</div>
+      <div class="color_info" id="index79" style="display:none">Index: 79<br/>#687850<br/>R: 104 G: 120 B: 80</div>
+      
+      <!-- Info Row #6 -->
+      <div class="color_info" id="index80" style="display:none">Index: 80<br/>#707820<br/>R: 112 G: 120 B: 32</div>
+      <div class="color_info" id="index81" style="display:none">Index: 81<br/>#706828<br/>R: 112 G: 104 B: 40</div>
+      <div class="color_info" id="index82" style="display:none">Index: 82<br/>#606024<br/>R: 96 G: 96 B: 36</div>
+      <div class="color_info" id="index83" style="display:none">Index: 83<br/>#4C4424<br/>R: 76 G: 68 B: 36</div>
+      <div class="color_info" id="index84" style="display:none">Index: 84<br/>#383020<br/>R: 56 G: 48 B: 32</div>
+      <div class="color_info" id="index85" style="display:none">Index: 85<br/>#9CAC9C<br/>R: 156 G: 172 B: 156</div>
+      <div class="color_info" id="index86" style="display:none">Index: 86<br/>#789478<br/>R: 120 G: 148 B: 120</div>
+      <div class="color_info" id="index87" style="display:none">Index: 87<br/>#587C58<br/>R: 88 G: 124 B: 88</div>
+      <div class="color_info" id="index88" style="display:none">Index: 88<br/>#406840<br/>R: 64 G: 104 B: 64</div>
+      <div class="color_info" id="index89" style="display:none">Index: 89<br/>#385858<br/>R: 56 G: 88 B: 88</div>
+      <div class="color_info" id="index90" style="display:none">Index: 90<br/>#304C48<br/>R: 48 G: 76 B: 72</div>
+      <div class="color_info" id="index91" style="display:none">Index: 91<br/>#28443C<br/>R: 40 G: 68 B: 60</div>
+      <div class="color_info" id="index92" style="display:none">Index: 92<br/>#203C2C<br/>R: 32 G: 60 B: 44</div>
+      <div class="color_info" id="index93" style="display:none">Index: 93<br/>#1C3024<br/>R: 28 G: 48 B: 36</div>
+      <div class="color_info" id="index94" style="display:none">Index: 94<br/>#142818<br/>R: 20 G: 40 B: 24</div>
+      <div class="color_info" id="index95" style="display:none">Index: 95<br/>#102010<br/>R: 16 G: 32 B: 16</div>
+      
+     <!-- Info Row #7 -->
+      <div class="color_info" id="index96" style="display:none">Index: 96<br/>#183018<br/>R: 24 G: 48 B: 24</div>
+      <div class="color_info" id="index97" style="display:none">Index: 97<br/>#10240C<br/>R: 16 G: 36 B: 12</div>
+      <div class="color_info" id="index98" style="display:none">Index: 98<br/>#081C04<br/>R: 8 G: 28 B: 4</div>
+      <div class="color_info" id="index99" style="display:none">Index: 99<br/>#041400<br/>R: 4 G: 20 B: 0</div>
+      <div class="color_info" id="index100" style="display:none">Index: 100<br/>#040C00<br/>R: 4 G: 12 B: 0</div>
+      <div class="color_info" id="index101" style="display:none">Index: 101<br/>#8C9C9C<br/>R: 140 G: 156 B: 156</div>
+      <div class="color_info" id="index102" style="display:none">Index: 102<br/>#789498<br/>R: 120 G: 148 B: 152</div>
+      <div class="color_info" id="index103" style="display:none">Index: 103<br/>#648894<br/>R: 100 G: 136 B: 148</div>
+      <div class="color_info" id="index104" style="display:none">Index: 104<br/>#507C90<br/>R: 80 G: 124 B: 144</div>
+      <div class="color_info" id="index105" style="display:none">Index: 105<br/>#406C8C<br/>R: 64 G: 108 B: 140</div>
+      <div class="color_info" id="index106" style="display:none">Index: 106<br/>#30588C<br/>R: 48 G: 88 B: 140</div>
+      <div class="color_info" id="index107" style="display:none">Index: 107<br/>#2C4C7C<br/>R: 44 G: 76 B: 124</div>
+      <div class="color_info" id="index108" style="display:none">Index: 108<br/>#28446C<br/>R: 40 G: 68 B: 108</div>
+      <div class="color_info" id="index109" style="display:none">Index: 109<br/>#20385C<br/>R: 32 G: 56 B: 92</div>
+      <div class="color_info" id="index110" style="display:none">Index: 110<br/>#1C304C<br/>R: 28 G: 48 B: 76</div>
+      <div class="color_info" id="index111" style="display:none">Index: 111<br/>#182840<br/>R: 24 G: 40 B: 64</div>
+      
+      <!-- Info Row #8 -->
+      <div class="color_info" id="index112" style="display:none">Index: 112<br/>#9CA4A4<br/>R: 156 G: 164 B: 164</div>
+      <div class="color_info" id="index113" style="display:none">Index: 113<br/>#384868<br/>R: 56 G: 72 B: 104</div>
+      <div class="color_info" id="index114" style="display:none">Index: 114<br/>#505858<br/>R: 80 G: 88 B: 88</div>
+      <div class="color_info" id="index115" style="display:none">Index: 115<br/>#586884<br/>R: 88 G: 104 B: 132</div>
+      <div class="color_info" id="index116" style="display:none">Index: 116<br/>#384050<br/>R: 56 G: 64 B: 80</div>
+      <div class="color_info" id="index117" style="display:none">Index: 117<br/>#BCBCBC<br/>R: 188 G: 188 B: 188</div>
+      <div class="color_info" id="index118" style="display:none">Index: 118<br/>#ACA498<br/>R: 172 G: 164 B: 152</div>
+      <div class="color_info" id="index119" style="display:none">Index: 119<br/>#A0907C<br/>R: 160 G: 144 B: 124</div>
+      <div class="color_info" id="index120" style="display:none">Index: 120<br/>#947C60<br/>R: 148 G: 124 B: 96</div>
+      <div class="color_info" id="index121" style="display:none">Index: 121<br/>#88684C<br/>R: 136 G: 104 B: 76</div>
+      <div class="color_info" id="index122" style="display:none">Index: 122<br/>#7C5834<br/>R: 124 G: 88 B: 52</div>
+      <div class="color_info" id="index123" style="display:none">Index: 123<br/>#704824<br/>R: 112 G: 72 B: 36</div>
+      <div class="color_info" id="index124" style="display:none">Index: 124<br/>#643C14<br/>R: 100 G: 60 B: 20</div>
+      <div class="color_info" id="index125" style="display:none">Index: 125<br/>#583008<br/>R: 88 G: 48 B: 8</div>
+      <div class="color_info" id="index126" style="display:none">Index: 126<br/>#FCCCCC<br/>R: 252 G: 204 B: 204</div>
+      <div class="color_info" id="index127" style="display:none">Index: 127<br/>#FCB0B0<br/>R: 252 G: 176 B: 176</div>
+      
+      <!-- Info Row #9 -->
+      <div class="color_info" id="index128" style="display:none">Index: 128<br/>#FC9898<br/>R: 252 G: 152 B: 152</div>
+      <div class="color_info" id="index129" style="display:none">Index: 129<br/>#FC7C7C<br/>R: 252 G: 124 B: 124</div>
+      <div class="color_info" id="index130" style="display:none">Index: 130<br/>#FC6464<br/>R: 252 G: 100 B: 100</div>
+      <div class="color_info" id="index131" style="display:none">Index: 131<br/>#FC4848<br/>R: 252 G: 72 B: 72</div>
+      <div class="color_info" id="index132" style="display:none">Index: 132<br/>#FC3030<br/>R: 252 G: 48 B: 48</div>
+      <div class="color_info" id="index133" style="display:none">Index: 133<br/>#FC0000<br/>R: 252 G: 0 B: 0<br/>Default color for the player cross on the worldmap.</div>
+      <div class="color_info" id="index134" style="display:none">Index: 134<br/>#E00000<br/>R: 224 G: 0 B: 0<br/>Default color for travel marker on the worldmap (Fallout 1).</div>
+      <div class="color_info" id="index135" style="display:none">Index: 135<br/>#C40000<br/>R: 196 G: 0 B: 0</div>
+      <div class="color_info" id="index136" style="display:none">Index: 136<br/>#A80000<br/>R: 168 G: 0 B: 0</div>
+      <div class="color_info" id="index137" style="display:none">Index: 137<br/>#900000<br/>R: 144 G: 0 B: 0</div>
+      <div class="color_info" id="index138" style="display:none">Index: 138<br/>#740000<br/>R: 116 G: 0 B: 0</div>
+      <div class="color_info" id="index139" style="display:none">Index: 139<br/>#580000<br/>R: 88 G: 0 B: 0</div>
+      <div class="color_info" id="index140" style="display:none">Index: 140<br/>#400000<br/>R: 64 G: 0 B: 0</div>
+      <div class="color_info" id="index141" style="display:none">Index: 141<br/>#FCE0C8<br/>R: 252 G: 224 B: 200</div>
+      <div class="color_info" id="index142" style="display:none">Index: 142<br/>#FCC494<br/>R: 252 G: 196 B: 148</div>
+      <div class="color_info" id="index143" style="display:none">Index: 143<br/>#FCB878<br/>R: 252 G: 184 B: 120</div>
+      
+      <!-- Info Row #10 -->
+      <div class="color_info" id="index144" style="display:none">Index: 144<br/>#FCAC60<br/>R: 252 G: 172 B: 96</div>
+      <div class="color_info" id="index145" style="display:none">Index: 145<br/>#FC9C48<br/>R: 252 G: 156 B: 72</div>
+      <div class="color_info" id="index146" style="display:none">Index: 146<br/>#FC942C<br/>R: 252 G: 148 B: 44</div>
+      <div class="color_info" id="index147" style="display:none">Index: 147<br/>#FC8814<br/>R: 252 G: 136 B: 20</div>
+      <div class="color_info" id="index148" style="display:none">Index: 148<br/>#FC7C00<br/>R: 252 G: 124 B: 0</div>
+      <div class="color_info" id="index149" style="display:none">Index: 149<br/>#DC6C00<br/>R: 220 G: 108 B: 0</div>
+      <div class="color_info" id="index150" style="display:none">Index: 150<br/>#C06000<br/>R: 192 G: 96 B: 0</div>
+      <div class="color_info" id="index151" style="display:none">Index: 151<br/>#A45000<br/>R: 164 G: 80 B: 0</div>
+      <div class="color_info" id="index152" style="display:none">Index: 152<br/>#844400<br/>R: 132 G: 68 B: 0</div>
+      <div class="color_info" id="index153" style="display:none">Index: 153<br/>#683400<br/>R: 104 G: 52 B: 0</div>
+      <div class="color_info" id="index154" style="display:none">Index: 154<br/>#4C2400<br/>R: 76 G: 36 B: 0</div>
+      <div class="color_info" id="index155" style="display:none">Index: 155<br/>#301800<br/>R: 48 G: 24 B: 0</div>
+      <div class="color_info" id="index156" style="display:none">Index: 156<br/>#F8D4A4<br/>R: 248 G: 212 B: 164</div>
+      <div class="color_info" id="index157" style="display:none">Index: 157<br/>#D8B078<br/>R: 216 G: 176 B: 120</div>
+      <div class="color_info" id="index158" style="display:none">Index: 158<br/>#C8A064<br/>R: 200 G: 160 B: 100</div>
+      <div class="color_info" id="index159" style="display:none">Index: 159<br/>#BC9054<br/>R: 188 G: 144 B: 84</div>
+      
+      <!-- Info Row #11 -->
+      <div class="color_info" id="index160" style="display:none">Index: 160<br/>#AC8044<br/>R: 172 G: 128 B: 68</div>
+      <div class="color_info" id="index161" style="display:none">Index: 161<br/>#9C7434<br/>R: 156 G: 116 B: 52</div>
+      <div class="color_info" id="index162" style="display:none">Index: 162<br/>#8C6428<br/>R: 140 G: 100 B: 40</div>
+      <div class="color_info" id="index163" style="display:none">Index: 163<br/>#7C581C<br/>R: 124 G: 88 B: 28</div>
+      <div class="color_info" id="index164" style="display:none">Index: 164<br/>#704C14<br/>R: 112 G: 76 B: 20</div>
+      <div class="color_info" id="index165" style="display:none">Index: 165<br/>#604008<br/>R: 96 G: 64 B: 8</div>
+      <div class="color_info" id="index166" style="display:none">Index: 166<br/>#503404<br/>R: 80 G: 52 B: 4</div>
+      <div class="color_info" id="index167" style="display:none">Index: 167<br/>#402800<br/>R: 64 G: 40 B: 0</div>
+      <div class="color_info" id="index168" style="display:none">Index: 168<br/>#342000<br/>R: 52 G: 32 B: 0</div>
+      <div class="color_info" id="index169" style="display:none">Index: 169<br/>#FCE4B8<br/>R: 252 G: 228 B: 184</div>
+      <div class="color_info" id="index170" style="display:none">Index: 170<br/>#E8C898<br/>R: 232 G: 200 B: 152</div>
+      <div class="color_info" id="index171" style="display:none">Index: 171<br/>#D4AC7C<br/>R: 212 G: 172 B: 124</div>
+      <div class="color_info" id="index172" style="display:none">Index: 172<br/>#C49064<br/>R: 196 G: 144 B: 100</div>
+      <div class="color_info" id="index173" style="display:none">Index: 173<br/>#B0744C<br/>R: 176 G: 116 B: 76</div>
+      <div class="color_info" id="index174" style="display:none">Index: 174<br/>#A05C38<br/>R: 160 G: 92 B: 56</div>
+      <div class="color_info" id="index175" style="display:none">Index: 175<br/>#904C2C<br/>R: 144 G: 76 B: 44</div>
+                        
+      <!-- Info Row #12 -->
+      <div class="color_info" id="index176" style="display:none">Index: 176<br/>#843C20<br/>R: 132 G: 60 B: 32</div>
+      <div class="color_info" id="index177" style="display:none">Index: 177<br/>#782C18<br/>R: 120 G: 44 B: 24</div>
+      <div class="color_info" id="index178" style="display:none">Index: 178<br/>#6C2010<br/>R: 108 G: 32 B: 16</div>
+      <div class="color_info" id="index179" style="display:none">Index: 179<br/>#5C1408<br/>R: 92 G: 20 B: 8</div>
+      <div class="color_info" id="index180" style="display:none">Index: 180<br/>#480C04<br/>R: 72 G: 12 B: 4</div>
+      <div class="color_info" id="index181" style="display:none">Index: 181<br/>#3C0400<br/>R: 60 G: 4 B: 0</div>
+      <div class="color_info" id="index182" style="display:none">Index: 182<br/>#FCE8DC<br/>R: 252 G: 232 B: 220</div>
+      <div class="color_info" id="index183" style="display:none">Index: 183<br/>#F8D4BC<br/>R: 248 G: 212 B: 188</div>
+      <div class="color_info" id="index184" style="display:none">Index: 184<br/>#F4C0A0<br/>R: 244 G: 192 B: 160</div>
+      <div class="color_info" id="index185" style="display:none">Index: 185<br/>#F0B084<br/>R: 240 G: 176 B: 132</div>
+      <div class="color_info" id="index186" style="display:none">Index: 186<br/>#F0A06C<br/>R: 240 G: 160 B: 108</div>
+      <div class="color_info" id="index187" style="display:none">Index: 187<br/>#F0945C<br/>R: 240 G: 148 B: 92</div>
+      <div class="color_info" id="index188" style="display:none">Index: 188<br/>#D88054<br/>R: 216 G: 128 B: 84</div>
+      <div class="color_info" id="index189" style="display:none">Index: 189<br/>#C07048<br/>R: 192 G: 112 B: 72</div>
+      <div class="color_info" id="index190" style="display:none">Index: 190<br/>#A86040<br/>R: 168 G: 96 B: 64</div>
+      <div class="color_info" id="index191" style="display:none">Index: 191<br/>#905038<br/>R: 144 G: 80 B: 56</div>
+      
+     <!-- Info Row #13 -->
+      <div class="color_info" id="index192" style="display:none">Index: 192<br/>#784030<br/>R: 120 G: 64 B: 48</div>
+      <div class="color_info" id="index193" style="display:none">Index: 193<br/>#603024<br/>R: 96 G: 48 B: 36</div>
+      <div class="color_info" id="index194" style="display:none">Index: 194<br/>#48241C<br/>R: 72 G: 36 B: 28</div>
+      <div class="color_info" id="index195" style="display:none">Index: 195<br/>#381814<br/>R: 56 G: 24 B: 20</div>
+      <div class="color_info" id="index196" style="display:none">Index: 196<br/>#64E464<br/>R: 100 G: 228 B: 100</div>
+      <div class="color_info" id="index197" style="display:none">Index: 197<br/>#149814<br/>R: 20 G: 152 B: 20</div>
+      <div class="color_info" id="index198" style="display:none">Index: 198<br/>#00A400<br/>R: 0 G: 164 B: 0</div>
+      <div class="color_info" id="index199" style="display:none">Index: 199<br/>#505048<br/>R: 80 G: 80 B: 72</div>
+      <div class="color_info" id="index200" style="display:none">Index: 200<br/>#006C00<br/>R: 0 G: 108 B: 0</div>
+      <div class="color_info" id="index201" style="display:none">Index: 201<br/>#8C8C84<br/>R: 140 G: 140 B: 132</div>
+      <div class="color_info" id="index202" style="display:none">Index: 202<br/>#1C1C1C<br/>R: 28 G: 28 B: 28</div>
+      <div class="color_info" id="index203" style="display:none">Index: 203<br/>#685038<br/>R: 104 G: 80 B: 56</div>
+      <div class="color_info" id="index204" style="display:none">Index: 204<br/>#302820<br/>R: 48 G: 40 B: 32</div>
+      <div class="color_info" id="index205" style="display:none">Index: 205<br/>#8C7060<br/>R: 140 G: 112 B: 96</div>
+      <div class="color_info" id="index206" style="display:none">Index: 206<br/>#483828<br/>R: 72 G: 56 B: 40</div>
+      <div class="color_info" id="index207" style="display:none">Index: 207<br/>#0C0C0C<br/>R: 12 G: 12 B: 12</div>
+      
+     <!-- Info Row #14 -->
+      <div class="color_info" id="index208" style="display:none">Index: 208<br/>#3C3C3C<br/>R: 60 G: 60 B: 60</div>
+      <div class="color_info" id="index209" style="display:none">Index: 209<br/>#6C746C<br/>R: 108 G: 116 B: 108</div>
+      <div class="color_info" id="index210" style="display:none">Index: 210<br/>#788478<br/>R: 120 G: 132 B: 120</div>
+      <div class="color_info" id="index211" style="display:none">Index: 211<br/>#889488<br/>R: 136 G: 148 B: 136</div>
+      <div class="color_info" id="index212" style="display:none">Index: 212<br/>#94A494<br/>R: 148 G: 164 B: 148</div>
+      <div class="color_info" id="index213" style="display:none">Index: 213<br/>#586860<br/>R: 88 G: 104 B: 96</div>
+      <div class="color_info" id="index214" style="display:none">Index: 214<br/>#607068<br/>R: 96 G: 112 B: 104</div>
+      <div class="color_info" id="index215" style="display:none">Index: 215<br/>#3CF800<br/>R: 60 G: 248 B: 0</div>
+      <div class="color_info" id="index216" style="display:none">Index: 216<br/>#38D408<br/>R: 56 G: 212 B: 8</div>
+      <div class="color_info" id="index217" style="display:none">Index: 217<br/>#34B410<br/>R: 52 G: 180 B: 16</div>
+      <div class="color_info" id="index218" style="display:none">Index: 218<br/>#309414<br/>R: 48 G: 148 B: 20</div>
+      <div class="color_info" id="index219" style="display:none">Index: 219<br/>#287418<br/>R: 40 G: 116 B: 24</div>
+      <div class="color_info" id="index220" style="display:none">Index: 220<br/>#FCFCFC<br/>R: 252 G: 252 B: 252</div>
+      <div class="color_info" id="index221" style="display:none">Index: 221<br/>#F0ECD0<br/>R: 240 G: 236 B: 208</div>
+      <div class="color_info" id="index222" style="display:none">Index: 222<br/>#D0B888<br/>R: 208 G: 184 B: 136</div>
+      <div class="color_info" id="index223" style="display:none">Index: 223<br/>#987C50<br/>R: 152 G: 124 B: 80</div>
+      
+      <!-- Info Row #15 -->
+      <div class="color_info" id="index224" style="display:none">Index: 224<br/>#68583C<br/>R: 104 G: 88 B: 60</div>
+      <div class="color_info" id="index225" style="display:none">Index: 225<br/>#504024<br/>R: 80 G: 64 B: 36</div>
+      <div class="color_info" id="index226" style="display:none">Index: 226<br/>#34281C<br/>R: 52 G: 40 B: 28</div>
+      <div class="color_info" id="index227" style="display:none">Index: 227<br/>#18100C<br/>R: 24 G: 16 B: 12</div>
+      <div class="color_info" id="index228" style="display:none">Index: 228<br/>#000000<br/>R: 0 G: 0 B: 0</div>
+      <div class="color_info" id="index229" style="display:none">Index: 229<br/>#18780C<br/>R: 24 G: 120 B: 12<br/>Animated color! - Green (for radioactive waste)</div>
+      <div class="color_info" id="index230" style="display:none">Index: 230<br/>#288018<br/>R: 40 G: 128 B: 24<br/>Animated color! - Green (for radioactive waste)</div>
+      <div class="color_info" id="index231" style="display:none">Index: 231<br/>#006C00<br/>R: 0 G: 108 B: 0<br/>Animated color! - Green (for radioactive waste)</div>
+      <div class="color_info" id="index232" style="display:none">Index: 232<br/>#087004<br/>R: 8 G: 112 B: 4<br/>Animated color! - Green (for radioactive waste)</div>
+      <div class="color_info" id="index233" style="display:none">Index: 233<br/>#68686C<br/>R: 104 G: 104 B: 108<br/>Animated color! - Blue (for computer screens)</div>
+      <div class="color_info" id="index234" style="display:none">Index: 234<br/>#60647C<br/>R: 96 G: 100 B: 124<br/>Animated color! - Blue (for computer screens)</div>
+      <div class="color_info" id="index235" style="display:none">Index: 235<br/>#54688C<br/>R: 84 G: 104 B: 140<br/>Animated color! - Blue (for computer screens)</div>
+      <div class="color_info" id="index236" style="display:none">Index: 236<br/>#0090A0<br/>R: 0 G: 144 B: 160<br/>Animated color! - Blue (for computer screens)</div>
+      <div class="color_info" id="index237" style="display:none">Index: 237<br/>#68B8FC<br/>R: 104 G: 184 B: 252<br/>Animated color! - Blue (for computer screens)</div>
+      <div class="color_info" id="index238" style="display:none">Index: 238<br/>#FC3800<br/>R: 252 G: 56 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index239" style="display:none">Index: 239<br/>#FC0000<br/>R: 252 G: 0 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      
+      <!-- Info Row #16 -->
+      <div class="color_info" id="index240" style="display:none">Index: 240<br/>#D40000<br/>R: 212 G: 0 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index241" style="display:none">Index: 241<br/>#902808<br/>R: 144 G: 40 B: 8<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index242" style="display:none">Index: 242<br/>#FC7400<br/>R: 252 G: 116 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index243" style="display:none">Index: 243<br/>#440000<br/>R: 68 G: 0 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index244" style="display:none">Index: 244<br/>#780000<br/>R: 120 G: 0 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index245" style="display:none">Index: 245<br/>#B00000<br/>R: 176 G: 0 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index246" style="display:none">Index: 246<br/>#780000<br/>R: 120 G: 0 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index247" style="display:none">Index: 247<br/>#440000<br/>R: 68 G: 0 B: 0<br/>Animated color! - Orange, Red, Yellow (for fire)</div>
+      <div class="color_info" id="index248" style="display:none">Index: 248<br/>#503C28<br/>R: 80 G: 60 B: 40<br/>Animated color! - Brown (for shores / water)</div>
+      <div class="color_info" id="index249" style="display:none">Index: 249<br/>#483828<br/>R: 72 G: 56 B: 40<br/>Animated color! - Brown (for shores / water)</div>
+      <div class="color_info" id="index250" style="display:none">Index: 250<br/>#403424<br/>R: 64 G: 52 B: 36<br/>Animated color! - Brown (for shores / water)</div>
+      <div class="color_info" id="index251" style="display:none">Index: 251<br/>#3C3024<br/>R: 60 G: 48 B: 36<br/>Animated color! - Brown (for shores / water)</div>
+      <div class="color_info" id="index252" style="display:none">Index: 252<br/>#342C20<br/>R: 52 G: 44 B: 32<br/>Animated color! - Brown (for shores / water)</div>
+      <div class="color_info" id="index253" style="display:none">Index: 253<br/>#302820<br/>R: 48 G: 40 B: 32<br/>Animated color! - Brown (for shores / water)</div>
+      <div class="color_info" id="index254" style="display:none">Index: 254<br/>#200000<br/>R: 32 G: 0 B: 0</div>
+      <div class="color_info" id="index255" style="display:none">Index: 255<br/>#000000<br/>R: 0 G: 0 B: 0</div>
+       
+   </body>
+</html>
