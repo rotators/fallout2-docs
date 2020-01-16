@@ -1,16 +1,16 @@
 body {
-    margin: 50px;
     background-color: #040C00;
-    color: #CDCDCD;
     border: 0px solid #000;
+    color: #CDCDCD;
     font-size : 12px;
     font-family : 'Lucida Grande', Verdana, Arial, Sans-Serif; 
+    margin: 50px;
     text-align: left;
 }
 
 a:link, a:visited {
-   color: #5DA046;
-   text-decoration: none;
+    color: #5DA046;
+    text-decoration: none;
 }
 
 a:hover {
@@ -19,7 +19,7 @@ a:hover {
 }
 
 a {
-	display: inline !important;
+    display: inline !important;
 }
 
 h1 {
@@ -35,25 +35,26 @@ h3 a:hover {
 }
 
 h3 {
+    border-bottom: 1px dotted #474C44;
+    color: #F49205;
+    font-size: 14px;
     margin: 0px;
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 0px;
-    font-size: 14px;
-    border-bottom: 1px dotted #474C44;
-    color: #F49205;
+
 }
 
 table {
-    width: 100%;
     border-collapse: collapse;
-    padding: 3px;
     margin: 3px;
+    padding: 3px;
+    width: 100%;
 }
 
 table th {
-    text-align: left;
     border-bottom: 1px solid #535b5aba;
+    text-align: left;
 }
 
 table td {
@@ -73,9 +74,9 @@ hr {
 }
 
 pre {
-	background: #222; 
-	padding: 10px;
-	border: 1px solid #555;
+    background: #222; 
+    padding: 10px;
+    border: 1px solid #555;
 }
 
 #main div {

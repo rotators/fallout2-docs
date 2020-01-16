@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FON File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>FON File Format</h1>
+<p>This document describes the FON file format. The information was obtained in the course of reviewing relevant functions in Mapper2.exe. The names of the structures and their fields used in the program were received from the debugging information in Mapper2.exe.</p>
+
+<h3>Background</h3>
+<p>Fonts from FON files are used for displaying information on the Fallout and Fallout 2 worldmap (according to information provided by Wasteland Ghost). All fonts are non-scalable, raster, and do <b><i>not</i></b> contain any anti-aliasing information.</p>
+
+<h3>Structure</h3>
+<table>
+<thead>
+   <tr>
+       <th style="padding-right: 10px; width: 160px;">Offset</th>
+       <th style="padding: 5px;">Size</th>
+       <th style="padding: 5px; width: 120px;">Type</th>
+       <th style="text-align: center;">Block</th>
+       <th>Description</th>
+   </tr>
+</thead>
+<tbody>
+<tr>
+    <td>0x0</td>
+    <td>4</td>
+    <td>int</td>
+    <td rowspan="5" style="font-size: 24px; text-align: center; ">Header</td>
+    <td>The number of character images in the file. A shorthand notation num is used below.Note: Some characters are not included because they weren't included in the file(s). </td>
+</tr>
+<tr>
+    <td>0x4</td>
+    <td>4</td>
+    <td>int</td>
+    <td>The height of the font in points</td>
+</tr>
+<tr>
+    <td>0x8</td>
+    <td>4</td>
+    <td>int</td>
+    <td>The distance between adjacent symbols in points</td>
+</tr>
+<tr>
+    <td>0xC</td>
+    <td>4</td>
+    <td>FontInfo*</td>
+    <td>Pointer to an array of structures that describe the characters. <br/><b>Note:</b> This field is only important in the memory of the computer. Inside the file, it has no meaning. </td>
+</tr>
+<tr>
+    <td>0x10</td>
+    <td>4</td>
+    <td>unsigned char* </td>
+    <td>Pointer to an array of images of each individual character's data.<br/><b>Note:</b> This field is only important in the memory of the computer. Inside the file, it has no meaning. </td>
+</tr>
+<tr style="border-top: 1px solid #535b5aba;">
+    <td>0x14</td>
+    <td>4</td>
+    <td>int</td>
+    <td rowspan="5" style="font-size: 24px; text-align: center;">An array of characters descriptors </td>
+    <td>Symbol 0 width</td>
+</tr>
+<tr>
+    <td>0x18</td>
+    <td>4</td>
+    <td>int</td>
+    <td>Symbol 0 position in a block of data</td>
+</tr>
+<tr>
+    <td>0x1C</td>
+    <td>4</td>
+    <td>int</td>
+    <td>Symbol 1 width</td>
+</tr>
+<tr>
+    <td>0x20</td>
+    <td>4</td>
+    <td>int</td>
+    <td>Symbol 1 position in a block of data</td>
+</tr>
+<tr>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+</tr>
+<tr>
+    <td>0x14 + 8 * num</td>
+    <td>1</td>
+    <td>unsigned char </td>
+    <td rowspan="2"></td>
+    <td rowspan="2">Characters' images data</td>
+</tr>
+<tr>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+</tr>
+
+</tbody>
+</table>
+
+<h3>Memory structure</h3>
+<p>To work with FON files, mapper2.exe and fallout2.exe use the following structure: </p>
+<h4>Header</h4>
+<pre>
+typedef struct {
+    int num;                // The number of images of characters in the file 
+    int height;             // height of the font in points 
+    int spacing;            // The distance between adjacent symbols at the points 
+    FontInfo* info;         // Pointer to the array structures, describing characters 
+    unsigned char* data;    // Pointer to the array structures, describing symbol
+} Font; 
+</pre>
+
+<h4>Symbol descriptor</h4>
+<pre>
+typedef struct {
+    int width;   // width character's points
+    int offset;  // The image characters in a block of data 
+} FontInfo; 
+</pre>
+
+<p>The size of the block of data depicting characters determined as follows: </p>
+<pre>
+last = font.num-1; // Index of last character in the font
+size = font.info[last].offset + (font.info[last].width + 7) / 8 * font.height;
+</pre>
+
+<h4>Through Construction</h4>
+<pre>(font.info[last].width + 7) / 8</pre>
+<p>determined by the number of bytes needed to store information on one line symbol image. Information on the image stored as a symbol bit matrix.</p>
+
+<h3>Example</h3>
+<p>Let's say there is a symbol of the size 8x16 points, which is described as the following block data</p>
+<pre>00 00 7e 81 a5 81 81 bd 99 81 81 7e 00 00 00 00</pre>
+
+<span>Bit matrix takes the form of</span>
+<pre>
+00       00000000        ........
+00       00000000        ........
+7e       01111110        .######.
+81       10000001        #......#
+a5       10100101        #.#..#.#
+81       10000001        #......#
+81       10000001        #......#
+bd  ==>  10111101  ==>   #.####.#
+99       10011001        #..##..#
+81       10000001        #......#
+81       10000001        #......#
+7e       01111110        .######.
+00       00000000        ........
+00       00000000        ........
+00       00000000        ........
+00       00000000        ........
+</pre>
+
+<h3>Tools</h3>
+<a href="https://fodev.net/files/mirrors/teamx-utils/fonedit1.0.rar">FON editor</a>
+- <a href="https://fodev.net/files/mirrors/teamx-utils/fonedit_src.rar">source code</a>
+
+<h2>History</h2>
+2020-01-16 - Ported from <a href="https://falloutmods.fandom.com/wiki/FON_File_Format">https://falloutmods.fandom.com/wiki/FON_File_Format</a>
+
+</div>
+</body>
+</html>
