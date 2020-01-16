@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RIX File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>RIX File Format</h1>
+<p>In Fallout 2 there are six RIX files. All are in master.dat, in the art\splash folder, and appear when loading the game.</p>
+
+<h3>File Structure</h3>
+<p>ColorRIX is an outdated graphics editor for VGA and SVGA cards, running under MS-DOS. There were about half a dozen formats, of which Fallout 2 only used one - SCF (renamed RIX). ColorRIX came with some VGA graphics cards and a description of the format can be found on some sites with FTP archives. </p>
+
+<p>This format lets/allows us to save uncompressed images in 640x480 resolution, 256 colors (indexed). It's analogous to the Microsoft Windows Bitmap File format (BMP). </p>
+
+<p>All of the control values it the file are stored in little-endian format. (I.e. least-significant byte first).</p>
+
+<table>
+    <thead>
+       <tr>
+           <th style="padding-right: 5px; ">Offset</th>
+           <th style="padding: 5px;">Size (bytes)</th>
+           <th>Description</th>
+       </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>0x000</td>
+        <td>4</td>
+        <td>"RIX3" - the file signature. </td>
+    </tr>
+    <tr>
+        <td>0x004</td>
+        <td>2</td>
+        <td>width of the image - example: 0x280 = 640</td>
+    </tr>
+    <tr>
+        <td>0x006</td>
+        <td>2</td>
+        <td>height of the image - example: 0x1E0 = 480</td>
+    </tr>
+    <tr>
+        <td>0x008</td>
+        <td>1</td>
+        <td>0xAF = VGA - Palette type.</td>
+    </tr>
+    <tr>
+        <td>0x009</td>
+        <td>1</td>
+        <td>0xAF = VGA - Palette type.</td>
+    </tr>
+    <tr>
+        <td>0x00A</td>
+        <td>256*3 = 768</td>
+        <td>The palette. 3 bytes per color.</td>
+    </tr>
+    <tr>
+        <td>0x30A</td>
+        <td>640*480 = 307200</td>
+        <td>The image data. 1 byte for each pixel referencing the palette data defined previously.</td>
+    </tr>
+    </tbody>
+    </table>
+
+    <h3>Tools</h3>
+    <a href="https://fodev.net/files/mirrors/teamx-utils/viewer.rar">Graphics viewer 1.36 to load/save</a><br/>
+    <a href="https://www.xnview.com/en/xnview/#formats">XnView</a><br/>
+    <a href="https://fodev.net/files/mirrors/teamx-utils/rix2bmp.rar">rix2bmp</a><br/>
+    <a href="https://fodev.net/files/mirrors/teamx-utils/rix2gif0.2.0.rar">rix2gif</a><br/>
