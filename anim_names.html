@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Animation Naming conventions</title>
+		<link rel="stylesheet" href="style.css" type="text/css" />
+      
+      <style>
+         .divTable{
+            display: table;
+            width: 100%;
+         }
+         .divTableRow {
+            display: table-row;
+         }
+         .divTableHeading {
+            background-color: #EEE;
+            display: table-header-group;
+         }
+         .divTableCell, .divTableHead {
+            border: 1px solid #999999;
+            display: table-cell;
+            padding: 3px 10px;
+         }
+         .divTableHeading {
+            background-color: #EEE;
+            display: table-header-group;
+            font-weight: bold;
+         }
+         .divTableFoot {
+            background-color: #EEE;
+            display: table-footer-group;
+            font-weight: bold;
+         }
+         .divTableBody {
+            display: table-row-group;
+         }
+      </style>
+      
+	</head>
+   <body>
+   
+      <div style="width: 1200px; margin: auto;">
+      
+      <h1>Animation Naming conventions</h1>
+         
+      <h3>Technicalities</h3>
+
+      <p>A critter consists of many "frm" files. It's the standard graphic format used in Fallout. Basically, there are 2 different types of this format, each of them with unique extension:</p>
+
+      <ul>
+         <li>*.FRM extension - a single *.frm file containing up to 6 directions of a sprite.</li>
+         <li>*.FR0-*.FR5 extension - *.frm animation divided to 6 different frm files (usually used for 6 sprite directions of death animations)</li>
+      </ul>
+
+      <p>Each of the frm/fr0-fr5 files represents a kind of animation. Name of the frm files designate the type of animation (see table below).</p>
+      <p>Note: *.fr0-*.fr5 files take precedence over *.frm!</p>
+
+      <div class="divTable" style="width: 400px;" >
+      <div class="divTableBody">
+         <h3>Basic Animations</h3>
+         <div class="divTableRow">
+            <div class="divTableCell">stand</div>
+            <div class="divTableCell">*aa.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">walk</div>
+            <div class="divTableCell">*ab.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">magic_hands_ground</div>
+            <div class="divTableCell">*ak.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">magic_hands_middle</div>
+            <div class="divTableCell">*al.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">dodge_anim</div>
+            <div class="divTableCell">*an.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">hit_from_front</div>
+            <div class="divTableCell">*ao.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">hit_from_back</div>
+            <div class="divTableCell">*ap.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">throw_punch</div>
+            <div class="divTableCell">*aq.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">kick_leg</div>
+            <div class="divTableCell">*ar.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">throw_anim</div>
+            <div class="divTableCell">*as.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">running</div>
+            <div class="divTableCell">*at.frm</div>
+         </div>
+         
+         <h3>Knockdown and Death</h3>
+
+         <div class="divTableRow">
+            <div class="divTableCell">fall_back</div>
+            <div class="divTableCell">*ba.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fall_front</div>
+            <div class="divTableCell">*bb.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">big_hole</div>
+            <div class="divTableCell">*bd.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">chunks_of_flesh</div>
+            <div class="divTableCell">*bf.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">dancing_autofire</div>
+            <div class="divTableCell">*bg.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">electrify</div>
+            <div class="divTableCell">*bh.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">sliced_in_half</div>
+            <div class="divTableCell">*bi.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">burned_to_nothing</div>
+            <div class="divTableCell">*bj.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">electrified_to_nothing</div>
+            <div class="divTableCell">*bk.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">exploded_to_nothing</div>
+            <div class="divTableCell">*bl.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">melted_to_nothing</div>
+            <div class="divTableCell">*bm.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fire_dance</div>
+            <div class="divTableCell">*bn.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fall_back_blood</div>
+            <div class="divTableCell">*bo.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fall_front_blood</div>
+            <div class="divTableCell">*bp.frm</div>
+         </div>
+         
+         <h3>Change Positions</h3>
+         <div class="divTableRow">
+            <div class="divTableCell">prone_to_standing</div>
+            <div class="divTableCell">*ch.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">back_to_standing</div>
+            <div class="divTableCell">*cj.frm</div>
+         </div>
+
+         <h3>Single-Frame Death Animations</h3>
+         <p>(the last frame of knockdown and death anims)</p>
+         <div class="divTableRow">
+            <div class="divTableCell">fall_back_sf</div>
+            <div class="divTableCell">*ra.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fall_front_sf</div>
+            <div class="divTableCell">*rb.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">big_hole_sf</div>
+            <div class="divTableCell">*rd.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">chunks_of_flesh_sf</div>
+            <div class="divTableCell">*rf.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">dancing_autofire_sf</div>
+            <div class="divTableCell">*rg.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">electrify_sf</div>
+            <div class="divTableCell">*rh.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">sliced_in_half_sf</div>
+            <div class="divTableCell">*ri.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">burned_to_nothing_sf</div>
+            <div class="divTableCell">*rj.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">electrified_to_nothing_sf</div>
+            <div class="divTableCell">*rk.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">exploded_to_nothing_sf</div>
+            <div class="divTableCell">*rl.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">melted_to_nothing_sf</div>
+            <div class="divTableCell">*rm.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fire_dance_sf</div>
+            <div class="divTableCell">*rn.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fall_back_blood_sf</div>
+            <div class="divTableCell">*ro.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">fall_front_blood_sf</div>
+            <div class="divTableCell">*rp.frm</div>
+         </div>
+         <div class="divTableRow">
+            <div class="divTableCell">targeting picture</div>
+            <div class="divTableCell">*na.frm</div>
+         </div>
+         
+      </div>
+      </div>
+               
+         <h2 style="text-align: left;">History</h2>
+         <p>2020-01-16 - Updated information and moved from readme.txt to html.<br/>
+         <p>2007-07-22 - Written by Lisac2k</p>
+      
+      </div> <!-- wrapper -->
+   
+   </body>
+</html>
