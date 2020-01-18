@@ -1,0 +1,168 @@
+<html>
+<head>
+    <title>FRM</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+    <div style="width: 1200px; margin: auto;">
+    <h1>FRM files</h1>
+    <p>FRM files are unpaletted 256-color image files containing either one or several images in one file. The palette used for FRM files come in the form of external palette files. </p>
+    <p>The engine defaults to color.pal if not specified, but FRMs may have their own distinct palette files. These specific palette files have the same name as the FRM, but with the extension .pal. For example, the palette file of helpscrn.frm is helpscrn.pal. </p>
+    <p>An index color model is used to store raw pixel data, meaning each pixel is represented by an index in an array of colors. For the default palette (<a href="fo_colors.html">color.pal</a>) which has 256 color indexes, the color index of 0 represents transparency. </p>
+    
+    <h3>File Suffixes</h3>
+    <p>An FRM may contain image data for one or all of the 6 orientations used in Fallout. If an FRM has the extension .fr[0-5] instead of the usual .frm, then that file contains image data for the orientation given by the last digit in the extension. 0 represents the northeast direction and each subsequent suffix rotates in the clockwise direction (5 representing the northwest direction). Otherwise, the FRM contains image data for either orientation 0, or all 6 orientations. </p>
+    
+    <h3>Frame Positioning</h3>
+    <p>The FRM contains offset values used to correctly align (or center) the image data. For example, image data should be aligned so that each critter's feet should be on the same level. </p>
+    <p>Each frame contained within the FRM has an offset from the previous frame which must be applied before rendering. This offset ensures that each frame is correctly aligned during an animation sequence. </p>
+    <p>The center of the image data is the center of the bottom edge of the frame. To find the position of the top left corner of the frame (needed for rendering): </p>
+    <pre>
+left = center_x - (frame_width / 2)
+top  = center_y - frame_height
+    </pre>
+    <h3>FRM header & data</h3>
+    <table cellspacing="0" cellpadding="5" border="1">
+        <tbody><tr>
+        <th>Offset
+        </th><th>Size
+        </th><th>Datatype
+        </th><th>Possible values in Fallout 1/2 .FRM's
+        </th><th style="width: 45%;">Description
+        </th></tr>
+        <tr>
+        <td>0x0000
+        </td><td>4 bytes
+        </td><td>unsigned
+        </td><td>0x04
+        </td><td><b>Version number of the FRM format</b>
+        </td></tr>
+        <tr>
+        <td>0x0004
+        </td><td>2 bytes
+        </td><td>unsigned
+        </td><td>0x08 - 0x16, possibly more
+        </td><td><b>FPS</b> - Frames per second rate of the animation
+        </td></tr>
+        <tr>
+        <td>0x0006
+        </td><td>2 bytes
+        </td><td>unsigned
+        </td><td>0x01 -&gt; 0xFF (if the FRM has 255 single frames which is highly unlikely)
+        </td><td><b>Action frame</b> - Frame of the animation on which actions occur (shot, open doors, etc.)
+        </td></tr>
+        <tr>
+        <td>0x0008
+        </td><td>2 bytes
+        </td><td>unsigned
+        </td><td>0x01 -&gt; 0xFF
+        </td><td><b>Number of frames per direction</b> - All orientations of an FRM have the same number of frames. For a static image, this number will be 1. For an animation of 10 frames, this value will be 10, even though there would be a total of 60 frames stored (10 for each of the 6 orientations)
+        </td></tr>
+        <tr>
+        <td>0x000A
+        </td><td>2 bytes
+        </td><td>signed
+        </td><td>Unknown
+        </td><td><b>Pixel shift in the x direction, of frames with orientation 0</b> - This value is required so that the frames are centered correctly. The logical center of the frame will not necessarily be the absolute center of the frame (width/2, height/2). For example, the center of a critter will be the position of its feet, while the center of a tree will be its base. A positive value translates to shifting the frame to the right of the screen when rendering as the "origin" (0, 0) for images is the top left-most pixel
+        </td></tr>
+        <tr>
+        <td>0x000C
+        </td><td>5 * 2 bytes
+        </td><td>signed
+        </td><td>Unknown
+        </td><td><b>Pixel shift in the x direction, of frames with orientations [1-5]</b>
+        </td></tr>
+        <tr>
+        <td>0x0016
+        </td><td>6 * 2 bytes
+        </td><td>signed
+        </td><td>Unknown
+        </td><td><b>Pixel shift in the y direction, of frames with orientations [0-5]</b> - Positive values shift the frame down toward bottom of the screen when rendering
+        </td></tr>
+        <tr>
+        <td>0x0022
+        </td><td>4 bytes
+        </td><td>unsigned
+        </td><td>Unknown
+        </td><td><b>Offset of first frame in orientation 0 from beginning of frame area</b> - The "frame area" begins from offset 0x003E. This is useful for seeking directly to where image data begins for each orientation
+        </td></tr>
+        <tr>
+        <td>0x0026
+        </td><td>5 * 4 bytes
+        </td><td>unsigned
+        </td><td>Unknown
+        </td><td><b>Offset of first frame in orientation[1-5] from beginning of frame area</b>
+        </td></tr>
+        <tr>
+        <td>0x003A
+        </td><td>4 bytes
+        </td><td>unsigned
+        </td><td>Unknown
+        </td><td><b>Size of frame data</b> - Used to allocate memory for all frame data in the file
+        </td></tr>
+        <tr>
+        <td colspan="5" style="text-align: center; color:#ffffff" bgcolor="#343434">
+        <p><b>END OF HEADER // BEGINNING OF FRAME AREA</b>
+        </p>
+        </td></tr>
+        <tr>
+        <td>0x003E
+        </td><td>2 bytes
+        </td><td>unsigned
+        </td><td>Unknown
+        </td><td><b>FRAME-0-WIDTH: Width of frame 0</b> - The width (in pixels) of the 0th frame in the orientation 0
+        </td></tr>
+        <tr>
+        <td>0x0040
+        </td><td>2 bytes
+        </td><td>unsigned
+        </td><td>Unknown
+        </td><td><b>FRAME-0-HEIGHT: Height of frame 0</b> - The height (in pixels) of the 0th frame in the orientation 0
+        </td></tr>
+        <tr>
+        <td>0x0042
+        </td><td>4 bytes
+        </td><td>unsigned
+        </td><td>FRAME-0-WIDTH * FRAME-0-HEIGHT
+        </td><td><b>FRAME-0-SIZE: Number of pixels for frame 0</b> - The total area, and hence number of bytes taken up by the 0th frame
+        </td></tr>
+        <tr>
+        <td>0x0046
+        </td><td>2 bytes
+        </td><td>signed
+        </td><td>Unknown
+        </td><td><b>Pixel shift in x direction of frame 0</b> - The pixel offset of this frame from the previous frame. The frame shifts left if negative, right if positive.
+        </td></tr>
+        <tr>
+        <td>0x0048
+        </td><td>2 bytes
+        </td><td>signed
+        </td><td>Unknown
+        </td><td><b>Pixel shift in y direction of frame 0</b> The frame shifts up if negative, down if positive.
+        </td></tr>
+        <tr>
+        <td>0x004A
+        </td><td>FRAME-0-SIZE bytes
+        </td><td>unsigned
+        </td><td>0x00 -&gt; 0x3F(hex) / 63(dec)
+        </td><td><b>colorIndex for frame 0</b> - Contains the colorIndex for the 0th frame. Each index is represented by one byte; there are 256 possible indices and their RGB values can be found in the appropriate .pal file. Pixel data starts at the top left corner of the frame and increases left to right, then top to bottom
+        </td></tr>
+        <tr>
+        <td>0x004A + (FRAME-0-SIZE)
+        </td><td>flexible
+        </td><td>unsigned
+        </td><td>0x00 -&gt; 0xFF
+        </td><td><b>Frame data for all the following frames</b> - Frames are stored for all the rest of the frames of orientation 0, then moves on to orientation 1 up to 5 (if these orientations are stored in the file)
+        </td></tr></tbody></table>
+
+        <h3>Tools</h3>
+        <a href="https://github.com/rotators/frm2png/archive/0.1.2.zip">frm2png (Rotators)</a><a href="https://github.com/rotators/frm2png/">Source code</a><br/>
+        <a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics">TeamX graphics tools</a>
+
+        <h2>History</h2>
+        2020-01-18 - Ported from <a href="https://falloutmods.fandom.com/wiki/FRM_File_Format">https://falloutmods.fandom.com/wiki/FRM_File_Format</a>
+
+    </div>
+
+</body>
+</html>

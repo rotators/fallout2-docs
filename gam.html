@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GAM File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>GAM File Format</h1>
+<p>GAM files are indexed text files. They contain global variables for each core Fallout game and its maps, and are found in master.dat\data and master.dat\maps, respectively.</p>
+<p>Format and editing of GAM files is identical between Fallout 1 and 2. </p>
+
+<h3>Structure</h3>
+<p>At the beginning there is a header - "MAP_GLOBAL_VARS:" in GAM files for maps and "GAME_GLOBAL_VARS:" in VAULT13.GAM.</p>
+<p>Next is a list of variables - first the name (as in most programming languages it can contain Latin letters, numbers, and underscores, as in "MVAR_Last_Respawn_Map"), then the assignment operator (:=, attributed to Pascal, Fallout's proprietary scripting language), then the initial value of the variable, and at the end a semicolon. </p>
+<p>Variables are referred to in scripts by their number in the list (starting at zero). </p>
+<p>Variable names are always written with capitalized internal words to distinguish them from map variables, and following each variable is a comment with its number. This is done for the convenience of programmers. </p>
+<p><b><u>Do not exceed</u> 256 characters in any one line in this file.</b> Any lines above 256 characters will overflow into the following line, causing all global variables after that to hold incorrect data. </p>
+
+<h3>Example 1</h3>
+<pre>
+MAP_GLOBAL_VARS:
+//MAP VAR                              NUMBER
+
+SecDoor_open            := 0;           // (0)
+armory_access           := 0;           // (1)
+revolting               := 1;           // (2)
+dummyvar                := 0;           // (3)
+map_runs                := 0;           // (4)
+rebels_leave_date       := 100;         // (5)
+</pre>
+<h2>History</h2>
+2020-01-16 - Ported from <a href="https://falloutmods.fandom.com/wiki/GAM_File_Format">https://falloutmods.fandom.com/wiki/GAM_File_Format</a>
+
+</div>
+</body>
+</html>
