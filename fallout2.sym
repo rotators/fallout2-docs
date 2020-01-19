@@ -369,6 +369,63 @@ enum Skill : long
   SKILL_count = 18
 };
 
+enum AttackSubType : long
+{
+	NONE                      = 0,
+	UNARMED                   = 1,
+	MELEE                     = 2,
+	THROWING                  = 3,
+	GUNS                      = 4
+};
+
+enum AttackType : long
+{
+	ATKTYPE_LWEAPON_PRIMARY   = 0,
+	ATKTYPE_LWEAPON_SECONDARY = 1,
+	ATKTYPE_RWEAPON_PRIMARY   = 2,
+	ATKTYPE_RWEAPON_SECONDARY = 3,
+	ATKTYPE_PUNCH             = 4,
+	ATKTYPE_KICK              = 5,
+	ATKTYPE_LWEAPON_RELOAD    = 6,
+	ATKTYPE_RWEAPON_RELOAD    = 7,
+	ATKTYPE_STRONGPUNCH       = 8,
+	ATKTYPE_HAMMERPUNCH       = 9,
+	ATKTYPE_HAYMAKER          = 10,
+	ATKTYPE_JAB               = 11,
+	ATKTYPE_PALMSTRIKE        = 12,
+	ATKTYPE_PIERCINGSTRIKE    = 13,
+	ATKTYPE_STRONGKICK        = 14,
+	ATKTYPE_SNAPKICK          = 15,
+	ATKTYPE_POWERKICK         = 16,
+	ATKTYPE_HIPKICK           = 17,
+	ATKTYPE_HOOKKICK          = 18,
+	ATKTYPE_PIERCINGKICK      = 19
+};
+
+enum KillType : long
+{
+	KILL_TYPE_men             = 0,
+	KILL_TYPE_women           = 1,
+	KILL_TYPE_children        = 2,
+	KILL_TYPE_super_mutant    = 3,
+	KILL_TYPE_ghoul           = 4,
+	KILL_TYPE_brahmin         = 5,
+	KILL_TYPE_radscorpion     = 6,
+	KILL_TYPE_rat             = 7,
+	KILL_TYPE_floater         = 8,
+	KILL_TYPE_centaur         = 9,
+	KILL_TYPE_robot           = 10,
+	KILL_TYPE_dog             = 11,
+	KILL_TYPE_manti           = 12,
+	KILL_TYPE_deathclaw       = 13,
+	KILL_TYPE_plant           = 14,
+	KILL_TYPE_gecko           = 15,
+	KILL_TYPE_alien           = 16,
+	KILL_TYPE_giant_ant       = 17,
+	KILL_TYPE_big_bad_boss    = 18,
+	KILL_TYPE_count           = 19
+};
+
 *structs:
 MessageNode {
   long number;
@@ -407,14 +464,13 @@ GameItem {
 	long invenMax;
 }
 
-struct InvenItem {
+InvenItem {
   GameItem *object;
   long count;
 }
 
 // Different from GameObject* in sfall
 Critter {
-struct GameObject {
 	long id;
 	long tile;
 	long x;
@@ -457,13 +513,13 @@ struct GameObject {
 	long lightIntensity;
 	DWORD outline;
 	long scriptId;
-	GameObject* owner;
+	Critter* owner;
 	long scriptIndex;
 }
 
 DbFile {
 	long fileType;
-	void* handle;
+	DWORD* handle;
 };
 
 ElevatorExit {
@@ -491,8 +547,8 @@ FrmFile {
 
 SkillInfo
 {
-	const char* name;
-	const char* description;
+	char* name;
+	char* description;
 	long attr;
 	long image;
 	long base;
@@ -507,8 +563,8 @@ SkillInfo
 };
 
 StatInfo {
-	const char* dame;
-	const char* description;
+	char* dame;
+	char* description;
 	long image;
 	long minValue;
 	long maxValue;
@@ -516,14 +572,14 @@ StatInfo {
 };
 
 TraitInfo {
-	const char* name;
-	const char* description;
+	char* name;
+	char* description;
 	long image;
 };
 
 PathNode {
 	char* path;
-	void* pDat;
+	DWORD* pDat;
 	long isDat;
 	PathNode* next;
 };
@@ -701,7 +757,7 @@ PathNode {
 419a78 art_data_size_
 419b78 art_data_load_
 419c80 art_data_free_
-419c88 art_id_(long artType, long lstIndex, long animCode, long weaponCode, long directionCode)
+419c88 long art_id_(long artType, long lstIndex, long animCode, long weaponCode, long directionCode)
 419d60 art_readSubFrameData_
 419e1c art_readFrameData_
 419ec0 load_frame_
@@ -1017,7 +1073,7 @@ PathNode {
 42da64 critter_kill_
 42dcb8 critter_kill_exps_
 42dcdc critter_is_active_
-42dd18 critter_is_dead_(Critter* critter)
+42dd18 long critter_is_dead_(Critter* critter) // retval should be bool?
 42dd58 critter_is_crippled_
 42dd80 critter_is_prone_
 42ddc4 critter_body_type_
@@ -1606,7 +1662,7 @@ PathNode {
 453fd0 dbg_error_
 45400c int_debug_
 45404c scripts_tile_is_visible_
-45409c void correctFidForRemovedItem_(GameObject* critter, GameObject* item, long flags)
+45409c void correctFidForRemovedItem_(Critter* critter, GameItem* item, long flags)
 4541c8 op_give_exp_points_
 454238 op_scr_return_
 4542ac op_play_sfx_
@@ -2449,7 +2505,7 @@ PathNode {
 484c98 message_insert_
 484ca8 message_delete_
 484cb8 message_make_path_
-484d10 message_find_(DWORD* msgFile, long msgNumber, DWORD* outBuf)
+484d10 long message_find_(DWORD* msgFile, long msgNumber, DWORD* outBuf)
 484d68 message_add_
 484eb0 message_remove_
 484f60 message_parse_number_
@@ -3324,7 +3380,7 @@ PathNode {
 4b185c tile_dist_
 4b1994 tile_in_front_of_
 4b1a00 tile_to_right_of_
-4b1a6c tile_num_in_direction_(long tile, long rotation, long distance)
+4b1a6c long tile_num_in_direction_(long tile, long rotation, long distance)
 4b1abc tile_dir_
 4b1b84 tile_num_beyond_
 4b1d20 tile_on_edge_
@@ -3465,7 +3521,7 @@ PathNode {
 4b78a4 deleteWindow_
 4b7ac4 resizeWindow_
 4b7e7c scaleWindow_
-4b7f3c createWindow_(char* winName, DWORD x, DWORD y, DWORD width, DWORD height, long color, long flags)
+4b7f3c long createWindow_(char* winName, DWORD x, DWORD y, DWORD width, DWORD height, long color, long flags)
 4b80a4 windowOutput_
 4b814c windowGotoXY_
 4b81c4 selectWindowID_
@@ -3732,15 +3788,15 @@ PathNode {
 4c60e0 db_freadByte_
 4c60f4 db_freadShort_
 4c614c db_freadInt_
-4c61ac db_fwriteByte_(DbFile* file, byte value)
-4c61c8 db_fwriteShort_(DbFile* file, ushort value)
-4c6214 db_fwriteInt_(DbFile* file, long value)
+4c61ac long db_fwriteByte_(DbFile* file, byte value)
+4c61c8 long db_fwriteShort_(DbFile* file, ushort value)
+4c6214 long db_fwriteInt_(DbFile* file, long value)
 4c6244 db_fwriteLong_
 4c62c4 db_fwriteFloat_
-4c62fc db_freadByteCount_(DbFile* file, byte* dest, long count)
-4c6330 db_freadShortCount_(DbFile* file, WORD* dest, long count)
-4c63bc db_freadIntCount_(DbFile* file, DWORD* dest, long count)
-4c6438 db_freadLongCount_(DbFile* file, long* dest, long count)
+4c62fc long db_freadByteCount_(DbFile* file, byte* dest, long count)
+4c6330 long db_freadShortCount_(DbFile* file, WORD* dest, long count)
+4c63bc long db_freadIntCount_(DbFile* file, DWORD* dest, long count)
+4c6438 long db_freadLongCount_(DbFile* file, long* dest, long count)
 4c6464 db_fwriteByteCount_
 4c6490 db_fwriteShortCount_
 4c64f8 db_fwriteIntCount_
@@ -3882,7 +3938,7 @@ PathNode {
 4ca8c8 mouse_in_
 4ca934 mouse_click_in_
 4ca9a0 mouse_get_rect_
-4ca9dc mouse_get_position_(long* outX, long* outY)
+4ca9dc void mouse_get_position_(long* outX, long* outY)
 4caa04 mouse_set_position_
 4caa38 mouse_clip_
 4caaa0 mouse_get_buttons_
