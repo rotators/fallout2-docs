@@ -4841,36 +4841,84 @@ PathNode {
 4fce17 MVE_gfxWaitRetrace_
 4fce34 MVE_gfxSetSplit_
 4fdf62 GetTickCount_
+415755 _MoveToObject
+41576c _MoveToTile
+415787 _MoveStraightToTile
+4157a0 _AnimateAndMoveStraight
+4157b9 _Animate
+4157cd _AnimateReverse
+4157e4 _AnimateAndHide
+415834 _AnimateForever
+41584b _TurnTowards
+415884 _IncRotation
+415898 _DecRotation
+4158ac _Must_Erase
+4158dd _Must_Call
+4158fc _Call3
+41591e _Fset
+415981 _Funset
+4159e9 _Flatten
+415a16 _ChangeFid
+415a28 _TakeOut
+415a3f _Light
+415a6e _MoveOnStairs
+415a85 _CheckFalling
+415a97 _Outline
+415ad9 _Ping
+415af9 _PlaySfx
+415b04 _Default
+41a850 defaultCompressionFunc__2
+41a870 decodeRead_2
+6c0094 GetStockObject
+6c00f8 CallNextHookEx
+6c00fc CreateWindowExA
+6c0100 DefWindowProcA
+6c0104 DispatchMessageA
+6c0108 GetAsyncKeyState
+6c010c GetKeyState
+6c0110 GetMessageA
+6c0114 GetSystemMetrics
+6c0118 GetUpdateRect
+6c011c LoadCursorA
+6c0120 LoadIconA
+6c0124 MessageBoxA
+6c0128 PeekMessageA
+6c012c RegisterClassA
+6c0130 SetCursor
+6c0134 SetFocus
+6c0138 SetWindowTextA
+6c013c SetWindowsHookExA
+6c0140 ShowCursor
+6c0144 TranslateMessage
+6c0148 UnhookWindowsHookEx
+6c014c UpdateWindow
+6c0164 timeGetTime
+6c0168 timeKillEvent
+6c016c timeSetEvent
+6c01d0 CloseHandle
+6c01d4 CopyFileA
+6c01d8 CreateMutexA
+6c01dc CreateProcessA
+6c01e0 FreeLibrary
+6c01e4 GetCurrentThreadId
+6c01e8 GetDiskFreeSpaceA
+6c01ec GetDriveTypeA
+6c01f0 GetFileAttributesA
+6c01f4 GetLastError
+6c01f8 GetModuleFileNameA
+6c01fc GetProcAddress
+6c0200 GetTickCount
+6c0204 GetVersionExA
+6c0208 GetVolumeInformationA
+6c020c LoadLibraryA
+6c0210 SetErrorMode
+6c0214 SetFileAttributesA
+6c0218 VirtualProtect
+6c021c WaitForSingleObject
+6c0220 lstrcatA
+6c0224 lstrcmpiA
 
 *globals:
-415755 void* _MoveToObject
-41576c void* _MoveToTile
-415787 void* _MoveStraightToTile
-4157a0 void* _AnimateAndMoveStraight
-4157b9 void* _Animate
-4157cd void* _AnimateReverse
-4157e4 void* _AnimateAndHide
-415834 void* _AnimateForever
-41584b void* _TurnTowards
-415884 void* _IncRotation
-415898 void* _DecRotation
-4158ac void* _Must_Erase
-4158dd void* _Must_Call
-4158fc void* _Call3
-41591e void* _Fset
-415981 void* _Funset
-4159e9 void* _Flatten
-415a16 void* _ChangeFid
-415a28 void* _TakeOut
-415a3f void* _Light
-415a6e void* _MoveOnStairs
-415a85 void* _CheckFalling
-415a97 void* _Outline
-415ad9 void* _Ping
-415af9 void* _PlaySfx
-415b04 void* _Default
-41a850 void* defaultCompressionFunc__2
-41a870 void* decodeRead_2
 41ade0 void* _defam
 41b560 void* _displayMapList
 423a97 void* Hit_CRITICAL_SUCCESS
@@ -4897,7 +4945,7 @@ PathNode {
 43ea1c void* _btncnt
 43ea7c void* _retvals
 43eefc void* _keytable
-444d10 void* _Dogs
+444d10 void* _DogPids // Hardcoded list of dog PIDs.
 45184a void* Glass&Metal&Plastic
 45184e void* Wood&
 451852 void* Dirt&Stone&Cement
@@ -9897,54 +9945,7 @@ PathNode {
 6b3adc void* _sync_time
 6b3ae0 void* _io_read
 6b3d0c void* _pal_tbl
-6c0094 void* GetStockObject
-6c00f8 void* CallNextHookEx
-6c00fc void* CreateWindowExA
-6c0100 void* DefWindowProcA
-6c0104 void* DispatchMessageA
-6c0108 void* GetAsyncKeyState
-6c010c void* GetKeyState
-6c0110 void* GetMessageA
-6c0114 void* GetSystemMetrics
-6c0118 void* GetUpdateRect
-6c011c void* LoadCursorA
-6c0120 void* LoadIconA
-6c0124 void* MessageBoxA
-6c0128 void* PeekMessageA
-6c012c void* RegisterClassA
-6c0130 void* SetCursor
-6c0134 void* SetFocus
-6c0138 void* SetWindowTextA
-6c013c void* SetWindowsHookExA
-6c0140 void* ShowCursor
-6c0144 void* TranslateMessage
-6c0148 void* UnhookWindowsHookEx
-6c014c void* UpdateWindow
-6c0164 void* timeGetTime
-6c0168 void* timeKillEvent
-6c016c void* timeSetEvent
-6c01d0 void* CloseHandle
-6c01d4 void* CopyFileA
-6c01d8 void* CreateMutexA
-6c01dc void* CreateProcessA
-6c01e0 void* FreeLibrary
-6c01e4 void* GetCurrentThreadId
-6c01e8 void* GetDiskFreeSpaceA
-6c01ec void* GetDriveTypeA
-6c01f0 void* GetFileAttributesA
-6c01f4 void* GetLastError
-6c01f8 void* GetModuleFileNameA
-6c01fc void* GetProcAddress
-6c0200 void* GetTickCount
-6c0204 void* GetVersionExA
-6c0208 void* GetVolumeInformationA
-6c020c void* LoadLibraryA
-6c0210 void* SetErrorMode
-6c0214 void* SetFileAttributesA
-6c0218 void* VirtualProtect
-6c021c void* WaitForSingleObject
-6c0220 void* lstrcatA
-6c0224 void* lstrcmpiA
+
 6c0238 void* __imp_GetActiveWindow
 6c023c void* __imp_wsprintfA
 6c0330 void* __imp_CloseHandle_0
