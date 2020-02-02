@@ -8,6 +8,15 @@ body {
     text-align: left;
 }
 
+#wrapper {
+    width: 800px;
+    margin: 0 auto 0 auto;
+}
+
+.center {
+  text-align: center
+}
+
 a:link, a:visited {
     color: #5DA046;
     text-decoration: none;
