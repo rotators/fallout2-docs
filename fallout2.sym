@@ -856,7 +856,7 @@ BlendColorTableData {
 };
 
 *functions:
-0x410010 abil_init
+0x410013 abil_init
 0x410058 abil_resize
 0x410094 abil_free
 0x4100A8 abil_find
@@ -3136,8 +3136,8 @@ BlendColorTableData {
 0x49D294 bool obj_is_openable(GameObject* object)
 0x49D2E4 obj_is_open
 0x49D2F4 obj_toggle_open
-0x49D3D8 obj_open
-0x49D3F4 obj_close
+0x49D3D8 void obj_open(GameObject* object)
+0x49D3F4 void obj_close(GameObject* object)
 0x49D410 DWORD obj_lock_is_jammed(GameObject* object)
 0x49D448 obj_jam_lock
 0x49D480 void obj_unjam_lock(GameObject* object)

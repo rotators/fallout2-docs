@@ -1,0 +1,8 @@
+abil_init 0x410057
+abil_resize 0x410092
+abil_free 0x4100A7
+abil_find 0x41012C
+obj_drop 0x49B9A0
+obj_use_door 0x49CD97
+obj_toggle_open 0x49D3D5
+scr_explode_scenery 0x4A71CF

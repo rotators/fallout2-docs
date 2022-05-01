@@ -1,0 +1,74 @@
+<html><head><link rel="stylesheet" href="../style.css" type="text/css" /></head><body><h1>obj_use_door</h1><table><thead><th style='text-align:left; width: 60px;'>Offset</th><th style='text-align:left; width: 300px;'>ASM</th><th style='text-align:left; '>Comment</th><thead><tbody><tr><td style='padding-right: 20px;'>0x49CCB8</td><td>push ecx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCB9</td><td>push esi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCBA</td><td>push edi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCBB</td><td>push ebp</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCBC</td><td>sub esp, 0x1c</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCBF</td><td>mov ecx, eax</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCC1</td><td>mov esi, edx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCC3</td><td>mov ebp, ebx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCC5</td><td>mov eax, edx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCC7</td><td>call <span style='color: green;'>obj_is_locked</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCCC</td><td>xor ebx, ebx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCCE</td><td>test eax, eax</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCD0</td><td>je 0x49cce3</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCD2</td><td>mov edx 0x2</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCD7</td><td>mov eax, esi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCD9</td><td>call <span style='color: green;'>gsnd_build_open_sfx_name</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCDE</td><td>call <span style='color: green;'>gsound_play_sfx_file</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCE3</td><td>mov edi, dword ptr ds:[esi+0x78]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCE6</td><td>cmp edi, 0xff</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCE9</td><td>setne al</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCEC</td><td>and eax, 0xff</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCF1</td><td>dec eax</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCF2</td><td>cmp eax, 0xff</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCF5</td><td>je 0x49cd29</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCF7</td><td>mov ebx, esi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCF9</td><td>mov edx, ecx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCFB</td><td>mov eax, edi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CCFD</td><td>call <span style='color: green;'>scr_set_objs</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD02</td><td>mov edx, <span style='color: yellow'>use_proc</span></td><td>edx = procedure_id (see define.h)</td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD07</td><td>mov eax, edi</td><td>eax = scriptId</td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD09</td><td>call <span style='color: green;'>exec_script_proc</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD0E</td><td>lea edx, dword ptr ds:[esp+0x10]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD12</td><td>mov eax, edi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD14</td><td>call <span style='color: green;'>scr_ptr</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD19</td><td>cmp eax, 0xff</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD1C</td><td>je 0x49ce73</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD22</td><td>mov ebx, dword ptr ds:[esp+0x10]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD26</td><td>mov ebx, dword ptr ds:[ebx+0x44]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD29</td><td>test ebx, ebx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD2B</td><td>jne 0x49ce71</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD31</td><td>mov edx, dword ptr ds:[esi+0x18]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD34</td><td>lea eax, dword ptr ds:[esi+0x2c]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD37</td><td>test edx, edx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD39</td><td>jne 0x49cd63</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD3B</td><td>0xf6 byte ptr ds:[eax+0x10], 0x1</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD3F</td><td>je 0x49cd4b</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD41</td><td>mov eax 0xffffffff</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD46</td><td>jmp 0x49ce74</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD4B</td><td>xor edx, edx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD4D</td><td>test ebp, ebp</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD4F</td><td>setne al</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD52</td><td>and eax, 0xff</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD57</td><td>mov ecx 0x1</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD5C</td><td>inc eax</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD5D</td><td>mov dword ptr ds:[esp+0x14], ecx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD61</td><td>0xeb 0x49cdb1</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD63</td><td>mov ebx, dword ptr ds:[esi+0x28]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD66</td><td>mov edx, dword ptr ds:[esi+0x4]</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD69</td><td>xor eax, eax</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD6B</td><td>call <span style='color: green;'>obj_blocking_at</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD70</td><td>test eax, eax</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD72</td><td>je 0x49cd97</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD74</td><td>mov ebx 0x255</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD79</td><td>mov edx, esp</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD7B</td><td>mov eax <span style='color: yellow'>proto_main_msg_file</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD80</td><td>call <span style='color: green;'>getmsg</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD85</td><td>call <span style='color: green;'>display_print</span></td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD8A</td><td>mov eax 0xffffffff</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD8F</td><td>add esp, 0x1c</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD92</td><td>pop ebp</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD93</td><td>pop edi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD94</td><td>pop esi</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD95</td><td>pop ecx</td><td></td></tr>
+<tr><td style='padding-right: 20px;'>0x49CD96</td><td>ret</td><td></td></tr></tbody></table></body></html>
