@@ -870,16 +870,16 @@ BlendColorTableData {
 0x4103B8 abil_write_ability_data
 0x410410 switch_dude
 0x410468 action_knockback
-0x410568 action_blood
+0x410568 int action_blood(GameObject* obj, int anim, int delay)
 0x41060C DWORD pick_death(GameObject* attacker, GameObject* target, GameObject* weapon, DWORD amount, DWORD anim, DWORD hitFromBack)
 0x410814 check_death
-0x4108C8 internal_destroy
+0x4108C8 internal_destroy(GameObject* a1, GameObject* a2)
 0x4108D0 show_damage_to_object
 0x410E24 show_death
 0x410F48 show_damage_target
 0x410FEC show_damage_extras
-0x4110AC show_damage
-0x411224 action_attack
+0x4110AC void show_damage(Attack* attack, int a2, int a3)
+0x411224 int action_attack(void* attack)
 0x4112B4 action_melee
 0x4115CC throw_change_fid
 0x411600 action_ranged
@@ -1170,18 +1170,18 @@ BlendColorTableData {
 0x424EE8 void check_for_death(GameObject* critter, DWORD amountDamage, DWORD* flags)
 0x424F2C set_new_results
 0x425020 damage_object
-0x425170 combat_display
+0x425170 void combat_display(void* attack)
 0x425A9C combat_display_hit
 0x425BA4 combat_display_flags
 0x425E3C combat_anim_begin
 0x425E80 combat_anim_finished
 0x425FBC combat_standup
-0x42603C print_tohit
+0x42603C void print_tohit(unsigned char* dest, int destPitch, int accuracy)
 0x42612C combat_get_loc_name
 0x4261B4 draw_loc_off
 0x426218 get_called_shot_location
 0x426614 combat_check_bad_shot
-0x426744 combat_to_hit
+0x426744 bool combat_to_hit(GameObject* target, int* accuracy)
 0x4267CC combat_attack_this
 0x426AA8 combat_outline_on
 0x426BC0 combat_outline_off
