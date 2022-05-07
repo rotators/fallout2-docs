@@ -3991,6 +3991,8 @@ BlendColorTableData {
 0x4C5CC4 mem_prep_block
 0x4C5CE4 mem_check_block
 0x4C5D30 db_init
+0x4C5D40 db_get_dir_list
+0x4C5D54 db_current
 0x4C5D58 db_total
 0x4C5D60 db_exit
 0x4C5D68 DWORD db_dir_entry(char* fileName, DWORD* sizeOut)
@@ -4952,7 +4954,12 @@ BlendColorTableData {
 0x503530 aTextSCutsS
 0x50B01C aTextSCutsSS
 0x50DBE8 aDialogS_msg
+0x5106D0 action_in_explode
 0x51071C curr_anim_set
+0x510720 anim_in_init
+0x510724 anim_in_anim_stop
+0x510728 anim_in_bk
+0x51072C lastDestination
 0x510738 art
 0x510898 use_language
 0x5108A4 art_vault_guy_num
@@ -4962,10 +4969,12 @@ BlendColorTableData {
 0x510944 combat_state
 0x510948 aiInfoList
 0x51094C gcsd
+0x510950 combat_call_display
 0x510954 hit_location_penalty
 0x510978 crit_succ_eff
 0x5179B0 pc_crit_succ_eff
 0x517F98 combat_end_due_to_load
+0x517F9C combat_cleanup_enabled
 0x51805C combat_obj
 0x518060 num_caps
 0x518064 cap
@@ -5022,6 +5031,8 @@ BlendColorTableData {
 0x518FA0 endWindowRect
 0x518FD4 movePointRect
 0x519024 interfaceWindow
+0x519038 TimeOut
+0x51903C Enabled
 0x519058 inven_dude
 0x51905C inven_pid
 0x519068 iscr_data
@@ -5062,6 +5073,11 @@ BlendColorTableData {
 0x51C12C quest_count
 0x51C290 protoLists
 0x51C370 pc_proto
+0x51C6AC num_script_indexes
+0x51C6B0 scr_find_first_idx
+0x51C6B4 scr_find_first_ptr
+0x51C6B8 scr_find_first_elev
+0x51C6BC scr_SpatialsEnabled
 0x51C710 script_path_base
 0x51C714 script_engine_running
 0x51C720 fallout_game_time
@@ -5098,8 +5114,10 @@ BlendColorTableData {
 0x51DF04 debug_func
 0x51DF34 cmap
 0x51E234 idle_func
+0x51E238 focus_func
 0x51E23C GNW95_repeat_rate
 0x51E240 GNW95_repeat_delay
+0x51E244 keyboard_hooked
 0x51E2AC last_buttons
 0x51E2B4 GNW95_DDPrimarySurface
 0x51E2B8 GNW95_DDRestoreSurface
@@ -5266,7 +5284,15 @@ BlendColorTableData {
 0x668140 skldxwin
 0x668154 masterVol
 0x66815C sampleRate
+0x668160 numSounds
 0x668164 deviceInit
+0x668168 dataSize
+0x66816C numBuffers
+0x668170 shouldUseSound
+0x668174 soundMgrList
+0x668178 soundDSObject
+0x66817C stat_message_file
+0x668180 level_description
 0x6681AC curr_pc_stat
 0x6681B0 Level_pc
 0x6681B4 Experience_pc
@@ -5334,6 +5360,12 @@ BlendColorTableData {
 0x6AC7B0 mouse_buttons
 0x6AC7CC mouse_hoty
 0x6AC7D0 mouse_hotx
+0x6AC7D4 mouse_idle_start_time
+0x6AC7D8 mouse_blit_trans
+0x6AC7DC mouse_blit
+0x6AC7E0 mouse_trans
+0x6AC7E4 right_time
+0x6AC7E8 left_time
 0x6AC9F0 scr_size
 0x6ACA18 scr_blit
 0x6ADD90 window_index
