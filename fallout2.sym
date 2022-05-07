@@ -872,10 +872,10 @@ BlendColorTableData {
 0x410468 action_knockback
 0x410568 int action_blood(GameObject* obj, int anim, int delay)
 0x41060C DWORD pick_death(GameObject* attacker, GameObject* target, GameObject* weapon, DWORD amount, DWORD anim, DWORD hitFromBack)
-0x410814 check_death
+0x410814 int check_death(GameObject* obj, int anim, int minViolenceLevel, bool isFallingBack)
 0x4108C8 void internal_destroy(GameObject* a1, GameObject* a2)
 0x4108D0 show_damage_to_object
-0x410E24 show_death
+0x410E24 int show_death(GameObject* obj, int anim)
 0x410F48 show_damage_target
 0x410FEC show_damage_extras
 0x4110AC void show_damage(Attack* attack, int a2, int a3)
@@ -959,8 +959,8 @@ BlendColorTableData {
 0x4156A8 anim_set_check
 0x415B44 anim_set_continue
 0x415B9C anim_set_end
-0x415E24 DWORD anim_can_use_door(GameObject* source, GameObject* object)
-0x415EE8 make_path
+0x415E24 DWORD anim_can_use_door(GameObject* critter, GameObject* door)
+0x415EE8 int make_path(GameObject* object, int from, int to, unsigned char* rotations, int a5)
 0x415EFC DWORD make_path_func(GameObject* objectFrom, DWORD tileFrom, DWORD tileTo, char* pathDataBuffer, DWORD checkTileTo, void* blockingFunc)
 0x41633C idist
 0x416360 DWORD tile_idistance(DWORD sourceTile, DWORD targetTile)
@@ -979,7 +979,7 @@ BlendColorTableData {
 0x417B30 object_animate
 0x417F18 object_anim_compact
 0x417FFC check_move
-0x4180B4 dude_move
+0x4180B4 int dude_move(int actionPoints)
 0x41810C dude_run
 0x418168 dude_fidget
 0x418378 dude_stand
@@ -1362,7 +1362,7 @@ BlendColorTableData {
 0x42E62C critter_compute_ap_from_distance
 0x42E66C DWORD critterIsOverloaded(GameObject* critter)
 0x42E690 critter_is_fleeing
-0x42E6AC critter_flag_check
+0x42E6AC bool critter_flag_check(int pid, int flag)
 0x42E6F0 critter_flag_set
 0x42E71C critter_flag_unset
 0x42E74C critter_flag_toggle
@@ -5162,9 +5162,15 @@ BlendColorTableData {
 0x5708B4 Mutate_
 0x5709C4 frame_time
 0x5709D0 glblmode
+0x5709E8 card_old_fid2
 0x5709EC card_old_fid1
+0x5709F0 trait_back
+0x5709F4 trait_back2
 0x570A29 free_perk
 0x570AB8 endgame_voiceover_loaded
+0x570A10 tagskill_count
+0x570A14 temp_tag_skill
+0x570A18 temp_tag_skill2
 0x570BD0 endgame_subtitle_done
 0x570BF0 endgame_window_buffer
 0x58E93C gCurrentFont
@@ -5244,6 +5250,7 @@ BlendColorTableData {
 0x664514 cursor_line
 0x664520 view_page
 0x664524 bottom_line
+0x664528 hot_back_line
 0x664529 holo_flag
 0x66452A stat_flag
 0x6647AC proto_msg_files
@@ -5258,7 +5265,12 @@ BlendColorTableData {
 0x6681B0 Level_pc
 0x6681B4 Experience_pc
 0x6681C0 text_object_list
+0x66B564 dir_tile2
+0x66B594 dir_tile
+0x66B5C4 tile_grid_blocked
+0x66B7C4 tile_grid_occupied
 0x66B9C4 tile_mask
+0x66BBC4 tile_border
 0x66BBD4 buf_rect_2
 0x66BDE4 square_rect
 0x66BDF8 tile_offy
