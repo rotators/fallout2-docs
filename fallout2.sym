@@ -873,7 +873,7 @@ BlendColorTableData {
 0x410568 int action_blood(GameObject* obj, int anim, int delay)
 0x41060C DWORD pick_death(GameObject* attacker, GameObject* target, GameObject* weapon, DWORD amount, DWORD anim, DWORD hitFromBack)
 0x410814 check_death
-0x4108C8 internal_destroy(GameObject* a1, GameObject* a2)
+0x4108C8 void internal_destroy(GameObject* a1, GameObject* a2)
 0x4108D0 show_damage_to_object
 0x410E24 show_death
 0x410F48 show_damage_target

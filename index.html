@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Fallout reversing and docs.</title>
+    <title>Fallout 1 & 2 reversing and modding resource</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
@@ -8,6 +8,7 @@
         <ol>
         <li><a href="#fo2exe">Fallout2.exe</a></li>
         <li><a href="#formats">File formats</a></li>
+        <li><a href="#artwork">Artwork</a></li>
         <li><a href="#animation">Animation</a></li>
         <li><a href="#scripting">Scripting</a></li>
         <li><a href="#watcom">Watcom</a></li>
@@ -23,23 +24,27 @@
             <li><a href="#sfall-dev">sfall dev</a></li>
             </ul>
         </li>
+        <li><a href="#fo_projects">Projects</a></li>
         <li><a href="#misc">Misc</a></li>
         <li><a href="#buy">Buy</a></li>
         </ol>
     </div>
     <div id="main">
         <div>
-            <h1>Fallout reversing and docs</h1>
+            <h1>Fallout 1 & 2 reversing and modding resource</h1>
             <p>You can find additional information and code at <a href="https://github.com/rotators">github.com/rotators</a></p>
             <h2 id="fo2exe">Fallout2.exe</h2>
             <a href="structs.html">Structures</a><br/>
             <a href="sfall_refs.html">Sfall references</a><br/>
+            <a href="fallout2_re.html">Fallout 2 RE references</a><br/>
             <a href="symbols.html">Function and variable offsets</a><br/>
             <a href="https://rotators.fodev.net/atom/F2_function_structure.txt">Call structure</a><br/>
             <a href="https://github.com/rotators/sfall/blob/rotators/db/Fallout2.dd32">x64dbg database</a><br/>
             <a href="https://rotators.fodev.net/ghosthack/scrapheap/reversing/ida/Fallout_1_and_2_IDA68.rar">Fallout_1_and_2_IDA68.rar - IDA database</a>
 			<h2>f2_res.dll (High resolution patch)</h2>
 			<a href="hrp.html">Symbols</a>
+            <h2 id="modding">Modding</h2>
+            <a href="https://f3mic.github.io/">Comprehensive Fallout 2 Modding Guide</a> - <a href="https://github.com/F3mic/F3mic.github.io">source</a>
             <h2 id="formats">File formats</h2>
 			<table style="font-size: 12px;">
 			<thead><tr><th>Format</th><th>Tools</th></tr></thead>
@@ -127,11 +132,14 @@
 				</tr>
 			</table>
 
+            <h2 id="artwork">Artwork</h2>
+            <a href="https://www.nma-fallout.com/threads/the-complete-fallout-1-2-artwork.191548/">The Complete Fallout 1 & 2 Artwork </a>
             <h2 id="animation">Animation</h2>
-            <a href="anim_names.html">Animation names</a>
+                <a href="anim_names.html">Animation names</a><br/>
+                <a href="https://rotators.fodev.net/ghosthack/scrapheap/anim_viewer/">Animation viewer</a> - <a href="https://github.com/rotators/fallout-animations/tree/master/viewer">TypeScript source</a>
 			<h2 id="scripting">Scripting</h2>
 			<a href="https://fodev.net/files/fo2/opcodes">Fallout 2 opcodes</a> - does not include <a href="https://github.com/rotators/Fo1in2/blob/master/Tools/SFallScriptEditor/docs/sfall%20opcode%20list.txt">sfall opcodes</a>.</p>
-			
+			<a href="https://fodev.net/files/mirrors/teamx-utils/F2_scripts.rar">Official Fallout 2 scripts source code</a>
 			<h2 id="worldmap">Worldmap</h2>
 			<a href="https://github.com/phobos2077/fallout2_worldmap">Fallout2 worldmap.txt interactive browser and parser </a>
             <h2 id="watcom">Watcom</h2>
@@ -216,10 +224,41 @@
                 <li><a href="http://fforum.kochegarov.com/index.php?showtopic=29288">Sfall 1</a></li>
                 <li><a href="https://discord.gg/VgcmJCN">NMA discord</a></li>
                 <li>Github: <a href="https://github.com/phobos2077">@phobos2077</a>
-                    <a href="https://github.com/NovaRain">@NovaRain
+                    <a href="https://github.com/NovaRain">@NovaRain</a>
                 <ul>
             </div>
-
+            <h2 id="fo_projects">Projects</h2>
+            <div>
+                <table style="margin-top: 30px; margin-bottom: 30px; font-size: 12px;">
+                <thead><tr><th>Project</th><th>Description</th></tr></thead>
+                <tbody>
+                <tr>
+                    <td><a href="https://github.com/alexbatalov/fallout2-re">Reverse engineered Fallout 2</a></td>
+                    <td>Fallout 2 RE project by Alexander Batalov. <a href="https://medium.com/@alex.batalov/reverse-engineering-fallout-2-5dad1421de21">Announcement post</a></td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/ajxs/jsFO">Fallout 2 Javascript port</a></td>
+                    <td>Inactive engine implementation</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/darkf/darkfo">DarkFO, a post-nuclear RPG remake (of Fallout 2)</a></td>
+                    <td>Inactive engine implementation in TypeScript and Python</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/falltergeist/falltergeist">falltergeist</a></td>
+                    <td>Opensource crossplatform Fallout 2™ game engine written in C++ and SDL.</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/BGforgeNet/FO2tweaks">Fallout 2 tweaks</a></td>
+                    <td>A collection of convenience tweaks, common sense changes, and cheats for Fallout 2. It is highly configurable, any component can be used with or without others. Some components also allow fine tuning.</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JanSimek/geck-map-editor">Fallout 2 map editor</a></td>
+                    <td>Fallout 2 map editor by Jan Simek</td>
+                </tr>
+                </tbody>
+                </table>
+            </div>
             <h2 id="misc">Misc</h2>
             <div>
                 <ul style="text-align: left;">
