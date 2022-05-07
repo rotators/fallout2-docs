@@ -4986,6 +4986,7 @@ BlendColorTableData {
 0x518710 gdialog_speech_playing
 0x518714 dialogue_state
 0x518718 dialogue_switch_mode
+0x51871C gdialog_state
 0x51873C gdBarterMod
 0x518740 dialogueBackWindow
 0x518744 dialogueWindow
@@ -4994,7 +4995,12 @@ BlendColorTableData {
 0x518848 dialog_target
 0x51884C dialog_target_is_party
 0x518850 dialogue_head
+0x518C80 gmouse_3d_initialized
+0x518C84 gmouse_3d_hover_test
+0x518C88 gmouse_3d_last_move_time
 0x518C0C gmouse_current_cursor
+0x518CA0 gmouse_3d_menu_frame_hot_x
+0x518CA4 gmouse_3d_menu_frame_hot_y
 0x518D1E gmouse_3d_action_nums
 0x518D38 gmouse_3d_current_mode
 0x518D94 outlined_object
