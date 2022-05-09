@@ -1203,6 +1203,8 @@ Attack {
 0x42603C void print_tohit(unsigned char* dest, int destPitch, int accuracy)
 0x42612C combat_get_loc_name
 0x4261B4 draw_loc_off
+0x4261C0 draw_loc_on_
+0x4261CC draw_loc_
 0x426218 get_called_shot_location
 0x426614 combat_check_bad_shot
 0x426744 bool combat_to_hit(GameObject* target, int* accuracy)
@@ -1807,6 +1809,7 @@ Attack {
 0x44EB04 gmovie_has_been_played
 0x44EB14 gmovieIsPlaying
 0x44EB1C gmovie_subtitle_func
+0x44EBC0 HighRGB_
 0x44EBFC bit1exbit8
 0x44ECCC tint_mask_buf_to_buf
 0x44ED40 buf_to_color
@@ -1878,6 +1881,7 @@ Attack {
 0x4518DC gsnd_build_open_sfx_name
 0x451970 gsound_red_butt_press
 0x451978 gsound_red_butt_release
+0x451980 gsound_toggle_butt_press_
 0x451988 gsound_med_butt_press
 0x451990 gsound_med_butt_release
 0x451998 gsound_lrg_butt_press
@@ -1885,6 +1889,7 @@ Attack {
 0x4519A8 void gsound_play_sfx_file(char* name)
 0x451A00 gsound_bkg_proc
 0x451A08 gsound_open
+0x451A1C gsound_write_
 0x451A30 gsound_read
 0x451A4C gsound_seek
 0x451A70 gsound_tell
@@ -2121,7 +2126,9 @@ Attack {
 0x45CBF8 op_tile_contains_pid_obj
 0x45CCC8 op_obj_name
 0x45CD64 op_get_pc_stat
+0x45CDD4 intExtraClose_
 0x45CDD8 initIntExtra
+0x45D878 intExtraRemoveProgramReferences_
 0x45D880 intface_init
 0x45E3D0 intface_reset
 0x45E440 intface_exit
@@ -2282,6 +2289,7 @@ Attack {
 0x467040 removeProgramReferences_
 0x4670A0 defaultTimerFunc
 0x4670A8 interpretSetTimeFunc
+0x4670B4 defaultFilename_
 0x4670B8 interpretMangleName
 0x4670C0 outputStr
 0x4670C8 checkWait
@@ -2487,6 +2495,7 @@ Attack {
 0x4770E0 item_init
 0x477144 item_reset
 0x477148 item_exit
+0x477154 item_load_
 0x477158 item_add_mult
 0x4772B8 DWORD item_add_force(GameObject* critter, GameObject* item, DWORD count)
 0x477490 DWORD item_remove_mult(GameObject* critter, GameObject* item, DWORD count)
@@ -2655,6 +2664,7 @@ Attack {
 0x47FE58 copy_file
 0x48000C KillOldMaps
 0x480040 void MapDirErase(char* folder, char* ext)
+0x4800C8 MapDirEraseFile_
 0x480104 SaveBackup
 0x4803D8 RestoreSave
 0x480708 RestoreLoad
@@ -2713,6 +2723,7 @@ Attack {
 0x4825CC get_map_idx_same
 0x48261C char* map_get_short_name(DWORD mapID)
 0x482684 map_get_description
+0x48268C map_get_description_idx_
 0x4826B8 map_get_index_number
 0x4826C0 map_scroll
 0x482900 map_file_path
@@ -3000,7 +3011,9 @@ Attack {
 0x492F60 SetDefaults
 0x493054 SaveSettings
 0x493128 RestoreSettings
+0x4931F8 JustUpdate_
 0x493A00 palette_init
+0x493AD0 palette_reset_
 0x493AD4 palette_fade_to
 0x493B48 palette_set_to
 0x493B78 palette_set_entries
@@ -3083,6 +3096,7 @@ Attack {
 0x497004 pipboy
 0x497228 StartPipboy
 0x497828 EndPipboy
+0x497918 pip_init_
 0x49791C pip_num
 0x4979B4 pip_date
 0x497A40 pip_print
@@ -3249,6 +3263,7 @@ Attack {
 0x4A281C queue_destroy
 0x4A2828 queue_explode
 0x4A2830 queue_explode_exit
+0x4A2834 queue_do_explosion_
 0x4A28E4 queue_premature
 0x4A2920 queue_leaving_map
 0x4A294C queue_is_empty
@@ -3257,6 +3272,7 @@ Attack {
 0x4A29D0 reaction_set
 0x4A29E4 level_to_reaction
 0x4A29E8 reaction_to_level
+0x4A29F0 reaction_influence_
 0x4A2A2C reaction_to_level_internal
 0x4A2B28 reaction_get
 0x4A2B50 regionSetBound
@@ -3271,6 +3287,7 @@ Attack {
 0x4A2FD0 regionSetFlag
 0x4A2FD4 regionGetFlag
 0x4A2FE0 roll_init
+0x4A2FFC roll_reset_
 0x4A3000 roll_check
 0x4A3030 roll_check_critical
 0x4A30C0 DWORD roll_random(DWORD minValue, DWORD maxValue)
@@ -3498,6 +3515,7 @@ Attack {
 0x4AC774 soundSeekData
 0x4AC77C soundCloseData
 0x4AC784 soundGetDefaultFileIO
+0x4AC78C defaultMangler_
 0x4AC790 soundError
 0x4AC7B0 refreshSoundBuffers
 0x4ACC58 soundInit
@@ -3545,6 +3563,7 @@ Attack {
 0x4AE4E0 setSoundDevice
 0x4AE4F0 soundStageLoop
 0x4AE578 soundSetMasterVolume
+0x4AE5C8 doTimerEvent@20_
 0x4AE5E0 registerTimedEvent
 0x4AE614 removeTimedEvent
 0x4AE634 soundGetPosition
@@ -3619,6 +3638,7 @@ Attack {
 0x4B0C00 text_object_remove
 0x4B0C40 tile_init
 0x4B11E4 tile_set_border
+0x4B129C tile_reset_
 0x4B12A0 tile_refresh_enabled
 0x4B12A8 tile_disable_refresh
 0x4B12B4 tile_enable_refresh
@@ -4055,8 +4075,10 @@ Attack {
 0x4C65F0 db_fwriteFloatCount
 0x4C6628 DWORD db_get_file_list(char* searchMask, char*** fileList)
 0x4C6868 void db_free_file_list(char*** fileList, DWORD arg2)
+0x4C68B8 db_register_mem
 0x4C68BC db_filelength
 0x4C68C4 db_register_callback
+0x4C68E4 db_enable_hash_table_
 0x4C68E8 db_list_compare
 0x4C6900 GNW_rect_exit
 0x4C6924 rect_clip_list
@@ -4093,6 +4115,7 @@ Attack {
 0x4C72B4 calculateColor
 0x4C72CC RGB2Color
 0x4C72D5 Index2RGB
+0x4C72E0 Color2RGB_
 0x4C7320 fadeSystemPalette
 0x4C73D4 colorSetFadeBkFunc
 0x4C73DC setBlackSystemPalette
@@ -4162,7 +4185,6 @@ Attack {
 0x4C9440 get_focus_func
 0x4C9448 set_idle_func
 0x4C9450 get_idle_func
-0x4C9458 sub_4C945
 0x4C9490 GNW95_build_key_map
 0x4C9BB4 GNW95_hook_input
 0x4C9C20 GNW95_input_init
@@ -4215,6 +4237,7 @@ Attack {
 0x4CADBC init_mode_1024_768
 0x4CADD0 init_mode_1280_1024
 0x4CADE4 GNW95_init_mode
+0x4CADF8 get_start_mode_
 0x4CADFC zero_vid_mem
 0x4CAE0C set_update_palette_func
 0x4CAE14 get_update_palette_func
@@ -4306,6 +4329,21 @@ Attack {
 0x4D3BE0 ByteReaderFill
 0x4D3C30 bits_init
 0x4D3C78 init_pack_tables
+0x4D3D9C ReadBand_Fail_
+0x4D3DA0 ReadBand_Fmt0_
+0x4D3DC8 ReadBand_Fmt3_16_
+0x4D3E90 ReadBand_Fmt17_
+0x4D3F98 ReadBand_Fmt18_
+0x4D4068 ReadBand_Fmt19_
+0x4D4158 ReadBand_Fmt20_
+0x4D4254 ReadBand_Fmt21_
+0x4D4338 ReadBand_Fmt22_
+0x4D4434 ReadBand_Fmt23_
+0x4D4584 ReadBand_Fmt24_
+0x4D4698 ReadBand_Fmt26_
+0x4D47A4 ReadBand_Fmt27_
+0x4D4870 ReadBand_Fmt29_
+0x4D493C ReadBands_
 0x4D4ADC untransform_subband0
 0x4D4D1C untransform_subband
 0x4D4E80 untransform_all
@@ -4878,34 +4916,22 @@ Attack {
 0x4F4776 modf
 0x4F478F frexp
 0x4F4800 MVE_memCallbacks
-0x4F4820 sub_4F482
-0x4F4850 sub_4F485
 0x4F4860 MVE_ioCallbacks
 0x4F4870 MVE_memIO
 0x4F4890 MVE_MemInit
 0x4F48C0 MVE_MemFree
 0x4F48F0 MVE_sndInit
-0x4F4900 sub_4F490
-0x4F4920 sub_4F492
 0x4F4940 MVE_sfSVGA
 0x4F49F0 MVE_sfCallbacks
+0x4F4A00 do_nothing_2
 0x4F4A10 MVE_palCallbacks
-0x4F4A20 sub_4F4A2
-0x4F4A50 sub_4F4A5
-0x4F4B20 sub_4F4B2
-0x4F4B50 sub_4F4B5
-0x4F4B60 sub_4F4B6
-0x4F4B80 sub_4F4B8
 0x4F4B90 MVE_rmCallbacks
-0x4F4BA0 sub_4F4BA
-0x4F4BB0 sub_4F4BB
 0x4F4BD0 MVE_rmFrameCounts
 0x4F4BF0 MVE_rmPrepMovie
 0x4F4C90 ioReset
 0x4F4D00 ioRead
 0x4F4D40 MVE_MemAlloc
 0x4F4DA0 ioNextRecord
-0x4F4DD0 sub_4F4DD
 0x4F4E20 MVE_rmHoldMovie
 0x4F4E40 syncWait
 0x4F4EA0 MVE_sndPause
@@ -4921,11 +4947,9 @@ Attack {
 0x4F5B70 MVE_sndAdd
 0x4F5CA0 MVE_sndResume
 0x4F5CB0 nfConfig
-0x4F5E60 sub_4F5E6
-0x4F5EF0 sub_4F5EF
-0x4F5F20 sub_4F5F2
 0x4F5F40 sfShowFrame
 0x4F6080 do_nothing_
+0x4F6090 SetPalette_1
 0x4F60C0 SetPalette_
 0x4F60F0 palMakeSynthPalette
 0x4F6210 palLoadPalette
