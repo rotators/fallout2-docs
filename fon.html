@@ -3,14 +3,115 @@
 <head>
     <title>FON File Format</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
+    <style>
+        .viewer-panel {
+            background: #11170f;
+            border: 1px solid #535b5aba;
+            margin: 15px 0;
+            padding: 12px;
+        }
+
+        .viewer-controls {
+            align-items: end;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            margin-bottom: 10px;
+        }
+
+        .viewer-controls label {
+            display: block;
+        }
+
+        .viewer-controls input {
+            background: #222;
+            border: 1px solid #555;
+            color: #cdcdcd;
+            box-sizing: border-box;
+            margin-top: 4px;
+            padding: 4px;
+            width: 100%;
+        }
+
+        .viewer-status {
+            color: #f49205;
+            min-height: 18px;
+        }
+
+        .font-summary {
+            margin: 8px 0;
+        }
+
+        .font-summary td:first-child {
+            color: #f49205;
+            width: 160px;
+        }
+
+        .canvas-wrap {
+            background: #040c00;
+            border: 1px solid #333;
+            margin-top: 10px;
+            max-width: 100%;
+            overflow: auto;
+            padding: 8px;
+        }
+
+        .canvas-wrap canvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        @media (max-width: 900px) {
+            .viewer-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 <div style="width: 1200px; margin: auto;">
 <h1>FON File Format</h1>
-<p>This document describes the FON file format. The information was obtained in the course of reviewing relevant functions in Mapper2.exe. The names of the structures and their fields used in the program were received from the debugging information in Mapper2.exe.</p>
+<p>This document describes the FON file format.</p>
 
 <h3>Background</h3>
-<p>Fonts from FON files are used for displaying information on the Fallout and Fallout 2 worldmap (according to information provided by Wasteland Ghost). All fonts are non-scalable, raster, and do <b><i>not</i></b> contain any anti-aliasing information.</p>
+<p>FON files are one of the Fallout engine's bitmap font formats. Fallout 2 loads up to ten text fonts named <code>font0.fon</code> through <code>font9.fon</code> for the low-numbered text font manager. Worldmap and interface text can also use AAF-based interface fonts, so FON should not be assumed to be the only worldmap font format. All fonts are non-scalable, raster, and do <b><i>not</i></b> contain any anti-aliasing information.</p>
+<p>All numeric fields in the file are 32-bit little-endian integers. The two pointer fields in the header are serialized from the original in-memory structure, but the engine ignores their file values and allocates fresh arrays when loading.</p>
+
+<h3>FON viewer</h3>
+<p>The viewer below parses the same file layout described on this page. The glyph grid labels each glyph by its numeric index, and the text preview maps each character byte directly to the glyph with the same index. This matches the engine's 8-bit text rendering path: values outside the loaded glyph count do not draw a glyph.</p>
+<div class="viewer-panel">
+    <div class="viewer-controls">
+        <label>FON file
+            <input id="fon-file" type="file" accept=".fon" />
+        </label>
+        <label>Zoom
+            <input id="fon-zoom" type="number" min="1" max="12" value="4" />
+        </label>
+        <label>Foreground
+            <input id="fon-fg" type="color" value="#cdcdcd" />
+        </label>
+        <label>Background
+            <input id="fon-bg" type="color" value="#040c00" />
+        </label>
+    </div>
+    <label>Preview text
+        <input id="fon-preview-text" type="text" value="Fallout 2 worldmap text" />
+    </label>
+    <div id="fon-status" class="viewer-status"></div>
+    <table class="font-summary">
+        <tbody>
+            <tr><td>Glyph count</td><td id="fon-glyph-count">-</td></tr>
+            <tr><td>Line height</td><td id="fon-line-height">-</td></tr>
+            <tr><td>Letter spacing</td><td id="fon-letter-spacing">-</td></tr>
+            <tr><td>Bitmap data start</td><td id="fon-data-start">-</td></tr>
+            <tr><td>Bitmap data size</td><td id="fon-data-size">-</td></tr>
+        </tbody>
+    </table>
+    <h4>Text preview</h4>
+    <div class="canvas-wrap"><canvas id="fon-preview" width="1" height="1"></canvas></div>
+    <h4>Glyph grid</h4>
+    <div class="canvas-wrap"><canvas id="fon-grid" width="1" height="1"></canvas></div>
+</div>
 
 <h3>Structure</h3>
 <table>
@@ -29,56 +130,56 @@
     <td>4</td>
     <td>int</td>
     <td rowspan="5" style="font-size: 24px; text-align: center; ">Header</td>
-    <td>The number of character images in the file. A shorthand notation num is used below.Note: Some characters are not included because they weren't included in the file(s). </td>
+    <td>The number of glyph images in the file. A shorthand notation <code>num</code> is used below. Some fonts contain fewer than 256 glyphs.</td>
 </tr>
 <tr>
     <td>0x4</td>
     <td>4</td>
     <td>int</td>
-    <td>The height of the font in points</td>
+    <td>The height of the font in pixels. This is the line height used while rendering every glyph.</td>
 </tr>
 <tr>
     <td>0x8</td>
     <td>4</td>
     <td>int</td>
-    <td>The distance between adjacent symbols in points</td>
+    <td>The horizontal spacing in pixels added after each glyph.</td>
 </tr>
 <tr>
     <td>0xC</td>
     <td>4</td>
     <td>FontInfo*</td>
-    <td>Pointer to an array of structures that describe the characters. <br/><b>Note:</b> This field is only important in the memory of the computer. Inside the file, it has no meaning. </td>
+    <td>Serialized pointer to an array of structures that describe the glyphs. <br/><b>Note:</b> This field is only important in memory. Inside the file, the value is ignored. </td>
 </tr>
 <tr>
     <td>0x10</td>
     <td>4</td>
     <td>unsigned char* </td>
-    <td>Pointer to an array of images of each individual character's data.<br/><b>Note:</b> This field is only important in the memory of the computer. Inside the file, it has no meaning. </td>
+    <td>Serialized pointer to the glyph bitmap data.<br/><b>Note:</b> This field is only important in memory. Inside the file, the value is ignored. </td>
 </tr>
 <tr style="border-top: 1px solid #535b5aba;">
     <td>0x14</td>
     <td>4</td>
     <td>int</td>
-    <td rowspan="5" style="font-size: 24px; text-align: center;">An array of characters descriptors </td>
-    <td>Symbol 0 width</td>
+    <td rowspan="5" style="font-size: 24px; text-align: center;">Glyph descriptor array</td>
+    <td>Glyph 0 width in pixels</td>
 </tr>
 <tr>
     <td>0x18</td>
     <td>4</td>
     <td>int</td>
-    <td>Symbol 0 position in a block of data</td>
+    <td>Glyph 0 offset, relative to the start of the bitmap data block</td>
 </tr>
 <tr>
     <td>0x1C</td>
     <td>4</td>
     <td>int</td>
-    <td>Symbol 1 width</td>
+    <td>Glyph 1 width in pixels</td>
 </tr>
 <tr>
     <td>0x20</td>
     <td>4</td>
     <td>int</td>
-    <td>Symbol 1 position in a block of data</td>
+    <td>Glyph 1 offset, relative to the start of the bitmap data block</td>
 </tr>
 <tr>
     <td>...</td>
@@ -91,7 +192,7 @@
     <td>1</td>
     <td>unsigned char </td>
     <td rowspan="2"></td>
-    <td rowspan="2">Characters' images data</td>
+    <td rowspan="2">Glyph bitmap data. Each glyph starts at its descriptor's data offset.</td>
 </tr>
 <tr>
     <td>...</td>
@@ -102,42 +203,94 @@
 </tbody>
 </table>
 
+<h3>Parsing notes</h3>
+<p>FON has no magic number or version field. Tools usually identify it by filename and location, or by validating that the header, descriptor table, and bitmap offsets form a plausible file.</p>
+<p>The header is always 20 bytes long. The descriptor table begins immediately after it at <code>0x14</code> and contains <code>num</code> entries, each 8 bytes long. The bitmap data block therefore starts at <code>0x14 + 8 * num</code>. Descriptor offsets are relative to this bitmap data block, not to the beginning of the file.</p>
+<p>Each glyph consumes <code>((width + 7) / 8) * height</code> bytes, rounded down by integer division after adding 7. A zero-width glyph consumes no bitmap bytes, but can still occupy a glyph index. The original engine computes the total bitmap block length from the last descriptor; file inspection tools should additionally validate every descriptor so malformed offsets cannot point outside the file.</p>
+<p>FON files store shape only. They do not store colors, palette indexes, kerning pairs, Unicode mappings, or proportional layout metadata beyond each glyph's width and the global spacing value.</p>
+
+<h3>Runtime notes</h3>
+<p>In Fallout 2, FON files are registered as font ids <code>0</code> through <code>9</code>. The separate AAF interface font manager registers font ids <code>100</code> through <code>110</code>. Calls such as <code>fontSetCurrent(3)</code> therefore select a loaded FON font, while calls such as <code>fontSetCurrent(101)</code> select an AAF interface font.</p>
+<p>The window manager initializes the FON text font system during startup. Missing individual <code>fontN.fon</code> files are tolerated, but initialization fails if none of the ten FON fonts can be loaded.</p>
+<p>Shadow, underline, and monospaced text are renderer options applied by the font manager at draw time. They are not stored in the FON file.</p>
+
+<h3>FON and AAF comparison</h3>
+<table>
+<thead>
+   <tr>
+       <th style="padding-right: 10px; width: 140px;">Feature</th>
+       <th>FON</th>
+       <th>AAF</th>
+   </tr>
+</thead>
+<tbody>
+<tr>
+    <td>Typical files</td>
+    <td><code>font0.fon</code> through <code>font9.fon</code></td>
+    <td><code>font0.aaf</code> and other interface font files</td>
+</tr>
+<tr>
+    <td>Font id range</td>
+    <td><code>0</code> through <code>9</code> in Fallout 2 CE</td>
+    <td><code>100</code> through <code>110</code> in Fallout 2 CE</td>
+</tr>
+<tr>
+    <td>Glyph count</td>
+    <td>Stored in the file header</td>
+    <td>Always 256 descriptor slots</td>
+</tr>
+<tr>
+    <td>Pixel data</td>
+    <td>1 bit per pixel; set bits draw the chosen text color</td>
+    <td>One value per pixel; values <code>1</code> through <code>9</code> represent brightness levels</td>
+</tr>
+<tr>
+    <td>Integer byte order</td>
+    <td>Little-endian 32-bit integers</td>
+    <td>Big-endian 16-bit and 32-bit integers</td>
+</tr>
+</tbody>
+</table>
+
 <h3>Memory structure</h3>
 <p>To work with FON files, mapper2.exe and fallout2.exe use the following structure: </p>
 <h4>Header</h4>
 <pre>
 typedef struct {
-    int num;                // The number of images of characters in the file 
-    int height;             // height of the font in points 
-    int spacing;            // The distance between adjacent symbols at the points 
-    FontInfo* info;         // Pointer to the array structures, describing characters 
-    unsigned char* data;    // Pointer to the array structures, describing symbol
+    int num;                // The number of glyph images in the file
+    int height;             // line height in pixels
+    int spacing;            // horizontal spacing between adjacent glyphs
+    FontInfo* info;         // Pointer to the array structures, describing glyphs
+    unsigned char* data;    // Pointer to glyph bitmap data
 } Font; 
 </pre>
 
-<h4>Symbol descriptor</h4>
+<h4>Glyph descriptor</h4>
 <pre>
 typedef struct {
-    int width;   // width character's points
-    int offset;  // The image characters in a block of data 
+    int width;   // glyph width in pixels
+    int offset;  // glyph image offset in the data block
 } FontInfo; 
 </pre>
 
-<p>The size of the block of data depicting characters determined as follows: </p>
+<p>The engine computes the size of the bitmap data block from the final glyph descriptor:</p>
 <pre>
-last = font.num-1; // Index of last character in the font
+last = font.num-1; // Index of the last glyph in the font
 size = font.info[last].offset + (font.info[last].width + 7) / 8 * font.height;
 </pre>
 
-<h4>Through Construction</h4>
+<h4>Row byte calculation</h4>
 <pre>(font.info[last].width + 7) / 8</pre>
-<p>determined by the number of bytes needed to store information on one line symbol image. Information on the image stored as a symbol bit matrix.</p>
+<p>is the number of bytes needed for one row of a glyph image. Glyph bitmap data is a 1-bit matrix, with the most significant bit of each byte drawn first. A set bit draws the current text color; a clear bit leaves the destination pixel unchanged.</p>
+
+<h4>Text rendering</h4>
+<p>During rendering, each byte in the source text is used as a glyph index. When the index is present in the font, the renderer draws that glyph and advances by <code>glyph.width + font.spacing</code> pixels. Missing glyph indexes are skipped.</p>
 
 <h3>Example</h3>
-<p>Let's say there is a symbol of the size 8x16 points, which is described as the following block data</p>
+<p>Let's say there is a glyph with the size 8x16 pixels, described by the following bitmap bytes:</p>
 <pre>00 00 7e 81 a5 81 81 bd 99 81 81 7e 00 00 00 00</pre>
 
-<span>Bit matrix takes the form of</span>
+<span>The bit matrix takes the form of</span>
 <pre>
 00       00000000        ........
 00       00000000        ........
@@ -161,9 +314,265 @@ bd  ==>  10111101  ==>   #.####.#
 <a href="https://fodev.net/files/mirrors/teamx-utils/fonedit1.0.rar">FON editor</a>
 - <a href="https://fodev.net/files/mirrors/teamx-utils/fonedit_src.rar">source code</a>
 
+<h3>Source code</h3>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/text_font.cc">Fallout 2 Community Edition FON loader and renderer - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/text_font.h">Fallout 2 Community Edition font manager declarations - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/font_manager.cc">Fallout 2 Community Edition AAF interface font manager - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/window_manager.cc">Fallout 2 Community Edition window manager font initialization - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc">Fallout 2 Community Edition worldmap font usage - C++</a>
+
 <h2>History</h2>
 2020-01-16 - Ported from <a href="https://falloutmods.fandom.com/wiki/FON_File_Format">https://falloutmods.fandom.com/wiki/FON_File_Format</a>
 
 </div>
+<script>
+(function () {
+    "use strict";
+
+    var currentFont = null;
+
+    var fileInput = document.getElementById("fon-file");
+    var zoomInput = document.getElementById("fon-zoom");
+    var fgInput = document.getElementById("fon-fg");
+    var bgInput = document.getElementById("fon-bg");
+    var previewTextInput = document.getElementById("fon-preview-text");
+    var statusEl = document.getElementById("fon-status");
+    var previewCanvas = document.getElementById("fon-preview");
+    var gridCanvas = document.getElementById("fon-grid");
+
+    function setStatus(message) {
+        statusEl.textContent = message || "";
+    }
+
+    function toHex(value) {
+        return "0x" + value.toString(16).toUpperCase();
+    }
+
+    function rowBytes(width) {
+        return Math.floor((width + 7) / 8);
+    }
+
+    function parseFon(buffer) {
+        if (buffer.byteLength < 20) {
+            throw new Error("File is too small for a FON header.");
+        }
+
+        var view = new DataView(buffer);
+        var glyphCount = view.getInt32(0, true);
+        var lineHeight = view.getInt32(4, true);
+        var letterSpacing = view.getInt32(8, true);
+        var dataStart = 20 + glyphCount * 8;
+
+        if (glyphCount <= 0 || glyphCount > 512) {
+            throw new Error("Unreasonable glyph count: " + glyphCount + ".");
+        }
+
+        if (lineHeight <= 0 || lineHeight > 256) {
+            throw new Error("Unreasonable line height: " + lineHeight + ".");
+        }
+
+        if (dataStart > buffer.byteLength) {
+            throw new Error("Glyph descriptor table extends past the end of the file.");
+        }
+
+        var glyphs = [];
+        var bitmapSize = 0;
+
+        for (var index = 0; index < glyphCount; index++) {
+            var descriptorOffset = 20 + index * 8;
+            var width = view.getInt32(descriptorOffset, true);
+            var dataOffset = view.getInt32(descriptorOffset + 4, true);
+
+            if (width < 0 || width > 512) {
+                throw new Error("Unreasonable width for glyph " + index + ": " + width + ".");
+            }
+
+            if (dataOffset < 0) {
+                throw new Error("Negative data offset for glyph " + index + ".");
+            }
+
+            var glyphSize = rowBytes(width) * lineHeight;
+            bitmapSize = Math.max(bitmapSize, dataOffset + glyphSize);
+            glyphs.push({ width: width, dataOffset: dataOffset });
+        }
+
+        if (dataStart + bitmapSize > buffer.byteLength) {
+            throw new Error("Bitmap data extends past the end of the file.");
+        }
+
+        return {
+            bytes: new Uint8Array(buffer),
+            glyphCount: glyphCount,
+            lineHeight: lineHeight,
+            letterSpacing: letterSpacing,
+            dataStart: dataStart,
+            bitmapSize: bitmapSize,
+            glyphs: glyphs
+        };
+    }
+
+    function glyphHasPixel(font, glyphIndex, x, y) {
+        var glyph = font.glyphs[glyphIndex];
+        if (!glyph || glyph.width <= 0) {
+            return false;
+        }
+
+        var stride = rowBytes(glyph.width);
+        var byteOffset = font.dataStart + glyph.dataOffset + y * stride + (x >> 3);
+        var mask = 0x80 >> (x & 7);
+        return (font.bytes[byteOffset] & mask) !== 0;
+    }
+
+    function drawGlyph(ctx, font, glyphIndex, x, y, zoom, color) {
+        var glyph = font.glyphs[glyphIndex];
+        if (!glyph || glyph.width <= 0) {
+            return;
+        }
+
+        ctx.fillStyle = color;
+        for (var gy = 0; gy < font.lineHeight; gy++) {
+            for (var gx = 0; gx < glyph.width; gx++) {
+                if (glyphHasPixel(font, glyphIndex, gx, gy)) {
+                    ctx.fillRect(x + gx * zoom, y + gy * zoom, zoom, zoom);
+                }
+            }
+        }
+    }
+
+    function updateSummary(font) {
+        document.getElementById("fon-glyph-count").textContent = font ? font.glyphCount : "-";
+        document.getElementById("fon-line-height").textContent = font ? font.lineHeight + " px" : "-";
+        document.getElementById("fon-letter-spacing").textContent = font ? font.letterSpacing + " px" : "-";
+        document.getElementById("fon-data-start").textContent = font ? toHex(font.dataStart) : "-";
+        document.getElementById("fon-data-size").textContent = font ? font.bitmapSize + " bytes" : "-";
+    }
+
+    function drawPreview(font) {
+        var zoom = getZoom();
+        var text = previewTextInput.value || "";
+        var width = 1;
+        var height = Math.max(1, font.lineHeight * zoom);
+
+        for (var i = 0; i < text.length; i++) {
+            var ch = text.charCodeAt(i) & 0xFF;
+            if (ch < font.glyphCount) {
+                width += (font.glyphs[ch].width + font.letterSpacing) * zoom;
+            }
+        }
+
+        previewCanvas.width = Math.max(1, width);
+        previewCanvas.height = height;
+
+        var ctx = previewCanvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        ctx.fillStyle = bgInput.value;
+        ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+        var x = 0;
+        for (var index = 0; index < text.length; index++) {
+            var glyphIndex = text.charCodeAt(index) & 0xFF;
+            if (glyphIndex < font.glyphCount) {
+                drawGlyph(ctx, font, glyphIndex, x, 0, zoom, fgInput.value);
+                x += (font.glyphs[glyphIndex].width + font.letterSpacing) * zoom;
+            }
+        }
+    }
+
+    function drawGrid(font) {
+        var zoom = getZoom();
+        var maxWidth = 0;
+        for (var i = 0; i < font.glyphCount; i++) {
+            maxWidth = Math.max(maxWidth, font.glyphs[i].width);
+        }
+
+        var columns = 16;
+        var labelHeight = 14;
+        var cellPadding = 4;
+        var cellWidth = Math.max(24, maxWidth * zoom + cellPadding * 2);
+        var cellHeight = font.lineHeight * zoom + labelHeight + cellPadding * 2;
+        var rows = Math.ceil(font.glyphCount / columns);
+
+        gridCanvas.width = columns * cellWidth;
+        gridCanvas.height = rows * cellHeight;
+
+        var ctx = gridCanvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        ctx.fillStyle = bgInput.value;
+        ctx.fillRect(0, 0, gridCanvas.width, gridCanvas.height);
+        ctx.font = "10px Verdana, Arial, sans-serif";
+        ctx.textBaseline = "top";
+
+        for (var index = 0; index < font.glyphCount; index++) {
+            var col = index % columns;
+            var row = Math.floor(index / columns);
+            var cellX = col * cellWidth;
+            var cellY = row * cellHeight;
+            var label = index.toString();
+            var glyphX = cellX + cellPadding;
+            var glyphY = cellY + labelHeight + cellPadding;
+
+            ctx.fillStyle = "#333";
+            ctx.fillRect(cellX, cellY, cellWidth - 1, cellHeight - 1);
+            ctx.fillStyle = bgInput.value;
+            ctx.fillRect(cellX + 1, cellY + 1, cellWidth - 3, cellHeight - 3);
+            ctx.fillStyle = "#f49205";
+            ctx.fillText(label, cellX + cellPadding, cellY + 2);
+            drawGlyph(ctx, font, index, glyphX, glyphY, zoom, fgInput.value);
+        }
+    }
+
+    function getZoom() {
+        var zoom = parseInt(zoomInput.value, 10);
+        if (!Number.isFinite(zoom)) {
+            zoom = 4;
+        }
+        return Math.max(1, Math.min(12, zoom));
+    }
+
+    function redraw() {
+        if (!currentFont) {
+            return;
+        }
+        zoomInput.value = getZoom();
+        drawPreview(currentFont);
+        drawGrid(currentFont);
+    }
+
+    fileInput.addEventListener("change", function () {
+        var file = fileInput.files && fileInput.files[0];
+        if (!file) {
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function () {
+            try {
+                currentFont = parseFon(reader.result);
+                updateSummary(currentFont);
+                setStatus("Loaded " + file.name + ".");
+                redraw();
+            } catch (err) {
+                currentFont = null;
+                updateSummary(null);
+                previewCanvas.width = 1;
+                previewCanvas.height = 1;
+                gridCanvas.width = 1;
+                gridCanvas.height = 1;
+                setStatus(err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    zoomInput.addEventListener("input", redraw);
+    fgInput.addEventListener("input", redraw);
+    bgInput.addEventListener("input", redraw);
+    previewTextInput.addEventListener("input", function () {
+        if (currentFont) {
+            drawPreview(currentFont);
+        }
+    });
+})();
+</script>
 </body>
 </html>

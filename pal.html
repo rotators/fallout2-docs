@@ -8,11 +8,11 @@
     <h1>.PAL Format</h1>
 <p>This document describes the raw data format of the color palette (PAL) file. The same format was used for both Fallout and Fallout 2, giving all PAL files complete compatibility with both game engines. </p>
 <h3>Technical Information</h3>
-<p>PAL files contain a palette used when rendering FRM frame data. Additionally, they contain a table for transforming RGB values into an index in the palette (speculated as being used for extracting fonts), and also several tables concatenated beyond the main file data whose uses are not clear. </p>
+<p>PAL files contain a palette used when rendering FRM frame data. Additionally, they contain a table for transforming 15-bit RGB values into a palette index. Newer palette files can also contain precomputed intensity and color-mixing tables used by the engine's lighting and blending code. </p>
 <h3>Required Fields</h3>
-<p>As referenced below, the Palette area (<code>0x00000000</code> - <code>0x000002FF</code>) and the RBG Conversion Table area (<code>0x00000300</code> - <code>0x000082FF</code>) are required elements in PAL files. </p>
+<p>As referenced below, the Palette area (<code>0x00000000</code> - <code>0x000002FF</code>) and the RGB Conversion Table area (<code>0x00000300</code> - <code>0x000082FF</code>) are required elements in PAL files. </p>
 <h3>.exe-Generated Data</h3>
-<p>The purpose of the .exe-Generated Data is not clear. When loading PAL files, if these tables don't exist FALLOUT2.exe and MAPPER2.exe will generate them. </p>
+<p>The .exe-Generated Data block starts with the tag <code>NEWC</code>. When loading PAL files, if this tag and the following tables don't exist, FALLOUT2.exe and MAPPER2.exe generate the same tables in memory from the palette and RGB conversion table. </p>
 <p>Also note that values contained in custom PAL files provided for individual FRM files are subject to certain changes in the game and mapper engines. </p>
 <h3>PAL data</h3>
 <table style="text-align:center" cellspacing="0" cellpadding="5" border="1">
@@ -105,7 +105,7 @@
     </td><td>0..255
     </td><td>Element00000
     </td><td rowspan="3"><b>RGB Conversion Table</b>
-    <p>Table for converting RGB values =&gt; index in the palette.
+    <p>Table for converting 15-bit RGB values =&gt; index in the palette. The index is <code>(red &lt;&lt; 10) | (green &lt;&lt; 5) | blue</code>, where each component is 0..31.
     </p>
     </td></tr>
     <tr>
@@ -133,7 +133,7 @@
     </td><td>char[4]
     </td><td>'NEWC'
     </td><td>
-    </td><td>Tag for the availability of additional tables.?
+    </td><td>Tag for the availability of precomputed color tables.
     </td></tr>
     <tr>
     <td>0x00008304
@@ -141,7 +141,7 @@
     </td><td>byte[65536]
     </td><td>
     </td><td>
-    </td><td>Additional table 1
+    </td><td>Intensity table. Indexed as <code>intensityColorTable[paletteIndex][intensity]</code>.
     </td></tr>
     <tr>
     <td>0x00018304
@@ -149,7 +149,7 @@
     </td><td>byte[65536]
     </td><td>
     </td><td>
-    </td><td>Additional table 2
+    </td><td>Additive color mix table. Indexed as <code>colorMixAddTable[colorA][colorB]</code>.
     </td></tr>
     <tr>
     <td>0x00028304
@@ -157,8 +157,11 @@
     </td><td>byte[65536]
     </td><td>
     </td><td>
-    </td><td>Additional table 3
+    </td><td>Multiplicative color mix table. Indexed as <code>colorMixMulTable[colorA][colorB]</code>.
     </td></tr></tbody></table>
+    <h3>Source code</h3>
+    <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/color.cc">Fallout 2 Community Edition PAL loader and color tables - C++</a><br/>
+    <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/palette.cc">Fallout 2 Community Edition palette application - C++</a>
     <h2>History</h2>
     2020-01-18 - Ported from <a href="https://falloutmods.fandom.com/wiki/PAL_File_Format">https://falloutmods.fandom.com/wiki/PAL_File_Formatt</a>
 </div>

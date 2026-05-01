@@ -14,6 +14,10 @@
         <p>In addition to the 'theme' characters combat.gcd, stealth.gcd and diplomat.gcd, there are three other files:
             demo.gcd, blank.gcd and player.gcd. </p>
         <p>Some of the derived stats from the file are not used but rather calculated by the engine instead.</p>
+        <p>All numeric fields are signed 32-bit integers stored in big-endian byte order. The file begins with the
+            same <code>CritterProtoData</code> block used by critter PRO files: flags, 35 base stats, 35 bonus stats,
+            18 skill bonuses, body type, experience, kill type, and natural damage type. After that, GCD stores the
+            32-byte player name, four tagged skill indexes, two selected trait indexes, and remaining character points.</p>
         <h3>Structure</h3>
         <table style="width: 800px;">
             <thead>
@@ -30,10 +34,10 @@
                 </tr>
                 <tr>
                     <td>0x0</td>
-                    <td>This part is not fully understood, but includes indicating some of the status tags shown in the
-                        lower-left part of the screen. It's known that 0x00000001 - "sneak", 0x00000008 - "level",
-                        0x00000010 - "addict". The tags for "poisoned" and "radiated" are not here. </td>
-                    <td>-</td>
+                    <td>Dude state flags. These are the status bits controlled by <code>dudeEnableState</code> and
+                        <code>dudeDisableState</code>. Known bits are 0x00000001 - sneaking, 0x00000008 - level-up
+                        available, and 0x00000010 - addicted. Poisoned and radiated are not stored here.</td>
+                    <td>Bitfield</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: center; font-size: 20px; border-bottom: 1px solid #535b5aba;">
@@ -126,8 +130,8 @@
                 </tr>
                 <tr>
                     <td>0x44</td>
-                    <td>Critical hit modifier</td>
-                    <td>?</td>
+                    <td>Better Criticals / critical hit modifier stat</td>
+                    <td>Usually 0</td>
                 </tr>
                 <tr>
                     <td>0x48</td>
@@ -597,21 +601,45 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: center; font-size: 20px; border-bottom: 1px solid #535b5aba;">Unknown</td>
+                    <td colspan="3" style="text-align: center; font-size: 20px; border-bottom: 1px solid #535b5aba;">Critter proto fields</td>
                 </tr>
                 <tr>
-                    <td>0x164-0x16F
+                    <td>0x164
                     </td>
-                    <td>Unknown. These values are always zero.
+                    <td>Body type. The engine resets this to 0 after loading the player character.
                     </td>
-                    <td> -
+                    <td>0 = biped
+                    </td>
+                </tr>
+                <tr>
+                    <td>0x168
+                    </td>
+                    <td>Experience value from the critter proto block. The engine resets this to 0 after loading the player character.
+                    </td>
+                    <td>Usually 0
+                    </td>
+                </tr>
+                <tr>
+                    <td>0x16C
+                    </td>
+                    <td>Kill type from the critter proto block. The engine resets this to 0 after loading the player character.
+                    </td>
+                    <td>Usually 0
+                    </td>
+                </tr>
+                <tr>
+                    <td>0x170
+                    </td>
+                    <td>Natural damage type. This is the unarmed/native damage type field from critter protos. For the player, <code>proto_dude_init</code> resets it to 0 after loading.
+                    </td>
+                    <td>0 = normal
                     </td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: center; font-size: 20px; border-bottom: 1px solid #535b5aba;">Other</td>
                 </tr>
                 <tr>
-                    <td>0x170-0x18F
+                    <td>0x174-0x193
                     </td>
                     <td>Character name
                     </td>
@@ -619,7 +647,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>0x190
+                    <td>0x194
                     </td>
                     <td>First tagged skill
                     </td>
@@ -627,7 +655,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>0x194
+                    <td>0x198
                     </td>
                     <td>Second tagged skill
                     </td>
@@ -635,7 +663,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>0x198
+                    <td>0x19C
                     </td>
                     <td>Third tagged skill
                     </td>
@@ -643,32 +671,32 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>0x19C
+                    <td>0x1A0
                     </td>
                     <td>Fourth tagged skill&nbsp; (This stays default value unless GCD was edited manually outside of
                         the game.)
                     </td>
-                    <td>0 to 17, default is FF FF FF FF
-                    </td>
-                </tr>
-                <tr>
-                    <td>0x1A0
-                    </td>
-                    <td>First trait
-                    </td>
-                    <td>0 to 15
+                    <td>0 to 17, default is -1 (<code>FF FF FF FF</code>)
                     </td>
                 </tr>
                 <tr>
                     <td>0x1A4
                     </td>
-                    <td>Second trait
+                    <td>First trait
                     </td>
-                    <td>0 to 15
+                    <td>0 to 15, or -1 for none
                     </td>
                 </tr>
                 <tr>
                     <td>0x1A8
+                    </td>
+                    <td>Second trait
+                    </td>
+                    <td>0 to 15, or -1 for none
+                    </td>
+                </tr>
+                <tr>
+                    <td>0x1AC
                     </td>
                     <td>Character points (for stats)
                     </td>
@@ -680,6 +708,11 @@
         <h2>Tools</h2>
         <a href="https://fodev.net/files/archive/fo2/cgcd.zip">CGCD</a> - <a href="https://github.com/rotators/cgcd">Source</a><br/>
         <a href="http://www.synalysis.net/formats.xml">Grammar on synalysis.net to edit .gcd files easily</a>.
+        <h2>Source code</h2>
+        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/critter.cc">Fallout 2 Community Edition GCD reader/writer - C++</a><br/>
+        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h">Fallout 2 Community Edition CritterProtoData structure - C++</a><br/>
+        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/skill_defs.h">Fallout 2 Community Edition skill indexes - C++</a><br/>
+        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/trait_defs.h">Fallout 2 Community Edition trait indexes - C++</a>
         <h2>History</h2>
         2020-01-17 - Ported from <a href="https://falloutmods.fandom.com/wiki/GCD_File_Format">https://falloutmods.fandom.com/wiki/GCD_File_Format</a>    
         </div>

@@ -9,16 +9,15 @@
 
 <p>DAT files are archived data files. They contain the bulk of the data for Fallout and Fallout 2, including all game artwork, critters, scripts, message/dialogue files, sounds and speech audio files, and much more. The two DAT files used by the games are master.dat and critter.dat, both of which are located in the root game folder. </p>
 <h3>DAT1 vs DAT2</h3>
-<p>There were two different DAT file formats used for the Fallout games. Both Fallout 1 and Fallout 2 used different formats but used the same file ending: *.dat. To avoid misunderstandings, we'll refer to DAT1 (for the Fallout 1 DAT format) and DAT2 (for the Fallout 2 version) in this document. It's important that DAT2 is not an improved DAT1 version, but more a completely rewritten file type that doesn't have much in common with DAT1. </p>
+<p>There were two different DAT file formats used for the Fallout games. Both Fallout 1 and Fallout 2 used different formats but used the same file ending: *.dat. To avoid misunderstandings, we'll refer to DAT1 (for the Fallout 1 DAT format) and DAT2 (for the Fallout 2 version) in this document. Note that DAT2 is not an improved version of DAT1, but a completely rewritten file type that shares little in common with DAT1. </p>
 <h3>DAT1</h3>
 <p>This specific DAT file type stores data in the <a href="http://en.wikipedia.org/wiki/Endianness">big-endian</a> format.</p>
 <h4>Structure</h4>
 <pre style="background: #222; padding: 10px;">
 int32   4   DirectoryCount
-int32   4   (Unknown1). Usually 0x0A (0x5E for master.dat). Must not be less than 1 or Fallout will crash
-             instantly with a memory read error. Possibly some kind of memory buffer size.
-int32   4   (Unknown2). Always 0.
-int32   4   (Unknown3). Could be some kind of checksum, but Fallout seems to work fine with any value.
+int32   4   FolderAllocationHint. Usually 0x0A (0x5E for master.dat). Must not be less than DirectoryCount or Fallout will crash.
+int32   4   Reserved1. Always 0.
+int32   4   Timestamp. Unix timestamp of when the archive was created.
 
 // Directory Name Block - for each directory (DirectoryCount times)
 // master.dat starts its listing with a root node, called '.'. This node contains COLOR.PAL and several font files; be careful not to skip it, as it may appear like two extraneous bytes
@@ -27,10 +26,9 @@ char    *   DirectoryName
 
 // Directory Content Block - for each directory (DirectoryCount times)
 int32   4   FileCount. Number of files in the directory.
-int32   4   (Unknown4). Similar to (Unknown1), the default value seems to be 0x0A and Fallout works with 
-                most positive non-zero values.
-int32   4   (Unknown5). Seems to always be 0x10.
-int32   4   (Unknown6). See (Unknown3).
+int32   4   FileAllocationHint. Similar to FolderAllocationHint, must be at least FileCount.
+int32   4   FixedMetadataSize. Always 0x10 (16 bytes), which is the size of the 4 DWORDS in the File List Block.
+int32   4   Timestamp. Creation timestamp for this directory block.
     // File List Block - for each file in directory (FileCount times).
     byte    1   Name length (number of characters)
     char    *   Name
@@ -42,6 +40,18 @@ int32   4   (Unknown6). See (Unknown3).
 // Data block
 byte    *   File data for all files (use Offset and [Packed]Size to find where a specific file starts and ends).
 </pre>
+
+<h4>Technical Analysis of "Unknown" Fields</h4>
+<p>Through community reverse-engineering (notably by TeamX and the Falltergeist project), the purposes of the previously unknown header fields in the DAT1 format have been identified:</p>
+
+<h5>Allocation Hints (Unknown1 & Unknown4)</h5>
+<p>The Fallout engine uses these fields as **memory allocation hints** rather than dynamic counts. When the engine calls its internal <code>db_init</code> function, it uses <code>FolderAllocationHint</code> to determine the size of the memory buffer to allocate for the directory list (e.g., <code>malloc(FolderAllocationHint * sizeof(DirEntry))</code>). It then loops <code>DirectoryCount</code> times to read the data. If <code>DirectoryCount</code> exceeds the allocation hint, the engine writes out of bounds, leading to a heap corruption crash. This explains why <code>master.dat</code> has exactly 94 folders and a hint of 94, while <code>critter.dat</code> has 10 folders and a hint of 10.</p>
+
+<h5>FixedMetadataSize (Unknown5)</h5>
+<p>This field is always 16 (<code>0x10</code>). This corresponds exactly to the size of the four 32-bit integers (Attributes, Offset, Size, PackedSize) that define a file entry. The engine likely uses this value as an offset jump or a validation check for the record size.</p>
+
+<h5>Timestamps (Unknown3 & Unknown6)</h5>
+<p>These fields store a standard 32-bit Unix Timestamp (seconds since Jan 1, 1970). For example, the <code>master.dat</code> in the original Fallout release contains <code>0x34110398</code>, which translates to **September 5, 1997**, just weeks before the game's gold release. While the engine reads these values, it does not validate them, which is why modding tools can safely ignore them or set them to zero without causing issues.</p>
 
 <h4>Fallout 1 LZSS uncompression algorithm</h4>
 <p>Originally <a href="https://www.nma-fallout.com/threads/fallout-dat-files.160366/">written by Shadowbird</a> on NMA forum.</p>
@@ -112,7 +122,7 @@ Byte FL = 0;                      // Flags indicating the compression status of 
 <a href="https://en.wikipedia.org/wiki/Lempel-Ziv-Storer-Szymanski">LZSS compression</a>
 
 <h3>DAT2 (Little-endian)</h3>
-<p>DAT2 files are divided in 3 parts, Data Block, Directory Tree and Fixed DAT Information block. Data Blocks contains all the files stored in the DAT, some of them needs to be GZipped, others don't. The Directory Tree contains all the information about each file stored in Data Block, as well as the offset where it's located, if it's compressed or not, packed/unpacked sizes, etc. And finally the Fixed DAT Information block that contains the size in bytes of both full DAT and the Directory Tree. Here you can see a small scheme of how DAT's structure:</p>
+<p>DAT2 files are divided in 3 parts, Data Block, Directory Tree and Fixed DAT Information block. Data Blocks contains all the files stored in the DAT, some of them are compressed with zlib streams, others are stored as-is. The Directory Tree contains all the information about each file stored in Data Block, as well as the offset where it's located, if it's compressed or not, packed/unpacked sizes, etc. And finally the Fixed DAT Information block contains the size in bytes of both the archive data and the Directory Tree. Here you can see a small scheme of DAT's structure:</p>
 <table style="background: #222; margin: 10px;">
 <thead>
 <tr>
@@ -135,7 +145,7 @@ Byte FL = 0;                      // Flags indicating the compression status of 
 	<tr>
 		<td>DirTree </td>
 		<td>X+5.............Z</td>
-		<td>Number of files in the archive</td>
+		<td>Directory listing entries</td>
 	</tr>
 	<tr>
 		<td>TreeSize</td>
@@ -154,10 +164,11 @@ Byte FL = 0;                      // Flags indicating the compression status of 
 	<li>TreeSize + DataSize corresponds to Fixed DAT Information block</li>
 </ul>
 <h4>The Data Block</h4>
-<p>The Data Block contains just plain files, their technical information is located in the Directory Tree. Data Block starts from the very beginning of a DAT file. They can be compressed or not, (Fallout engine uses zlib stream data compression), if they're compressed the signature 0x78DA appears at the begin of the file, if not, there is no signature, the file starts without signature. The 0x78DA compression signature has an integer (2 bytes/WORD) nature. 0x78DA in ASCII is "xÚ" as char is 120 for 'x' and 218 for 'Ú' Compressed files are "zlib stream data" (RFC-1950(zlib format), RFC-1951(deflate format), RFC-1952(gzip format)). However, if you attach this header 1F 8B 08 08 9F E8 B7 36 02 03 to the file, such file could been easily decompressed with WinZip. </p>
+<p>The Data Block contains the actual file data. Technical information for these files is located in the Directory Tree. In normal Fallout 2 DATs the Data Block starts from the very beginning of a DAT file. The engine also supports an archive data section that begins later in the file: it calculates <code>dataOffset = physicalFileSize - DataSize</code>, then adds each entry's <code>Offset</code> to that base.</p>
+<p>Files can be compressed or uncompressed. Compressed entries are zlib streams (RFC-1950/RFC-1951), not gzip files. Common compressed data begins with the zlib bytes <code>78 DA</code>, but parsers should trust the directory entry's <code>Type</code> flag and feed the entry data to a zlib inflate stream rather than relying only on those first two bytes.</p>
 
 <h4>The Directory Tree</h4>
-<p>Directory Tree contains entries that specifies about a file stored in the Data Block. These entries can be varying depending on the FilenameSize of the file (Path + Filename). Like you saw in the scheme located at the beginning of this document, Directory Tree has been divided into 2 parts, FilesTotal and the DirTree. FilesTotal contains how many files are stored in the DAT, DirTree contains all the information about these files. FilesTotal is declared as a DWORD (4 bytes/Long) type and is read in INTEL L-H format. Format of DirTree entries DirTree has a private structure. The length of this structure can vary depending on the length of the Filename (path + filename). All the entries are DWord types unless it's specified. At the end of this chapter you can find a scheme on the structure and the way it's declared on C and Visual Basic programming languages. All the directories and files are stored in DOS 8.3 format, that is 8 characters for the file name and 3 characters for the file extension. All the entries are sorted alphabetically in a descendent direction. Structure scheme: all Dwords are read in INTEL L-H format.</p>
+<p>The Directory Tree contains entries that specify the properties of each file stored in the Data Block. These entries vary in size depending on the FilenameSize (Path + Filename). As shown in the scheme above, the Directory Tree is divided into two parts: <b>FilesTotal</b> and the <b>DirTree</b> entries. FilesTotal is a DWORD (4 bytes) indicating how many files are stored in the DAT, read in little-endian format. The DirTree entries follow, each with a variable length structure. All numeric entries are DWORDs unless specified otherwise. Entries are sorted alphabetically for case-insensitive binary search by the engine. All DWORDs are read in little-endian format.</p>
 
 <table style="background: #222; margin: 10px;">
 <thead>
@@ -196,7 +207,7 @@ Byte FL = 0;                      // Flags indicating the compression status of 
 	<tr>
 		<td>Offset</td>
 		<td>Dword</td>
-		<td>Address/Location of the file.</td>
+		<td>Offset of the entry's data, relative to the start of the archive data section (<code>physicalFileSize - DataSize</code>).</td>
 	</tr>
 </tbody>
 </table>
@@ -207,9 +218,27 @@ Byte FL = 0;                      // Flags indicating the compression status of 
 <li>String stands for common string bytes "ABCDEF123456!@#$%/][\", etc. </li>
 </ul>
 
-<b>Declaration of a DirEntry</b>
+<b>Declaration of a DirEntry (C)</b>
+<pre style="background: #222; padding: 10px;">
+struct DirEntry {
+    uint32_t filenameSize;
+    char     filename[filenameSize];
+    uint8_t  type; // 1 for compressed
+    uint32_t realSize;
+    uint32_t packedSize;
+    uint32_t offset;
+};
+</pre>
 
-<b>How to find a DirTreeAddr (starting location of Directory Tree)</b>
+<b>How to find the Directory Tree</b>
+<p>The Directory Tree is located at the end of the DAT data section, just before the 8-byte footer. To find it, read the last 8 bytes of the physical file: the first 4 bytes are the <b>TreeSize</b>, and the next 4 bytes are the <b>DataSize</b>. In normal DAT2 archives <code>DataSize</code> matches the total file size. The engine uses the physical file size when seeking, so the most robust formula is <code>physicalFileSize - TreeSize - 8</code>.</p>
+
+<h4>Engine behavior</h4>
+<ul>
+<li>The engine opens only entries whose mode starts with <code>r</code>; DAT2 archives are read-only to the game.</li>
+<li>Compressed entries use a 0x400-byte input buffer and zlib <code>inflate</code>. Seeking backwards in compressed entries rewinds and inflates forward to the requested uncompressed offset.</li>
+<li>Text reads normalize CRLF to LF for both compressed and uncompressed DAT entries.</li>
+</ul>
 
 <h3>Credits</h3>
 <p>DAT1 format reverse engineered by Shadowbird (gmail.com, account "shadowbird.lv").</p>
@@ -225,10 +254,12 @@ Byte FL = 0;                      // Flags indicating the compression status of 
 <a href="https://github.com/rotators/tools/tree/master/DATLib">Fallout 2 DAT reading - C#</a><br/>
 <a href="https://github.com/rotators/Fo1in2/blob/master/Tools/Packrat/src/dat.cs">Fallout 2 DAT creation - C#</a><br/>
 <a href="https://github.com/berenm/game-data-reverse-engineering/tree/master/python">DAT unpacking for both Fallout 1 and 2 DATs - Python</a><br/>
-<a href="https://github.com/falltergeist/dat-unpacker">Console utility for unpacking 1 &amp; 2 DATs - C++</a>
+<a href="https://github.com/falltergeist/dat-unpacker">Console utility for unpacking 1 &amp; 2 DATs - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.cc">Fallout 2 Community Edition DAT2 reader - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.h">Fallout 2 Community Edition DAT2 structures - C++</a>
 
 
-<h1 style="text-align: left;">History</h3>
+<h2>History</h2>
 <p>
 2019-12-15 - Ported from <a href="https://falloutmods.fandom.com/wiki/DAT_file_format">https://falloutmods.fandom.com/wiki/DAT_file_format</a> by <a href="https://github.com/ghost2238">ghost</a><br/>
 </p>

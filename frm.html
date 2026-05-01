@@ -21,6 +21,7 @@
 left = center_x - (frame_width / 2)
 top  = center_y - frame_height
     </pre>
+    <p>All numeric fields in FRM files are stored in big-endian byte order. This matches the Fallout 2 engine reader, which reads 16-bit and 32-bit FRM values with the same byte-swapping helpers used for other big-endian game data.</p>
     <h3>FRM header & data</h3>
     <table cellspacing="0" cellpadding="5" border="1">
         <tbody><tr>
@@ -62,43 +63,43 @@ top  = center_y - frame_height
         <td>0x000A
         </td><td>2 bytes
         </td><td>signed
-        </td><td>Unknown
+        </td><td>Signed pixel offset
         </td><td><b>Pixel shift in the x direction, of frames with orientation 0</b> - This value is required so that the frames are centered correctly. The logical center of the frame will not necessarily be the absolute center of the frame (width/2, height/2). For example, the center of a critter will be the position of its feet, while the center of a tree will be its base. A positive value translates to shifting the frame to the right of the screen when rendering as the "origin" (0, 0) for images is the top left-most pixel
         </td></tr>
         <tr>
         <td>0x000C
         </td><td>5 * 2 bytes
         </td><td>signed
-        </td><td>Unknown
+        </td><td>Signed pixel offsets
         </td><td><b>Pixel shift in the x direction, of frames with orientations [1-5]</b>
         </td></tr>
         <tr>
         <td>0x0016
         </td><td>6 * 2 bytes
         </td><td>signed
-        </td><td>Unknown
+        </td><td>Signed pixel offsets
         </td><td><b>Pixel shift in the y direction, of frames with orientations [0-5]</b> - Positive values shift the frame down toward bottom of the screen when rendering
         </td></tr>
         <tr>
         <td>0x0022
         </td><td>4 bytes
         </td><td>unsigned
-        </td><td>Unknown
+        </td><td>Usually 0
         </td><td><b>Offset of first frame in orientation 0 from beginning of frame area</b> - The "frame area" begins from offset 0x003E. This is useful for seeking directly to where image data begins for each orientation
         </td></tr>
         <tr>
         <td>0x0026
         </td><td>5 * 4 bytes
         </td><td>unsigned
-        </td><td>Unknown
-        </td><td><b>Offset of first frame in orientation[1-5] from beginning of frame area</b>
+        </td><td>Frame-area offsets
+        </td><td><b>Offset of first frame in orientation[1-5] from beginning of frame area</b> - If an offset is the same as the previous orientation's offset, the engine reuses the already-read frame data for that orientation. This is common for single-direction art.
         </td></tr>
         <tr>
         <td>0x003A
         </td><td>4 bytes
         </td><td>unsigned
-        </td><td>Unknown
-        </td><td><b>Size of frame data</b> - Used to allocate memory for all frame data in the file
+        </td><td>Total frame-area byte size
+        </td><td><b>Size of frame data</b> - Used to allocate memory for all frame data in the file. Some malformed FRMs have this set to zero; Fallout 2 Community Edition treats that as the remaining file size.
         </td></tr>
         <tr>
         <td colspan="5" style="text-align: center; color:#ffffff" bgcolor="#343434">
@@ -109,14 +110,14 @@ top  = center_y - frame_height
         <td>0x003E
         </td><td>2 bytes
         </td><td>unsigned
-        </td><td>Unknown
+        </td><td>Width in pixels
         </td><td><b>FRAME-0-WIDTH: Width of frame 0</b> - The width (in pixels) of the 0th frame in the orientation 0
         </td></tr>
         <tr>
         <td>0x0040
         </td><td>2 bytes
         </td><td>unsigned
-        </td><td>Unknown
+        </td><td>Height in pixels
         </td><td><b>FRAME-0-HEIGHT: Height of frame 0</b> - The height (in pixels) of the 0th frame in the orientation 0
         </td></tr>
         <tr>
@@ -130,21 +131,21 @@ top  = center_y - frame_height
         <td>0x0046
         </td><td>2 bytes
         </td><td>signed
-        </td><td>Unknown
+        </td><td>Signed pixel offset
         </td><td><b>Pixel shift in x direction of frame 0</b> - The pixel offset of this frame from the previous frame. The frame shifts left if negative, right if positive.
         </td></tr>
         <tr>
         <td>0x0048
         </td><td>2 bytes
         </td><td>signed
-        </td><td>Unknown
+        </td><td>Signed pixel offset
         </td><td><b>Pixel shift in y direction of frame 0</b> The frame shifts up if negative, down if positive.
         </td></tr>
         <tr>
         <td>0x004A
         </td><td>FRAME-0-SIZE bytes
         </td><td>unsigned
-        </td><td>0x00 -&gt; 0x3F(hex) / 63(dec)
+        </td><td>0x00 -&gt; 0xFF
         </td><td><b>colorIndex for frame 0</b> - Contains the colorIndex for the 0th frame. Each index is represented by one byte; there are 256 possible indices and their RGB values can be found in the appropriate .pal file. Pixel data starts at the top left corner of the frame and increases left to right, then top to bottom
         </td></tr>
         <tr>
@@ -158,6 +159,10 @@ top  = center_y - frame_height
         <h3>Tools</h3>
         <a href="https://github.com/rotators/frm2png/archive/0.1.2.zip">frm2png (Rotators)</a> <a href="https://github.com/rotators/frm2png/">Source code</a><br/>
         <a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics">TeamX graphics tools</a>
+
+        <h3>Source code</h3>
+        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.cc">Fallout 2 Community Edition FRM reader/writer - C++</a><br/>
+        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.h">Fallout 2 Community Edition FRM structures - C++</a>
 
         <h2>History</h2>
         2020-01-18 - Ported from <a href="https://falloutmods.fandom.com/wiki/FRM_File_Format">https://falloutmods.fandom.com/wiki/FRM_File_Format</a>
