@@ -1,0 +1,310 @@
+<html>
+<head>
+    <title>PRO File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>PRO File Format</h1>
+
+<p>PRO files are binary prototype records. A prototype describes the default properties of an object: its PID, art FID, name and description message id, flags, script id, material, and type-specific data such as weapon damage, critter stats, or door key codes.</p>
+
+<p>Map objects and inventory entries usually store per-instance state separately. The PRO file is the shared template that the engine loads when it needs the object's base data.</p>
+
+<h2>Location and lookup</h2>
+
+<p>Prototype files are stored below <tt>proto\&lt;type&gt;</tt>. These paths are relative to <tt>master.dat</tt> or <tt>critter.dat</tt> when packed, or to the game's <tt>data</tt> directory when unpacked. The file name is not derived directly from the PID number at runtime; it is looked up through the matching <tt>.lst</tt> file.</p>
+
+<table>
+<tr><th>Object type</th><th>PID high byte</th><th>Directory</th><th>List file</th><th>Message file</th></tr>
+<tr><td>Item</td><td><tt>0</tt></td><td><tt>proto\items</tt></td><td><tt>proto\items\items.lst</tt></td><td><tt>text\&lt;language&gt;\game\pro_item.msg</tt></td></tr>
+<tr><td>Critter</td><td><tt>1</tt></td><td><tt>proto\critters</tt></td><td><tt>proto\critters\critters.lst</tt></td><td><tt>text\&lt;language&gt;\game\pro_crit.msg</tt></td></tr>
+<tr><td>Scenery</td><td><tt>2</tt></td><td><tt>proto\scenery</tt></td><td><tt>proto\scenery\scenery.lst</tt></td><td><tt>text\&lt;language&gt;\game\pro_scen.msg</tt></td></tr>
+<tr><td>Wall</td><td><tt>3</tt></td><td><tt>proto\walls</tt></td><td><tt>proto\walls\walls.lst</tt></td><td><tt>text\&lt;language&gt;\game\pro_wall.msg</tt></td></tr>
+<tr><td>Tile</td><td><tt>4</tt></td><td><tt>proto\tiles</tt></td><td><tt>proto\tiles\tiles.lst</tt></td><td><tt>text\&lt;language&gt;\game\pro_tile.msg</tt></td></tr>
+<tr><td>Misc</td><td><tt>5</tt></td><td><tt>proto\misc</tt></td><td><tt>proto\misc\misc.lst</tt></td><td><tt>text\&lt;language&gt;\game\pro_misc.msg</tt></td></tr>
+</table>
+
+<p>The low 24 bits of a PID are a 1-based line number in the relevant list file. For example, PID <tt>0x02000031</tt> has object type <tt>2</tt> (scenery) and list index <tt>0x31</tt> (49), so the engine reads line 49 from <tt>proto\scenery\scenery.lst</tt> and opens that file in <tt>proto\scenery</tt>.</p>
+
+<p>When reading a list line, the engine cuts the line at the first space and then removes CR/LF. This allows comments after the filename, but it also means filenames cannot contain spaces.</p>
+
+<p>Many vanilla PRO filenames follow an eight-digit decimal naming convention such as <tt>00000032.pro</tt>, but the list file is authoritative. Tools should use the list entry rather than generating a filename from the PID.</p>
+
+<p>PRO files stored inside save-game directories, for example <tt>data\savegame\slot##\proto</tt>, may be gzip-compressed like saved map objects. If a saved-game PRO does not parse as the binary format described here, try treating it as gzip data first.</p>
+
+<h2>Encoding and byte order</h2>
+
+<p>All numeric fields below are stored as big-endian 32-bit signed integers unless the table says <tt>uint8</tt>. The engine's file helpers write a 32-bit integer as high word first and high byte first.</p>
+
+<p>There is no magic number or version field in a PRO file. The engine decides which structure to read from the high byte of the PID stored at the start of the file.</p>
+
+<h2>Type sizes</h2>
+
+<table>
+<tr><th>Type</th><th>Serialized size</th><th>Notes</th></tr>
+<tr><td>Item</td><td><tt>0x81</tt>, <tt>0x7D</tt>, <tt>0x7A</tt>, <tt>0x51</tt>, <tt>0x45</tt>, <tt>0x41</tt>, or <tt>0x3D</tt></td><td>Depends on item subtype: armor, drug, weapon, ammo, misc, container, or key.</td></tr>
+<tr><td>Critter</td><td><tt>0x1A0</tt> in Fallout 2, <tt>0x19C</tt> in Fallout 1</td><td>Fallout 2 adds the native damage type at the end.</td></tr>
+<tr><td>Scenery</td><td><tt>0x31</tt> or <tt>0x2D</tt></td><td>Door, stairs, and elevator have two subtype fields; ladders and generic scenery have one.</td></tr>
+<tr><td>Wall</td><td><tt>0x24</tt></td><td>Fixed size.</td></tr>
+<tr><td>Tile</td><td><tt>0x1C</tt></td><td>Fixed size.</td></tr>
+<tr><td>Misc</td><td><tt>0x1C</tt></td><td>Fixed size.</td></tr>
+</table>
+
+<h2>Common header</h2>
+
+<p>Every PRO file starts with these three fields:</p>
+
+<table>
+<tr><th>Offset</th><th>Type</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0x00</tt></td><td><tt>int32</tt></td><td><tt>pid</tt></td><td>Prototype id. High byte is the object type; low 24 bits are the list index.</td></tr>
+<tr><td><tt>0x04</tt></td><td><tt>int32</tt></td><td><tt>message_num</tt></td><td>Base id in the type's <tt>pro_*.msg</tt> file.</td></tr>
+<tr><td><tt>0x08</tt></td><td><tt>int32</tt></td><td><tt>fid</tt></td><td>Art FID. See <a href="lst.html">LST File Format</a> for the FID layout.</td></tr>
+</table>
+
+<p>Prototype names and descriptions are not stored as strings in the PRO file. The engine uses <tt>message_num + 0</tt> for the name and <tt>message_num + 1</tt> for the description in the message file associated with the PID's object type.</p>
+
+<h2>Shared object fields</h2>
+
+<p>Most object types continue with lighting, flags, extended flags, and a script id. Tiles are smaller and do not have light fields. Misc protos do not store a script id in the PRO file.</p>
+
+<table>
+<tr><th>Field</th><th>Used by</th><th>Description</th></tr>
+<tr><td><tt>light_distance</tt></td><td>Items, critters, scenery, walls, misc</td><td>Light radius emitted by the object.</td></tr>
+<tr><td><tt>light_intensity</tt></td><td>Items, critters, scenery, walls, misc</td><td>Light intensity.</td></tr>
+<tr><td><tt>flags</tt></td><td>All six PRO types</td><td>Main object flags.</td></tr>
+<tr><td><tt>flags_ext</tt></td><td>All six PRO types</td><td>Extended flags. Some values control action availability.</td></tr>
+<tr><td><tt>sid</tt></td><td>Items, critters, scenery, walls, tiles</td><td>Script id, or <tt>-1</tt> for no script. This refers to <tt>scripts.lst</tt>.</td></tr>
+<tr><td><tt>material</tt></td><td>Items, scenery, walls, tiles</td><td>Material type used by engine logic and editor UI.</td></tr>
+</table>
+
+<h2>Known shared values</h2>
+
+<h3>Main flags</h3>
+
+<table>
+<tr><th>Flag</th><th>Name</th><th>Meaning</th></tr>
+<tr><td><tt>0x00000008</tt></td><td>Flat</td><td>Rendered early, just after tiles.</td></tr>
+<tr><td><tt>0x00000010</tt></td><td>NoBlock</td><td>Does not block the tile.</td></tr>
+<tr><td><tt>0x00000800</tt></td><td>MultiHex</td><td>Uses more than one hex.</td></tr>
+<tr><td><tt>0x00001000</tt></td><td>No Highlight</td><td>Does not draw the object highlight outline.</td></tr>
+<tr><td><tt>0x00004000</tt></td><td>TransRed</td><td>Red transparency mode.</td></tr>
+<tr><td><tt>0x00008000</tt></td><td>TransNone</td><td>Opaque transparency mode.</td></tr>
+<tr><td><tt>0x00010000</tt></td><td>TransWall</td><td>Wall transparency mode.</td></tr>
+<tr><td><tt>0x00020000</tt></td><td>TransGlass</td><td>Glass transparency mode.</td></tr>
+<tr><td><tt>0x00040000</tt></td><td>TransSteam</td><td>Steam transparency mode.</td></tr>
+<tr><td><tt>0x00080000</tt></td><td>TransEnergy</td><td>Energy transparency mode.</td></tr>
+<tr><td><tt>0x10000000</tt></td><td>WallTransEnd</td><td>Changes wall transparency logic.</td></tr>
+<tr><td><tt>0x20000000</tt></td><td>LightThru</td><td>Light passes through.</td></tr>
+<tr><td><tt>0x80000000</tt></td><td>ShootThru</td><td>Projectiles can pass through.</td></tr>
+</table>
+
+<h3>Materials</h3>
+
+<table>
+<tr><th>Value</th><th>Material</th></tr>
+<tr><td><tt>0</tt></td><td>Glass</td></tr>
+<tr><td><tt>1</tt></td><td>Metal</td></tr>
+<tr><td><tt>2</tt></td><td>Plastic</td></tr>
+<tr><td><tt>3</tt></td><td>Wood</td></tr>
+<tr><td><tt>4</tt></td><td>Dirt</td></tr>
+<tr><td><tt>5</tt></td><td>Stone</td></tr>
+<tr><td><tt>6</tt></td><td>Cement</td></tr>
+<tr><td><tt>7</tt></td><td>Leather</td></tr>
+</table>
+
+<h3>Script ids</h3>
+
+<p>Script ids are stored as packed 32-bit values. <tt>0xFFFFFFFF</tt> means no script. For normal object scripts the high byte is the script type and the low 16 bits are the line number in <tt>scripts\scripts.lst</tt>.</p>
+
+<table>
+<tr><th>Script type</th><th>Value</th></tr>
+<tr><td>System</td><td><tt>0</tt></td></tr>
+<tr><td>Spatial</td><td><tt>1</tt></td></tr>
+<tr><td>Time</td><td><tt>2</tt></td></tr>
+<tr><td>Item</td><td><tt>3</tt></td></tr>
+<tr><td>Critter</td><td><tt>4</tt></td></tr>
+</table>
+
+<p>Older format notes often describe the packed form as <tt>0x0Y00XXXX</tt>, where <tt>Y</tt> is the script type and <tt>XXXX</tt> is the script-list index. This matches the practical values used by normal item, scenery, and critter scripts.</p>
+
+<h2>File layouts</h2>
+
+<p>The following tables list the serialized field order after the common header. They intentionally describe the file order, not the in-memory C struct padding.</p>
+
+<h3>Item</h3>
+
+<table>
+<tr><th>Order</th><th>Field</th><th>Notes</th></tr>
+<tr><td>1</td><td><tt>0x000C</tt>-<tt>0x001F</tt></td><td><tt>light_distance</tt>, <tt>light_intensity</tt>, <tt>flags</tt>, <tt>flags_ext</tt>, <tt>sid</tt>.</td></tr>
+<tr><td>2</td><td><tt>0x0020</tt></td><td><tt>type</tt>. Item subtype: armor, container, drug, weapon, ammo, misc, or key.</td></tr>
+<tr><td>3</td><td><tt>0x0024</tt>-<tt>0x0037</tt></td><td><tt>material</tt>, <tt>size</tt>, <tt>weight</tt>, <tt>cost</tt>, <tt>inv_fid</tt>. <tt>inv_fid</tt> is the inventory art FID, or <tt>-1</tt>.</td></tr>
+<tr><td>4</td><td><tt>0x0038</tt></td><td><tt>field_80</tt> (<tt>uint8</tt>). Older notes identify this as an item sound id.</td></tr>
+<tr><td>5</td><td><tt>0x0039</tt> onward</td><td>Subtype payload. Depends on <tt>type</tt>.</td></tr>
+</table>
+
+<p>Older notes split item <tt>flags_ext</tt> into lower flag bytes plus an attack-mode byte for weapons. Fallout 2 CE reads and writes it as one 32-bit <tt>flags_ext</tt> value, so this split is best treated as a UI/editor interpretation of the same four bytes.</p>
+
+<table>
+<tr><th>Extended flag</th><th>Meaning</th></tr>
+<tr><td><tt>0x00000100</tt></td><td>Big gun.</td></tr>
+<tr><td><tt>0x00000200</tt></td><td>Two-handed weapon.</td></tr>
+<tr><td><tt>0x00000800</tt></td><td>Can be used.</td></tr>
+<tr><td><tt>0x00001000</tt></td><td>Can be used on another object.</td></tr>
+<tr><td><tt>0x00008000</tt></td><td>Container can be picked up.</td></tr>
+<tr><td><tt>0x08000000</tt></td><td>Hidden or integral item, for example natural claws or robot weapons.</td></tr>
+</table>
+
+<table>
+<tr><th>Item subtype</th><th>Value</th><th>Size</th><th>Payload fields</th></tr>
+<tr><td>Armor</td><td><tt>0</tt></td><td><tt>0x81</tt></td><td><tt>ac</tt>, 7 damage resistances, 7 damage thresholds, <tt>perk</tt>, <tt>male_fid</tt>, <tt>female_fid</tt>.</td></tr>
+<tr><td>Container</td><td><tt>1</tt></td><td><tt>0x41</tt></td><td><tt>max_size</tt>, <tt>open_flags</tt>.</td></tr>
+<tr><td>Drug</td><td><tt>2</tt></td><td><tt>0x7D</tt></td><td>3 affected stats, 3 immediate amounts, first duration, 3 first delayed amounts, second duration, 3 second delayed amounts, addiction chance, withdrawal effect, withdrawal onset.</td></tr>
+<tr><td>Weapon</td><td><tt>3</tt></td><td><tt>0x7A</tt></td><td>Animation code, max damage, min damage, damage type, two ranges, projectile PID, minimum strength, two AP costs, critical failure type, perk, burst rounds, caliber, ammo type PID, ammo capacity, sound code byte.</td></tr>
+<tr><td>Ammo</td><td><tt>4</tt></td><td><tt>0x51</tt></td><td>Caliber, quantity, AC modifier, DR modifier, damage multiplier, damage divisor.</td></tr>
+<tr><td>Misc</td><td><tt>5</tt></td><td><tt>0x45</tt></td><td>Power type PID, power type, charges.</td></tr>
+<tr><td>Key</td><td><tt>6</tt></td><td><tt>0x3D</tt></td><td>Key code.</td></tr>
+</table>
+
+<p>Weapon attack modes are often shown in editors as two 4-bit values: <tt>0</tt> none, <tt>1</tt> punch, <tt>2</tt> kick, <tt>3</tt> swing, <tt>4</tt> thrust, <tt>5</tt> throw, <tt>6</tt> fire single, <tt>7</tt> fire burst, and <tt>8</tt> flame. The lower nibble is attack mode 1 and the upper nibble is attack mode 2.</p>
+
+<p>Weapon animation codes select the critter weapon animation set: <tt>0</tt> none, <tt>1</tt> knife, <tt>2</tt> club, <tt>3</tt> sledgehammer, <tt>4</tt> spear, <tt>5</tt> pistol, <tt>6</tt> SMG, <tt>7</tt> rifle, <tt>8</tt> big gun, <tt>9</tt> minigun, and <tt>10</tt> rocket launcher.</p>
+
+<h3>Critter</h3>
+
+<p>Critter PRO files are fixed-size in normal Fallout 2 data: <tt>0x1A0</tt> bytes. After the common header they store:</p>
+
+<table>
+<tr><th>Field group</th><th>Contents</th></tr>
+<tr><td>Shared fields</td><td><tt>light_distance</tt>, <tt>light_intensity</tt>, <tt>flags</tt>, <tt>flags_ext</tt>, <tt>sid</tt>.</td></tr>
+<tr><td>Critter identity</td><td><tt>head_fid</tt>, <tt>ai_packet</tt>, <tt>team_num</tt>.</td></tr>
+<tr><td>Critter data</td><td><tt>d.flags</tt>, 35 base stats, 35 bonus stats, 18 skills, body type, experience, kill type, native damage type.</td></tr>
+</table>
+
+<p>The player character has a special built-in PID, <tt>0x01000000</tt>. For normal critter PRO files, the high PID byte is still <tt>1</tt>.</p>
+
+<p>Critter base and bonus stat arrays each contain 35 values in engine stat order: seven SPECIAL stats, hit points, action points, armor class, unarmed damage, melee damage, carry weight, sequence, healing rate, critical chance, better criticals, seven damage thresholds, nine damage resistances, age, and gender. The skill array contains 18 values in skill order from Small Guns through Outdoorsman.</p>
+
+<table>
+<tr><th>Critter data flag</th><th>Meaning</th></tr>
+<tr><td><tt>0x00000002</tt></td><td>Can barter.</td></tr>
+<tr><td><tt>0x00000020</tt></td><td>Cannot be stolen from.</td></tr>
+<tr><td><tt>0x00000040</tt></td><td>Does not drop items.</td></tr>
+<tr><td><tt>0x00000080</tt></td><td>Cannot lose limbs.</td></tr>
+<tr><td><tt>0x00000100</tt></td><td>Corpse does not age away.</td></tr>
+<tr><td><tt>0x00000200</tt></td><td>Does not heal damage over time.</td></tr>
+<tr><td><tt>0x00000400</tt></td><td>Invulnerable.</td></tr>
+<tr><td><tt>0x00000800</tt></td><td>Leaves no dead body.</td></tr>
+<tr><td><tt>0x00001000</tt></td><td>Special death behavior.</td></tr>
+<tr><td><tt>0x00002000</tt></td><td>Melee attack can be used at range.</td></tr>
+<tr><td><tt>0x00004000</tt></td><td>Cannot be knocked down.</td></tr>
+</table>
+
+<h3>Scenery</h3>
+
+<table>
+<tr><th>Order</th><th>Field</th><th>Notes</th></tr>
+<tr><td>1</td><td><tt>light_distance</tt>, <tt>light_intensity</tt>, <tt>flags</tt>, <tt>flags_ext</tt>, <tt>sid</tt></td><td>Shared non-tile fields.</td></tr>
+<tr><td>2</td><td><tt>type</tt></td><td>Scenery subtype.</td></tr>
+<tr><td>3</td><td><tt>material</tt></td><td>Named <tt>field_2C</tt> in Fallout 2 CE.</td></tr>
+<tr><td>4</td><td><tt>field_34</tt> (<tt>uint8</tt>)</td><td>Stored as one byte.</td></tr>
+<tr><td>5</td><td>Subtype payload</td><td>Depends on <tt>type</tt>.</td></tr>
+</table>
+
+<p>The one-byte scenery field at <tt>0x0028</tt> is commonly treated as a sound id by older tools. Typical sound ids include <tt>0x21</tt>, <tt>0x23</tt>, <tt>0x24</tt>, and values in the range <tt>0x30</tt> through <tt>0x5A</tt>.</p>
+
+<table>
+<tr><th>Scenery subtype</th><th>Value</th><th>Payload fields</th></tr>
+<tr><td>Door</td><td><tt>0</tt></td><td><tt>open_flags</tt>, <tt>key_code</tt>.</td></tr>
+<tr><td>Stairs</td><td><tt>1</tt></td><td><tt>lower_tile</tt>, <tt>upper_tile</tt>.</td></tr>
+<tr><td>Elevator</td><td><tt>2</tt></td><td>Elevator type, elevator level.</td></tr>
+<tr><td>Ladder up</td><td><tt>3</tt></td><td>One destination field.</td></tr>
+<tr><td>Ladder down</td><td><tt>4</tt></td><td>One destination field.</td></tr>
+<tr><td>Generic</td><td><tt>5</tt></td><td>One generic field.</td></tr>
+</table>
+
+<p>For stairs and ladders, destination tile values are packed together with elevation in a single 32-bit value in the traditional documentation. Valid destination tiles are normal map tile numbers. Map-instance data can also carry destination map ids for some scenery objects, so do not assume every travel target is fully described by the PRO file alone.</p>
+
+<h3>Wall, tile, and misc</h3>
+
+<table>
+<tr><th>Type</th><th>Fields after common header</th><th>Serialized size</th></tr>
+<tr><td>Wall</td><td><tt>light_distance</tt>, <tt>light_intensity</tt>, <tt>flags</tt>, <tt>flags_ext</tt>, <tt>sid</tt>, <tt>material</tt>.</td><td><tt>0x24</tt></td></tr>
+<tr><td>Tile</td><td><tt>flags</tt>, <tt>flags_ext</tt>, <tt>sid</tt>, <tt>material</tt>.</td><td><tt>0x1C</tt></td></tr>
+<tr><td>Misc</td><td><tt>light_distance</tt>, <tt>light_intensity</tt>, <tt>flags</tt>, <tt>flags_ext</tt>.</td><td><tt>0x1C</tt></td></tr>
+</table>
+
+<p>Older format notes split wall and scenery <tt>flags_ext</tt> into two 16-bit halves: wall-light type flags and action flags. The serialized file still contains the same four bytes as the 32-bit <tt>flags_ext</tt> field used by the CE source.</p>
+
+<table>
+<tr><th>Wall-light value</th><th>Meaning</th></tr>
+<tr><td><tt>0x0000</tt></td><td>North / South</td></tr>
+<tr><td><tt>0x0800</tt></td><td>East / West</td></tr>
+<tr><td><tt>0x1000</tt></td><td>North corner</td></tr>
+<tr><td><tt>0x2000</tt></td><td>South corner</td></tr>
+<tr><td><tt>0x4000</tt></td><td>East corner</td></tr>
+<tr><td><tt>0x8000</tt></td><td>West corner</td></tr>
+</table>
+
+<table>
+<tr><th>Action value</th><th>Meaning</th></tr>
+<tr><td><tt>0x0001</tt></td><td>Kneel down when using.</td></tr>
+<tr><td><tt>0x0008</tt></td><td>Use.</td></tr>
+<tr><td><tt>0x0010</tt></td><td>Use on another object.</td></tr>
+<tr><td><tt>0x0020</tt></td><td>Look.</td></tr>
+<tr><td><tt>0x0040</tt></td><td>Talk.</td></tr>
+<tr><td><tt>0x0080</tt></td><td>Pick up.</td></tr>
+</table>
+
+<h2>Action behavior</h2>
+
+<p>Several common interactions are inferred from the PID type and flags rather than from a single named field:</p>
+
+<ul>
+<li>An object can be used if extended flag <tt>0x0800</tt> is set, or if it is an item container.</li>
+<li>An object can be used on another object if extended flag <tt>0x1000</tt> is set, or if it is an item drug.</li>
+<li>An object can be talked to if it is a critter, or if extended flag <tt>0x4000</tt> is set.</li>
+<li>Items can normally be picked up, but item containers require extended flag <tt>0x8000</tt>.</li>
+</ul>
+
+<h2>Editing notes</h2>
+
+<ul>
+<li>Keep <tt>pid</tt>, list position, directory, and object type consistent. The engine uses all of them during lookup.</li>
+<li>Changing a PRO filename requires updating the matching <tt>proto\&lt;type&gt;\&lt;type&gt;.lst</tt> line.</li>
+<li>Changing <tt>message_num</tt> changes which name and description are loaded from <tt>pro_*.msg</tt>.</li>
+<li>Script ids refer to <tt>scripts.lst</tt>; inserting or deleting script-list lines can retarget existing protos.</li>
+<li>FID fields use the same packed object-art identifiers described on the <a href="lst.html">LST page</a>.</li>
+</ul>
+
+<h2>Minimal parser subset</h2>
+
+<p>A tool that only needs to enrich MAP objects can often get useful classifications without parsing every subtype payload. The high-value subset is:</p>
+
+<ul>
+<li><tt>0x0000</tt>-<tt>0x0014</tt>: PID, message id, FID, light radius, light intensity, and main flags.</li>
+<li><tt>0x001C</tt>: script id for items, critters, scenery, and walls.</li>
+<li><tt>0x0020</tt>: item subtype for item PRO files and scenery subtype for scenery PRO files.</li>
+<li>PID high-byte object types <tt>0</tt> through <tt>5</tt>: item, critter, scenery, wall, tile, misc.</li>
+</ul>
+
+<p>This subset is enough to distinguish many MAP object categories and script-bearing object kinds, but it is not enough to fully model item stats, critter combat data, scenery destinations, or other subtype-specific behavior.</p>
+
+<h2>Source References</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.cc">Fallout 2 CE - proto.cc</a></li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.h">Fallout 2 CE - proto.h</a></li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h">Fallout 2 CE - proto_types.h</a></li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/db.cc">Fallout 2 CE - db.cc</a></li>
+</ul>
+
+<hr/>
+<h2>History</h2>
+<p>
+2026-05-01 - Added source-backed local documentation based on Fallout 2 CE by <a href="https://github.com/OpenAI">OpenAI</a><br/>
+Original public documentation: <a href="https://falloutmods.fandom.com/wiki/PRO_File_Format">https://falloutmods.fandom.com/wiki/PRO_File_Format</a>
+</p>
+</div>
+</body>
+</html>
