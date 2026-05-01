@@ -7,44 +7,58 @@
 <div style="width: 1200px; margin: auto;">
 <h1>BIO File Format</h1>
 
-<p>BIO files are plain text files. They contain biographies of the 3 starting characters which can be chosen during the character creation stage, and can be found in the \premade folder.</p>
+<p>BIO files are plain text biographies shown on the premade character selection screen. They live in the <tt>premade</tt> directory and are paired with <a href="gcd.html">GCD files</a> that use the same base name.</p>
 
-<p>There are no automatic linebreaks or scrolling on the character selection screen, so extra attention should be payed to make sure the length of each indiviual line does not exceed 26 characters (they can be up to 30 lines in length, but it's ugly). Also, the number of lines of content should not exceed 22 lines. The first line of text should be "So-and-so's story", in all capitals. Stylistically, there should be blank lines before and after the title.</p>
+<p>In an unmodified Fallout 2 installation the three selectable premade characters are loaded from these base paths:</p>
 
-<pre>
-(blank line)                      --
-"CHARACTER NAME'S" STORY:           |
-(another blank line)                |
-"                                   |
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-      Biography content             | --> 22 lines of content
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-                                    |
-                          "       --
+<table>
+<tr><th>Character role</th><th>BIO file</th><th>GCD file</th><th>Face FID</th></tr>
+<tr><td>Combat</td><td><tt>premade\combat.bio</tt></td><td><tt>premade\combat.gcd</tt></td><td><tt>201</tt></td></tr>
+<tr><td>Stealth</td><td><tt>premade\stealth.bio</tt></td><td><tt>premade\stealth.gcd</tt></td><td><tt>202</tt></td></tr>
+<tr><td>Diplomat</td><td><tt>premade\diplomat.bio</tt></td><td><tt>premade\diplomat.gcd</tt></td><td><tt>203</tt></td></tr>
+</table>
 
+<p>The BIO file contains only the displayed story text. The character's statistics and traits come from the matching GCD file, and the face art is selected by the character selector's premade-character table or by a modded configuration.</p>
 
-|                         |
- -------------------------
-           |
-           v
- 26 characters maximum recommended
-</pre>
+<h2>Display behavior</h2>
 
-<h3>Example</h3>
-Taken from Narg's BIO file, combat.bio, exactly as it is shown (Fallout 2):
+<p>The game opens the selected <tt>.bio</tt> file in text mode and reads it line by line into a 256 byte buffer. Each line is drawn at the biography panel position using font <tt>101</tt> and color table entry <tt>992</tt>.</p>
+
+<table>
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Starting position</td><td><tt>x = 438</tt>, <tt>y = 40</tt></td></tr>
+<tr><td>Drawing width</td><td><tt>202</tt> pixels (<tt>640 - 438</tt>)</td></tr>
+<tr><td>Vertical limit</td><td>Lines are drawn while <tt>y &lt; 260</tt></td></tr>
+<tr><td>Line buffer</td><td><tt>256</tt> bytes per line, including terminator</td></tr>
+<tr><td>Missing file</td><td>No biography text is drawn; the selector still opens normally</td></tr>
+</table>
+
+<p>There is no word wrapping and no scrolling. A long line is not reflowed onto the next line, so authors need to insert line breaks manually. The old Team-X recommendation of keeping lines to about 26 characters is a useful practical rule, but the real limit is the pixel width of the rendered text. Narrow letters can fit more characters than wide letters.</p>
+
+<p>The number of visible lines depends on font <tt>101</tt>'s line height. The original guidance to keep the biography to roughly 22 content lines is still sensible because the renderer stops once the next line would start at or below <tt>y = 260</tt>.</p>
+
+<h2>Formatting recommendations</h2>
+
+<ul>
+<li>Use plain text and manually wrap every line.</li>
+<li>Keep the heading short and uppercase, for example <tt>NARG'S STORY:</tt>.</li>
+<li>Leave a blank line after the heading, matching the vanilla BIO files.</li>
+<li>Avoid curly quotes and other Unicode punctuation unless the target game build and font encoding are known to support them.</li>
+<li>Test the BIO in game or in a renderer that uses the same font metrics; character count alone is only an approximation.</li>
+</ul>
+
+<h2>Localization</h2>
+
+<p>When the active language is not English, Fallout 2 CE checks for a localized premade path before falling back to the base file. For example, when the selector asks for <tt>premade\combat.bio</tt>, the localized lookup can use <tt>premade\&lt;language&gt;\combat.bio</tt> if that file exists. The same lookup is used for the matching GCD file.</p>
+
+<h2>Custom premade characters</h2>
+
+<p>Fallout 2 CE includes sfall-compatible support for custom premade characters. Mods can provide a comma-separated list of premade base names and a matching list of face FIDs. The selector then builds <tt>premade\&lt;name&gt;.bio</tt> and <tt>premade\&lt;name&gt;.gcd</tt> from each base name.</p>
+
+<p>In this implementation, custom base names longer than 11 characters are rejected before the <tt>premade\</tt> prefix is added. Keeping short DOS-style names is therefore the safest choice for custom premade sets.</p>
+
+<h2>Example</h2>
+<p>Taken from Narg's BIO file, <tt>combat.bio</tt>, exactly as it is shown in Fallout 2:</p>
 
 <pre>
 NARG'S STORY:
@@ -67,14 +81,27 @@ nothing stand in his
 way.
 </pre>
 
-.BIO files can be opened with any texteditor.
+<h2>Parser notes</h2>
+
+<ul>
+<li>BIO is not a structured binary format; any text editor can open it.</li>
+<li>Blank lines are real lines and consume vertical space.</li>
+<li>Text mode reading means line endings are handled by the platform file layer.</li>
+<li>The file extension is added by the selector; the premade base path is stored without <tt>.bio</tt> or <tt>.gcd</tt>.</li>
+</ul>
+
+<h2>Source References</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/character_selector.cc">Fallout 2 CE - character_selector.cc</a></li>
+</ul>
 
 <hr/>
 <h2>History</h2>
 <p>
 2019-12-14 - Ported from <a href="https://falloutmods.fandom.com/wiki/BIO_File_Format">https://falloutmods.fandom.com/wiki/BIO_File_Format</a> by <a href="https://github.com/ghost2238">ghost</a><br/>
 2007 - <a href="https://www.nma-fallout.com/threads/teamx-documents-russian-to-english-translation.179561/">Translated by Kanhef</a><br/>
-? - Written byTeam-X (bio_format.shtml)
+? - Written by Team-X (bio_format.shtml)
 </p>
 </div>
 </body>

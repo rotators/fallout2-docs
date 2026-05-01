@@ -6,13 +6,48 @@
 <body>
 <div style="width: 1200px; margin: auto;">
 <h1>LST File Format</h1>
-<p>This is a simple text file where each line of the file corresponds to an element in a list. Each line uses the DOS style end of line markers CRLF ("\r\n"). The first line of the file contains data for element 0, the second line contains data for element 1 and so on. </p>
+<p>An LST file is a plain text table where each physical line corresponds to one numbered entry. The first line is entry 0, the second line is entry 1, and so on. These indexes are used by several Fallout data structures to refer to files indirectly.</p>
 
-<p>The data for a line is typically a single word (usually the name of a file). </p>
+<p>The data on a line is usually a single token, most often a file name or base file name. Fallout data files typically use DOS-style CRLF line endings, but readers should not rely on the line ending alone to identify the format.</p>
 
-<p>Comments are allowed in a LST file. Comments start with the semicolon ";", and continue to the end of the line. Blank lines and lines only containing comments are not allowed.</p>
+<p>Comments are allowed and start with a semicolon (<code>;</code>). For art list files, the engine reads only the first token on each line and stops at a space, comma, semicolon, tab, carriage return, or newline. This means an inline comment can safely follow the entry value.</p>
 
-<p>Here is the first 5 lines from the LST file skilldex.lst, which correspond to elements 0 to 4.</p>
+<p>Blank lines and lines containing only comments should not be used. They still occupy a line position, so they can shift every following index and break references from other files.</p>
+
+<h3>General rules</h3>
+<table>
+<thead>
+    <tr>
+        <th style="width: 180px;">Rule</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td>Indexing</td>
+    <td>Indexes are zero-based. Entry 0 is the first physical line in the file.</td>
+</tr>
+<tr>
+    <td>Ordering</td>
+    <td>Order is part of the data. Reordering lines changes every reference that stores a line index.</td>
+</tr>
+<tr>
+    <td>Comments</td>
+    <td>Semicolon comments are common. Some specialized lists also use other trailing metadata, so preserve text after the first token when editing.</td>
+</tr>
+<tr>
+    <td>Case</td>
+    <td>Original data usually uses uppercase filenames, but tools should avoid changing case because unpacked files on modern systems can be case-sensitive.</td>
+</tr>
+<tr>
+    <td>Extensions</td>
+    <td>Some lists store complete filenames such as <code>STRENGTH.FRM</code>; others store base names that the engine combines with an extension.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Example</h3>
+<p>Here are the first five lines from <code>skilldex.lst</code>. They correspond to entries 0 through 4:</p>
 
 <pre>
 STRENGTH.FRM  ; Strength     (Basic Stat)
@@ -21,6 +56,133 @@ ENDUR.FRM     ; Endurance    (Basic Stat)
 CHARISMA.FRM  ; Charisma     (Basic Stat)
 INTEL.FRM     ; Intelligence (Basic Stat)
 </pre>
+
+<h3>Art lists</h3>
+<p>The art system loads one LST file for each art object type from paths of the form <code>art\TYPE\TYPE.lst</code>. Examples include <code>art\items\items.lst</code>, <code>art\critters\critters.lst</code>, <code>art\tiles\tiles.lst</code>, and <code>art\skilldex\skilldex.lst</code>.</p>
+<p>For these art lists, the line number becomes the art index stored in a FID. The art type selects which LST is used, and the low bits of the FID select the line within that list. For example, a skilldex art FID can point at entry 0 of <code>skilldex.lst</code>, which resolves to <code>STRENGTH.FRM</code>.</p>
+<p>Fallout 2 CE stores art list names in fixed 13-byte slots: up to 12 characters plus a trailing null byte. Tools that generate art LST files should keep base names within that limit unless they know the target engine supports longer names.</p>
+
+<h4>Art FID layout</h4>
+<p>Art FIDs pack several fields into one 32-bit value. The low 12 bits store the LST index. Bits 24 through 27 store the art object type, which selects the LST file. Critter FIDs also use bits 12 through 15 for weapon animation, bits 16 through 23 for animation type, and bits 28 through 30 for rotation.</p>
+
+<pre>
+bits 28..30  rotation
+bits 24..27  art object type
+bits 16..23  animation type
+bits 12..15  weapon animation code
+bits  0..11  LST index
+</pre>
+
+<p>The engine constructs art FIDs with the following layout:</p>
+
+<pre>
+fid = ((rotation << 28) &amp; 0x70000000)
+    | (objectType << 24)
+    | ((animType << 16) &amp; 0x00FF0000)
+    | ((weaponCode << 12) &amp; 0x0000F000)
+    | (lstIndex &amp; 0x00000FFF);
+</pre>
+
+<table>
+<thead>
+    <tr>
+        <th style="width: 170px;">Field</th>
+        <th style="width: 120px;">Mask</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td>LST index</td>
+    <td><code>0x00000FFF</code></td>
+    <td>Zero-based line number within the selected art LST.</td>
+</tr>
+<tr>
+    <td>Weapon animation</td>
+    <td><code>0x0000F000</code></td>
+    <td>Critter weapon animation code. Usually zero for non-critter art.</td>
+</tr>
+<tr>
+    <td>Animation type</td>
+    <td><code>0x00FF0000</code></td>
+    <td>Critter animation or head fidget/expression selector, depending on art type.</td>
+</tr>
+<tr>
+    <td>Art object type</td>
+    <td><code>0x0F000000</code></td>
+    <td>Selects the art LST family, such as items, critters, tiles, or skilldex.</td>
+</tr>
+<tr>
+    <td>Rotation</td>
+    <td><code>0x70000000</code></td>
+    <td>Direction used for directional FRM/FR0..FR5 art. Not every art type uses it.</td>
+</tr>
+</tbody>
+</table>
+
+<p>For example, a non-animated skilldex image at entry 0 uses object type 10 and LST index 0, giving an art FID of <code>0x0A000000</code>. The object type selects <code>art\skilldex\skilldex.lst</code>, and index 0 selects <code>STRENGTH.FRM</code>.</p>
+<p>Non-critter art usually leaves the animation, weapon, and rotation fields at zero. The important part for LST editing is that changing a line number changes the value expected in the low 12 bits of any FID that references it.</p>
+
+<h4>Index limits</h4>
+<p>Because the art index field in a FID is 12 bits wide, a normal art FID can directly address entries <code>0</code> through <code>4095</code> within a single art LST. Adding more lines than that may still produce a text file, but those entries cannot be represented by the standard FID layout.</p>
+
+<h4>Art object types</h4>
+<table>
+<thead>
+    <tr>
+        <th style="width: 100px;">Type</th>
+        <th style="width: 160px;">Directory</th>
+        <th>List file</th>
+    </tr>
+</thead>
+<tbody>
+<tr><td>0</td><td><code>items</code></td><td><code>art\items\items.lst</code></td></tr>
+<tr><td>1</td><td><code>critters</code></td><td><code>art\critters\critters.lst</code></td></tr>
+<tr><td>2</td><td><code>scenery</code></td><td><code>art\scenery\scenery.lst</code></td></tr>
+<tr><td>3</td><td><code>walls</code></td><td><code>art\walls\walls.lst</code></td></tr>
+<tr><td>4</td><td><code>tiles</code></td><td><code>art\tiles\tiles.lst</code></td></tr>
+<tr><td>5</td><td><code>misc</code></td><td><code>art\misc\misc.lst</code></td></tr>
+<tr><td>6</td><td><code>intrface</code></td><td><code>art\intrface\intrface.lst</code></td></tr>
+<tr><td>7</td><td><code>inven</code></td><td><code>art\inven\inven.lst</code></td></tr>
+<tr><td>8</td><td><code>heads</code></td><td><code>art\heads\heads.lst</code></td></tr>
+<tr><td>9</td><td><code>backgrnd</code></td><td><code>art\backgrnd\backgrnd.lst</code></td></tr>
+<tr><td>10</td><td><code>skilldex</code></td><td><code>art\skilldex\skilldex.lst</code></td></tr>
+</tbody>
+</table>
+
+<p>Critter and head lists are special. The first token is still the art base name, but the remaining comma-separated fields are read as metadata. In <code>critters.lst</code>, extra fields can define an alias critter and whether that critter should run. In <code>heads.lst</code>, extra fields describe the number of good, neutral, and bad fidgets.</p>
+
+<h4>Filename construction</h4>
+<p>Most art lists store filenames that are used directly under their art type directory. Critter and head lists are different: their entries are base names. For critters, the engine appends animation and weapon animation codes and then chooses <code>.frm</code> or a directional <code>.frN</code> extension. For talking heads, the engine appends fidget and expression codes before adding <code>.frm</code>.</p>
+<p>This is why a critter list entry such as <code>hmjmps</code> does not name a complete file by itself. It is the stem used to build filenames for that critter's animation set.</p>
+
+<h4>Localized art lookup</h4>
+<p>When the game language is not English, the art loader can try a localized art path before falling back to the normal path. The LST index still selects the same entry; only the resolved file path changes.</p>
+
+<h3>Special cases</h3>
+<p>The script system uses indexes from <code>scripts.lst</code>. Script ids and proto fields can refer to entries in that list, so inserting or deleting lines can change which script an object uses.</p>
+<p>Entries in <code>scripts.lst</code> are expected to contain an <code>.int</code> filename. Fallout 2 CE stores the script base name without the extension and rejects names longer than 13 characters before <code>.int</code>. A line can also contain <code>local_vars=N</code> metadata after a <code>#</code> marker; the script engine uses that value to allocate local variables for the script.</p>
+
+<pre>
+arroyo.int        # local_vars=4
+doorlook.int      # local_vars=0
+</pre>
+
+<p>Stored script references use a packed value of the form <code>0x0Y00XXXX</code>, where <code>Y</code> is the script type and <code>XXXX</code> is the zero-based index in <code>scripts.lst</code>. Known script type values are <code>0</code> for system, <code>1</code> for spatial, <code>2</code> for time, <code>3</code> for item, and <code>4</code> for critter. A value of <code>-1</code> means no script.</p>
+
+<h3>Editing notes</h3>
+<p>When adding new entries, append them to the end of the list whenever possible. This preserves existing indexes. If a line must be removed, replacing it with a harmless placeholder is usually safer than deleting it, because deletion shifts every later index.</p>
+<p>When building tools, treat LST files as indexed tables rather than unordered name lists. A sorted or deduplicated LST can be technically valid text but still invalid game data.</p>
+<p>Preserve formatting unless there is a reason to rewrite it. Line endings, comments, case, trailing metadata, and placeholder lines may all carry practical value for mod compatibility even when the engine only reads the first token.</p>
+
+<h3>Parser pitfalls</h3>
+<p>The art list loader counts every physical line before it extracts tokens. A blank line is therefore still an entry; after tokenization it becomes an empty filename. A line that begins with a delimiter such as a space, comma, semicolon, or tab also produces an empty first token.</p>
+<p>For art lists, the loader copies at most 12 characters from the first token and then appends a null byte. Longer names are silently truncated in the in-memory art table, which can make two different entries collide if their first 12 characters are identical.</p>
+<p>Because comments are parsed differently by different list consumers, semicolon comments are safest for simple art lists, while <code>scripts.lst</code> uses <code># local_vars=N</code> metadata. A generic LST editor should not assume one comment convention is valid for every list.</p>
+
+<h3>Source code</h3>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.cc">Fallout 2 Community Edition art list loading - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc">Fallout 2 Community Edition scripts.lst loading - C++</a>
 
 <h2>History</h2>
 <p>

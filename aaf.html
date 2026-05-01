@@ -2,20 +2,84 @@
 <head>
     <title>AAF File Format</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
+    <style>
+        .viewer-panel {
+            background: #11170f;
+            border: 1px solid #535b5aba;
+            margin: 15px 0;
+            padding: 12px;
+        }
+
+        .viewer-controls {
+            align-items: end;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            margin-bottom: 10px;
+        }
+
+        .viewer-controls label {
+            display: block;
+        }
+
+        .viewer-controls input {
+            background: #222;
+            border: 1px solid #555;
+            color: #cdcdcd;
+            box-sizing: border-box;
+            margin-top: 4px;
+            padding: 4px;
+            width: 100%;
+        }
+
+        .viewer-status {
+            color: #f49205;
+            min-height: 18px;
+        }
+
+        .font-summary {
+            margin: 8px 0;
+        }
+
+        .font-summary td:first-child {
+            color: #f49205;
+            width: 180px;
+        }
+
+        .canvas-wrap {
+            background: #040c00;
+            border: 1px solid #333;
+            margin-top: 10px;
+            max-width: 100%;
+            overflow: auto;
+            padding: 8px;
+        }
+
+        .canvas-wrap canvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        @media (max-width: 900px) {
+            .viewer-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 <div style="width: 1200px; margin: auto;">
 <h1>AAF File Format</h1>
-<p>The AAF Font File Format is used to store fonts in Fallouts 1 & 2. Only the AAF files used in the English versions are discussed here; there may or may not be variations for other languages.</p>
+<p>The AAF file format stores bitmap fonts used by Fallout and Fallout 2. This page describes the English-version files; localized releases may contain variations that are not covered here.</p>
 
-<p>The AAF file stores a separate glyph for each of the 256 positions in the ASCII table. The fonts in an AAF file are typically non-fixed size, i.e. each glyph has its own width and height. A glyph is defined by a rectangular bitmap representing the pixels of the glyph, corresponding to the way that it appears on the screen. Each pixel can have a possible value in the range of 0 to 9.</p>
+<p>An AAF file stores one glyph descriptor for each of the 256 byte values. Glyphs are usually proportional: each glyph has its own width and height. The glyph bitmap is stored as one byte per pixel, with values in the range <code>0</code> through <code>9</code>.</p>
 
 <ul>
-  <li>0 means that the pixel is transparent.</li>
-  <li>The values 1 to 9 represent the relative brightness of that pixel, with 9 being the brightest. There does not appear to be a linear increase in brightness from values 1 to 9.</li> 
+  <li><code>0</code> means the pixel is transparent.</li>
+  <li><code>1</code> through <code>9</code> represent relative brightness, with <code>9</code> being the brightest. The brightness scale does not appear to be linear.</li>
 </ul>
 
-<p>Here is an example of the bitmap of a glyph. This glyph is from the file FONT1.AAF and represents the character 'b' (ASCII 98).</p>
+<p>The following bitmap is a glyph from <code>FONT1.AAF</code> representing the character <code>b</code> (ASCII 98):</p>
 
 <pre style="background: #222; margin: 10px; width: 80px; padding: 5px;">
   77    
@@ -27,9 +91,45 @@
   777763
 </pre>
 
-<p>Pixels with value 0 are not shown as they are transparent. The higher numbers 7 and 6 represent the brighter parts of the glyph, while the 3 would be much duller in colour. This would be expected for the rounder corners of the b.</p>
+<p>Pixels with value <code>0</code> are omitted because they are transparent. The values <code>7</code> and <code>6</code> mark brighter parts of the glyph, while <code>3</code> is dimmer and appears around the rounded corners.</p>
 
-<p>All integer fields are stored in Motorola / big-endian byte order. The file starts with a 12-byte header followed by 256 glyph descriptors. Each descriptor is 8 bytes: width, height, and an offset relative to the start of the glyph data block at <code>0x080C</code>. This makes the glyph data block start at <code>0x000C + 256 * 8 = 0x080C</code>.</p>
+<p>All integer fields are stored in Motorola / big-endian byte order. The file starts with a 12-byte header followed by 256 glyph descriptors. Each descriptor is 8 bytes: width, height, and an offset relative to the start of the glyph data block. The glyph data block starts at <code>0x000C + 256 * 8 = 0x080C</code>.</p>
+
+<h3>AAF viewer</h3>
+<p>The viewer below reads an uploaded <code>.aaf</code> file, validates the header and glyph descriptors, and renders both a text preview and a 256-slot glyph grid. Pixel values are shown as brightness levels of the selected foreground color.</p>
+<div class="viewer-panel">
+    <div class="viewer-controls">
+        <label>AAF file
+            <input id="aaf-file" type="file" accept=".aaf" />
+        </label>
+        <label>Zoom
+            <input id="aaf-zoom" type="number" min="1" max="12" value="4" />
+        </label>
+        <label>Foreground
+            <input id="aaf-fg" type="color" value="#cdcdcd" />
+        </label>
+        <label>Background
+            <input id="aaf-bg" type="color" value="#040c00" />
+        </label>
+    </div>
+    <label>Preview text
+        <input id="aaf-preview-text" type="text" value="Fallout 2 interface text" />
+    </label>
+    <div id="aaf-status" class="viewer-status"></div>
+    <table class="font-summary">
+        <tbody>
+            <tr><td>Maximum glyph height</td><td id="aaf-max-height">-</td></tr>
+            <tr><td>Horizontal gap</td><td id="aaf-horizontal-gap">-</td></tr>
+            <tr><td>Space width</td><td id="aaf-space-width">-</td></tr>
+            <tr><td>Vertical gap</td><td id="aaf-vertical-gap">-</td></tr>
+            <tr><td>Glyph data size</td><td id="aaf-data-size">-</td></tr>
+        </tbody>
+    </table>
+    <h4>Text preview</h4>
+    <div class="canvas-wrap"><canvas id="aaf-preview" width="1" height="1"></canvas></div>
+    <h4>Glyph grid</h4>
+    <div class="canvas-wrap"><canvas id="aaf-grid" width="1" height="1"></canvas></div>
+</div>
 
 <table style="background: #222; margin: 10px;">
 <thead>
@@ -45,67 +145,67 @@
 		<td>0x000</td>
 		<td>4</td>
 		<td>char[4] = "AAFF"</td>
-		<td>Signature used to identify file type. </td>
+		<td>Signature used to identify the file type.</td>
 	</tr>
 	<tr>
 		<td>0x004</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>Maximum glyph height. This is the maximum height of the glyph, including ascenders and descenders.</td>
+		<td>Maximum glyph height, including ascenders and descenders.</td>
 	</tr>
 	<tr>
 		<td>0x006</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>Horizontal gap. Gap size in pixels between adjacent glyphs.</td>
+		<td>Horizontal gap, in pixels, added between adjacent glyphs.</td>
 	</tr>
 	<tr>
 		<td>0x008</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>Width of space. The width of the space character.</td>
+		<td>Width, in pixels, used for the space character.</td>
 	</tr>
 	<tr>
 		<td>0x00A</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>Vertical gap. The number of pixels between two lines of glyphs. </td>
+		<td>Vertical gap, in pixels, added between two lines of glyphs.</td>
 	</tr>
 	<tr>
 		<td>0x00C</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>GLYPH-0-WIDTH: Width in pixels of the glyph corresponding to ASCII 0.</td>
+		<td>Width, in pixels, of glyph 0.</td>
 	</tr>
 	<tr>
 		<td>0x00E</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>GLYPH-0-HEIGHT: Height in pixels of the glyph corresponding to ASCII 0.</td>
+		<td>Height, in pixels, of glyph 0.</td>
 	</tr>
 	<tr>
 		<td>0x010</td>
 		<td>4</td>
 		<td>unsigned long</td>
-		<td>Offset of glyph 0. Add <code>0x080C</code> to this value to get the glyph's absolute offset from the beginning of the file. Note: If GLYPH-x-WIDTH * GLYPH-x-HEIGHT = 0 (NULL glyph), then this value is the offset of the next non-empty glyph.</td>
+		<td>Offset of glyph 0, relative to the glyph data block at <code>0x080C</code>. If <code>width * height = 0</code>, this can be the offset of the next non-empty glyph.</td>
 	</tr>
 	<tr>
 		<td>0x014</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>GLYPH-1-WIDTH : Width of glyph 1.</td>
+		<td>Width, in pixels, of glyph 1.</td>
 	</tr>
 	<tr>
 		<td>0x016</td>
 		<td>2</td>
 		<td>unsigned short</td>
-		<td>GLYPH-1-HEIGHT : Height of glyph 1. </td>
+		<td>Height, in pixels, of glyph 1.</td>
 	</tr>
 	<tr>
 		<td>0x018</td>
 		<td>4</td>
 		<td>unsigned long</td>
-		<td>Offset of glyph 1. Add <code>0x080C</code> to this value to get the glyph's absolute offset from the beginning of the file.</td>
+		<td>Offset of glyph 1, relative to the glyph data block at <code>0x080C</code>.</td>
 	</tr>
 	<tr>
 		<td>0x01C</td>
@@ -117,7 +217,7 @@
 		<td>0x80C</td>
 		<td>GLYPH-0-WIDTH * GLYPH-0-HEIGHT</td>
 		<td>byte = [0..9]</td>
-		<td>Pixel data for glyph 0. Contains the pixel data for the glyph. Each pixel in the glyph is represented by one byte, with possible values in the range 0 to 9. A value of 0 means the pixel is transparent, while values 1 to 9 represent different brightness values of the pixel (1 is dark and 9 is bright). Pixel data starts at the top left corner of the glyph and increases left to right, then top to bottom. </td>
+		<td>Pixel data for glyph 0. Pixels are stored left to right, then top to bottom. Each pixel is one byte in the range <code>0</code> through <code>9</code>.</td>
 	</tr>
 	<tr>
 		<td>0x080C + (GLYPH-0-WIDTH * GLYPH-0-HEIGHT)</td>
@@ -129,12 +229,67 @@
 		<td>0x080C + (GLYPH-0-WIDTH * GLYPH-0-HEIGHT) + (GLYPH-1-WIDTH * GLYPH-1-HEIGHT)</td>
 		<td>...</td>
 		<td>byte = [0..9]</td>
-		<td>Pixel data for glyphs 2 to 255, as described above. </td>
+		<td>Pixel data for glyphs 2 through 255, as described above.</td>
 	</tr>
 	</tbody>
 </table>
 
-<p>A NULL glyph has no pixel data of its own. Its offset can be the same as the next glyph with data, so readers should use width and height to decide whether to read pixels.</p>
+<h3>Parsing notes</h3>
+<p>The <code>AAFF</code> signature identifies the file type. After the 12-byte header, the descriptor table always contains 256 entries and therefore always ends at <code>0x080C</code>. Descriptor offsets are relative to this glyph data block, not to the beginning of the file.</p>
+<p>Each glyph consumes <code>width * height</code> bytes. A NULL glyph has no pixel data of its own, and its offset can be the same as the next glyph with data, so readers should use width and height to decide whether to read pixels.</p>
+<p>AAF stores glyph brightness, not final palette colors. At render time, the engine blends each non-zero pixel value with the selected text color.</p>
+
+<h3>Runtime notes</h3>
+<p>In Fallout 2 CE, the AAF loader attempts to load interface fonts named <code>font0.aaf</code>, <code>font1.aaf</code>, and so on. The interface font manager exposes AAF fonts as font ids <code>100</code> through <code>110</code>, separate from the FON text font manager.</p>
+<p>When rendering a string, a space character uses the header's space width field instead of the width in glyph descriptor 32. Each character advances by its character width plus the horizontal gap. The line height reported by the engine is the maximum glyph height plus the vertical gap.</p>
+<p>Glyph pixels are bottom-aligned within the maximum glyph height. If a glyph is shorter than the maximum height, rendering skips the difference before drawing that glyph's rows.</p>
+
+<h3>AAF and FON comparison</h3>
+<table>
+<thead>
+   <tr>
+       <th style="padding-right: 10px; width: 140px;">Feature</th>
+       <th>AAF</th>
+       <th>FON</th>
+   </tr>
+</thead>
+<tbody>
+<tr>
+    <td>Typical role</td>
+    <td>Interface font manager</td>
+    <td>Low-numbered text font manager</td>
+</tr>
+<tr>
+    <td>Typical files</td>
+    <td><code>font0.aaf</code> and other interface font files</td>
+    <td><code>font0.fon</code> through <code>font9.fon</code></td>
+</tr>
+<tr>
+    <td>Font id range</td>
+    <td><code>100</code> through <code>110</code> in Fallout 2 CE</td>
+    <td><code>0</code> through <code>9</code> in Fallout 2 CE</td>
+</tr>
+<tr>
+    <td>Glyph slots</td>
+    <td>Always 256 descriptor slots</td>
+    <td>Glyph count is stored in the file header</td>
+</tr>
+<tr>
+    <td>Pixel data</td>
+    <td>One byte per pixel; values <code>1</code> through <code>9</code> represent brightness levels</td>
+    <td>1 bit per pixel; set bits draw the chosen text color</td>
+</tr>
+<tr>
+    <td>Integer byte order</td>
+    <td>Big-endian 16-bit and 32-bit integers</td>
+    <td>Little-endian 32-bit integers</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Source code</h3>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/font_manager.cc">Fallout 2 Community Edition AAF interface font manager - C++</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/text_font.cc">Fallout 2 Community Edition FON text font manager - C++</a>
 
 <h2>History</h2>
 <p>
@@ -143,5 +298,264 @@ Patched by Anchorite (anchorite2001@yandex.ru) <br/>
 Created by Noid (noid@888.nu) 
 </p>
 </div>
+<script>
+(function () {
+    "use strict";
+
+    var HEADER_SIZE = 12;
+    var GLYPH_COUNT = 256;
+    var DESCRIPTOR_SIZE = 8;
+    var DATA_START = HEADER_SIZE + GLYPH_COUNT * DESCRIPTOR_SIZE;
+    var currentFont = null;
+
+    var fileInput = document.getElementById("aaf-file");
+    var zoomInput = document.getElementById("aaf-zoom");
+    var fgInput = document.getElementById("aaf-fg");
+    var bgInput = document.getElementById("aaf-bg");
+    var previewTextInput = document.getElementById("aaf-preview-text");
+    var statusEl = document.getElementById("aaf-status");
+    var previewCanvas = document.getElementById("aaf-preview");
+    var gridCanvas = document.getElementById("aaf-grid");
+
+    function setStatus(message) {
+        statusEl.textContent = message || "";
+    }
+
+    function parseColor(hex) {
+        var value = parseInt(hex.slice(1), 16);
+        return {
+            r: (value >> 16) & 0xFF,
+            g: (value >> 8) & 0xFF,
+            b: value & 0xFF
+        };
+    }
+
+    function brightnessColor(hex, level) {
+        var color = parseColor(hex);
+        var scale = Math.max(0, Math.min(9, level)) / 9;
+        return "rgb(" +
+            Math.round(color.r * scale) + "," +
+            Math.round(color.g * scale) + "," +
+            Math.round(color.b * scale) + ")";
+    }
+
+    function parseAaf(buffer) {
+        if (buffer.byteLength < DATA_START) {
+            throw new Error("File is too small for an AAF header and descriptor table.");
+        }
+
+        var view = new DataView(buffer);
+        if (view.getUint8(0) !== 0x41 || view.getUint8(1) !== 0x41 || view.getUint8(2) !== 0x46 || view.getUint8(3) !== 0x46) {
+            throw new Error("Missing AAFF signature.");
+        }
+
+        var maxHeight = view.getUint16(4, false);
+        var horizontalGap = view.getUint16(6, false);
+        var spaceWidth = view.getUint16(8, false);
+        var verticalGap = view.getUint16(10, false);
+
+        if (maxHeight === 0 || maxHeight > 512) {
+            throw new Error("Unreasonable maximum glyph height: " + maxHeight + ".");
+        }
+
+        var glyphs = [];
+        var dataSize = buffer.byteLength - DATA_START;
+        var maxPixelValue = 0;
+
+        for (var index = 0; index < GLYPH_COUNT; index++) {
+            var descriptorOffset = HEADER_SIZE + index * DESCRIPTOR_SIZE;
+            var width = view.getUint16(descriptorOffset, false);
+            var height = view.getUint16(descriptorOffset + 2, false);
+            var dataOffset = view.getUint32(descriptorOffset + 4, false);
+            var glyphSize = width * height;
+
+            if (width > 512 || height > 512) {
+                throw new Error("Unreasonable size for glyph " + index + ": " + width + "x" + height + ".");
+            }
+
+            if (height > maxHeight) {
+                throw new Error("Glyph " + index + " is taller than the maximum glyph height.");
+            }
+
+            if (glyphSize > 0 && dataOffset + glyphSize > dataSize) {
+                throw new Error("Pixel data for glyph " + index + " extends past the end of the file.");
+            }
+
+            for (var byteIndex = 0; byteIndex < glyphSize; byteIndex++) {
+                var pixel = view.getUint8(DATA_START + dataOffset + byteIndex);
+                if (pixel > maxPixelValue) {
+                    maxPixelValue = pixel;
+                }
+            }
+
+            glyphs.push({ width: width, height: height, dataOffset: dataOffset });
+        }
+
+        if (maxPixelValue > 9) {
+            throw new Error("Pixel value " + maxPixelValue + " is outside the expected 0..9 range.");
+        }
+
+        return {
+            bytes: new Uint8Array(buffer),
+            maxHeight: maxHeight,
+            horizontalGap: horizontalGap,
+            spaceWidth: spaceWidth,
+            verticalGap: verticalGap,
+            dataSize: dataSize,
+            glyphs: glyphs
+        };
+    }
+
+    function characterWidth(font, ch) {
+        return ch === 32 ? font.spaceWidth : font.glyphs[ch].width;
+    }
+
+    function drawGlyph(ctx, font, glyphIndex, x, y, zoom, color) {
+        var glyph = font.glyphs[glyphIndex];
+        if (!glyph || glyph.width === 0 || glyph.height === 0) {
+            return;
+        }
+
+        var glyphY = y + (font.maxHeight - glyph.height) * zoom;
+        for (var gy = 0; gy < glyph.height; gy++) {
+            for (var gx = 0; gx < glyph.width; gx++) {
+                var pixel = font.bytes[DATA_START + glyph.dataOffset + gy * glyph.width + gx];
+                if (pixel !== 0) {
+                    ctx.fillStyle = brightnessColor(color, pixel);
+                    ctx.fillRect(x + gx * zoom, glyphY + gy * zoom, zoom, zoom);
+                }
+            }
+        }
+    }
+
+    function updateSummary(font) {
+        document.getElementById("aaf-max-height").textContent = font ? font.maxHeight + " px" : "-";
+        document.getElementById("aaf-horizontal-gap").textContent = font ? font.horizontalGap + " px" : "-";
+        document.getElementById("aaf-space-width").textContent = font ? font.spaceWidth + " px" : "-";
+        document.getElementById("aaf-vertical-gap").textContent = font ? font.verticalGap + " px" : "-";
+        document.getElementById("aaf-data-size").textContent = font ? font.dataSize + " bytes" : "-";
+    }
+
+    function drawPreview(font) {
+        var zoom = getZoom();
+        var text = previewTextInput.value || "";
+        var width = 1;
+        var height = Math.max(1, (font.maxHeight + font.verticalGap) * zoom);
+
+        for (var i = 0; i < text.length; i++) {
+            width += (characterWidth(font, text.charCodeAt(i) & 0xFF) + font.horizontalGap) * zoom;
+        }
+
+        previewCanvas.width = Math.max(1, width);
+        previewCanvas.height = height;
+
+        var ctx = previewCanvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        ctx.fillStyle = bgInput.value;
+        ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+        var x = 0;
+        for (var index = 0; index < text.length; index++) {
+            var glyphIndex = text.charCodeAt(index) & 0xFF;
+            drawGlyph(ctx, font, glyphIndex, x, 0, zoom, fgInput.value);
+            x += (characterWidth(font, glyphIndex) + font.horizontalGap) * zoom;
+        }
+    }
+
+    function drawGrid(font) {
+        var zoom = getZoom();
+        var maxWidth = font.spaceWidth;
+        for (var i = 0; i < GLYPH_COUNT; i++) {
+            maxWidth = Math.max(maxWidth, font.glyphs[i].width);
+        }
+
+        var columns = 16;
+        var labelHeight = 14;
+        var cellPadding = 4;
+        var cellWidth = Math.max(28, maxWidth * zoom + cellPadding * 2);
+        var cellHeight = font.maxHeight * zoom + labelHeight + cellPadding * 2;
+        var rows = Math.ceil(GLYPH_COUNT / columns);
+
+        gridCanvas.width = columns * cellWidth;
+        gridCanvas.height = rows * cellHeight;
+
+        var ctx = gridCanvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        ctx.fillStyle = bgInput.value;
+        ctx.fillRect(0, 0, gridCanvas.width, gridCanvas.height);
+        ctx.font = "10px Verdana, Arial, sans-serif";
+        ctx.textBaseline = "top";
+
+        for (var index = 0; index < GLYPH_COUNT; index++) {
+            var col = index % columns;
+            var row = Math.floor(index / columns);
+            var cellX = col * cellWidth;
+            var cellY = row * cellHeight;
+            var glyphX = cellX + cellPadding;
+            var glyphY = cellY + labelHeight + cellPadding;
+
+            ctx.fillStyle = "#333";
+            ctx.fillRect(cellX, cellY, cellWidth - 1, cellHeight - 1);
+            ctx.fillStyle = bgInput.value;
+            ctx.fillRect(cellX + 1, cellY + 1, cellWidth - 3, cellHeight - 3);
+            ctx.fillStyle = "#f49205";
+            ctx.fillText(index.toString(), cellX + cellPadding, cellY + 2);
+            drawGlyph(ctx, font, index, glyphX, glyphY, zoom, fgInput.value);
+        }
+    }
+
+    function getZoom() {
+        var zoom = parseInt(zoomInput.value, 10);
+        if (!Number.isFinite(zoom)) {
+            zoom = 4;
+        }
+        return Math.max(1, Math.min(12, zoom));
+    }
+
+    function redraw() {
+        if (!currentFont) {
+            return;
+        }
+        zoomInput.value = getZoom();
+        drawPreview(currentFont);
+        drawGrid(currentFont);
+    }
+
+    fileInput.addEventListener("change", function () {
+        var file = fileInput.files && fileInput.files[0];
+        if (!file) {
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function () {
+            try {
+                currentFont = parseAaf(reader.result);
+                updateSummary(currentFont);
+                setStatus("Loaded " + file.name + ".");
+                redraw();
+            } catch (err) {
+                currentFont = null;
+                updateSummary(null);
+                previewCanvas.width = 1;
+                previewCanvas.height = 1;
+                gridCanvas.width = 1;
+                gridCanvas.height = 1;
+                setStatus(err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    zoomInput.addEventListener("input", redraw);
+    fgInput.addEventListener("input", redraw);
+    bgInput.addEventListener("input", redraw);
+    previewTextInput.addEventListener("input", function () {
+        if (currentFont) {
+            drawPreview(currentFont);
+        }
+    });
+})();
+</script>
 </body>
 </html>

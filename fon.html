@@ -71,14 +71,14 @@
 <body>
 <div style="width: 1200px; margin: auto;">
 <h1>FON File Format</h1>
-<p>This document describes the FON file format.</p>
+<p>This document describes the FON bitmap font format used by the Fallout engine.</p>
 
 <h3>Background</h3>
-<p>FON files are one of the Fallout engine's bitmap font formats. Fallout 2 loads up to ten text fonts named <code>font0.fon</code> through <code>font9.fon</code> for the low-numbered text font manager. Worldmap and interface text can also use AAF-based interface fonts, so FON should not be assumed to be the only worldmap font format. All fonts are non-scalable, raster, and do <b><i>not</i></b> contain any anti-aliasing information.</p>
+<p>FON files are one of the Fallout engine's bitmap font formats. Fallout 2 loads up to ten text fonts named <code>font0.fon</code> through <code>font9.fon</code> for the low-numbered text font manager. Worldmap and interface text can also use AAF-based interface fonts, so FON should not be treated as the only worldmap font format. FON glyphs are non-scalable raster images and do <b><i>not</i></b> contain anti-aliasing information.</p>
 <p>All numeric fields in the file are 32-bit little-endian integers. The two pointer fields in the header are serialized from the original in-memory structure, but the engine ignores their file values and allocates fresh arrays when loading.</p>
 
 <h3>FON viewer</h3>
-<p>The viewer below parses the same file layout described on this page. The glyph grid labels each glyph by its numeric index, and the text preview maps each character byte directly to the glyph with the same index. This matches the engine's 8-bit text rendering path: values outside the loaded glyph count do not draw a glyph.</p>
+<p>The viewer below parses the same layout described on this page. The glyph grid labels each glyph by its numeric index, and the text preview maps each input byte directly to the glyph with the same index. This matches the engine's 8-bit text rendering path: values outside the loaded glyph count do not draw anything.</p>
 <div class="viewer-panel">
     <div class="viewer-controls">
         <label>FON file
@@ -130,31 +130,31 @@
     <td>4</td>
     <td>int</td>
     <td rowspan="5" style="font-size: 24px; text-align: center; ">Header</td>
-    <td>The number of glyph images in the file. A shorthand notation <code>num</code> is used below. Some fonts contain fewer than 256 glyphs.</td>
+    <td>Number of glyph images in the file. The shorthand <code>num</code> is used below. Some fonts contain fewer than 256 glyphs.</td>
 </tr>
 <tr>
     <td>0x4</td>
     <td>4</td>
     <td>int</td>
-    <td>The height of the font in pixels. This is the line height used while rendering every glyph.</td>
+    <td>Font height in pixels. The renderer uses this as the line height for every glyph.</td>
 </tr>
 <tr>
     <td>0x8</td>
     <td>4</td>
     <td>int</td>
-    <td>The horizontal spacing in pixels added after each glyph.</td>
+    <td>Horizontal spacing, in pixels, added after each glyph.</td>
 </tr>
 <tr>
     <td>0xC</td>
     <td>4</td>
     <td>FontInfo*</td>
-    <td>Serialized pointer to an array of structures that describe the glyphs. <br/><b>Note:</b> This field is only important in memory. Inside the file, the value is ignored. </td>
+    <td>Serialized pointer to the glyph descriptor array. <br/><b>Note:</b> This field only matters in memory. In the file, the loader ignores the stored value.</td>
 </tr>
 <tr>
     <td>0x10</td>
     <td>4</td>
     <td>unsigned char* </td>
-    <td>Serialized pointer to the glyph bitmap data.<br/><b>Note:</b> This field is only important in memory. Inside the file, the value is ignored. </td>
+    <td>Serialized pointer to the glyph bitmap data.<br/><b>Note:</b> This field only matters in memory. In the file, the loader ignores the stored value.</td>
 </tr>
 <tr style="border-top: 1px solid #535b5aba;">
     <td>0x14</td>
@@ -204,13 +204,13 @@
 </table>
 
 <h3>Parsing notes</h3>
-<p>FON has no magic number or version field. Tools usually identify it by filename and location, or by validating that the header, descriptor table, and bitmap offsets form a plausible file.</p>
+<p>FON has no magic number or version field. Tools usually identify it by filename and location, or by validating that the header, descriptor table, and bitmap offsets describe a plausible file.</p>
 <p>The header is always 20 bytes long. The descriptor table begins immediately after it at <code>0x14</code> and contains <code>num</code> entries, each 8 bytes long. The bitmap data block therefore starts at <code>0x14 + 8 * num</code>. Descriptor offsets are relative to this bitmap data block, not to the beginning of the file.</p>
-<p>Each glyph consumes <code>((width + 7) / 8) * height</code> bytes, rounded down by integer division after adding 7. A zero-width glyph consumes no bitmap bytes, but can still occupy a glyph index. The original engine computes the total bitmap block length from the last descriptor; file inspection tools should additionally validate every descriptor so malformed offsets cannot point outside the file.</p>
+<p>Each glyph consumes <code>((width + 7) / 8) * height</code> bytes. This is integer arithmetic, so adding 7 before division is equivalent to rounding the row width up to the next byte. A zero-width glyph consumes no bitmap bytes, but can still occupy a glyph index. The original engine computes the total bitmap block length from the last descriptor; file inspection tools should additionally validate every descriptor so malformed offsets cannot point outside the file.</p>
 <p>FON files store shape only. They do not store colors, palette indexes, kerning pairs, Unicode mappings, or proportional layout metadata beyond each glyph's width and the global spacing value.</p>
 
 <h3>Runtime notes</h3>
-<p>In Fallout 2, FON files are registered as font ids <code>0</code> through <code>9</code>. The separate AAF interface font manager registers font ids <code>100</code> through <code>110</code>. Calls such as <code>fontSetCurrent(3)</code> therefore select a loaded FON font, while calls such as <code>fontSetCurrent(101)</code> select an AAF interface font.</p>
+<p>In Fallout 2, FON files are registered as font ids <code>0</code> through <code>9</code>. The separate AAF interface font manager registers font ids <code>100</code> through <code>110</code>. A call such as <code>fontSetCurrent(3)</code> selects a loaded FON font, while <code>fontSetCurrent(101)</code> selects an AAF interface font.</p>
 <p>The window manager initializes the FON text font system during startup. Missing individual <code>fontN.fon</code> files are tolerated, but initialization fails if none of the ten FON fonts can be loaded.</p>
 <p>Shadow, underline, and monospaced text are renderer options applied by the font manager at draw time. They are not stored in the FON file.</p>
 
@@ -253,15 +253,15 @@
 </table>
 
 <h3>Memory structure</h3>
-<p>To work with FON files, mapper2.exe and fallout2.exe use the following structure: </p>
+<p>Mapper2.exe and fallout2.exe use the following in-memory structures for loaded FON files:</p>
 <h4>Header</h4>
 <pre>
 typedef struct {
-    int num;                // The number of glyph images in the file
+    int num;                // number of glyph images in the file
     int height;             // line height in pixels
     int spacing;            // horizontal spacing between adjacent glyphs
-    FontInfo* info;         // Pointer to the array structures, describing glyphs
-    unsigned char* data;    // Pointer to glyph bitmap data
+    FontInfo* info;         // pointer to glyph descriptors
+    unsigned char* data;    // pointer to glyph bitmap data
 } Font; 
 </pre>
 
@@ -287,10 +287,10 @@ size = font.info[last].offset + (font.info[last].width + 7) / 8 * font.height;
 <p>During rendering, each byte in the source text is used as a glyph index. When the index is present in the font, the renderer draws that glyph and advances by <code>glyph.width + font.spacing</code> pixels. Missing glyph indexes are skipped.</p>
 
 <h3>Example</h3>
-<p>Let's say there is a glyph with the size 8x16 pixels, described by the following bitmap bytes:</p>
+<p>The following example shows an 8x16 pixel glyph described by 16 bitmap bytes:</p>
 <pre>00 00 7e 81 a5 81 81 bd 99 81 81 7e 00 00 00 00</pre>
 
-<span>The bit matrix takes the form of</span>
+<span>The bit matrix is:</span>
 <pre>
 00       00000000        ........
 00       00000000        ........
