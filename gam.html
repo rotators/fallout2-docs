@@ -7,17 +7,23 @@
 <body>
 <div style="width: 1200px; margin: auto;">
 <h1>GAM File Format</h1>
-<p>GAM files are indexed text files. They contain global variables for each core Fallout game and its maps, and are found in master.dat\data and master.dat\maps, respectively.</p>
-<p>Format and editing of GAM files is identical between Fallout 1 and 2. </p>
 
-<h3>Structure</h3>
-<p>At the beginning there is a header - "MAP_GLOBAL_VARS:" in GAM files for maps and "GAME_GLOBAL_VARS:" in VAULT13.GAM.</p>
-<p>Next is a list of variables - first the name (as in most programming languages it can contain Latin letters, numbers, and underscores, as in "MVAR_Last_Respawn_Map"), then the assignment operator (:=, attributed to Pascal, Fallout's proprietary scripting language), then the initial value of the variable, and at the end a semicolon. </p>
-<p>Variables are referred to in scripts by their number in the list (starting at zero). </p>
-<p>Variable names are always written with capitalized internal words to distinguish them from map variables, and following each variable is a comment with its number. This is done for the convenience of programmers. </p>
-<p><b><u>Do not exceed</u> 256 characters in any one line in this file.</b> Any lines above 256 characters will overflow into the following line, causing all global variables after that to hold incorrect data. </p>
+<p>GAM files are text files that define initial integer variables. Fallout uses one game-wide GAM file for global variables and optional per-map GAM files for map variables. The files are not save files by themselves; they seed runtime arrays that are later stored inside saved game data and saved maps.</p>
 
-<h3>Example 1</h3>
+<h2>Locations</h2>
+
+<table>
+<tr><th>File</th><th>Section header</th><th>Runtime array</th><th>Used by</th></tr>
+<tr><td><tt>data\vault13.gam</tt></td><td><tt>GAME_GLOBAL_VARS:</tt></td><td>Game global variables.</td><td><tt>global_var</tt> and <tt>set_global_var</tt> script operations.</td></tr>
+<tr><td><tt>maps\*.gam</tt></td><td><tt>MAP_GLOBAL_VARS:</tt></td><td>Current map's map-variable array.</td><td><tt>map_var</tt> and <tt>set_map_var</tt> script operations.</td></tr>
+</table>
+
+<p>The map GAM filename is derived from the map filename. For example, when loading a clean <tt>maps\MYMAP.MAP</tt>, Fallout 2 CE also looks for <tt>maps\MYMAP.GAM</tt> and reads its <tt>MAP_GLOBAL_VARS:</tt> section.</p>
+
+<h2>Text syntax</h2>
+
+<p>The parser searches for the requested section header, then reads each following line as one variable entry. The variable's list index is its position in this parsed order, starting at zero. Scripts refer to variables by this numeric index, not by the source name.</p>
+
 <pre>
 MAP_GLOBAL_VARS:
 //MAP VAR                              NUMBER
@@ -29,8 +35,145 @@ dummyvar                := 0;           // (3)
 map_runs                := 0;           // (4)
 rebels_leave_date       := 100;         // (5)
 </pre>
+
+<table>
+<tr><th>Syntax element</th><th>Behavior</th></tr>
+<tr><td>Section header</td><td>The engine scans until the requested 16-character header prefix matches, such as <tt>GAME_GLOBAL_VARS:</tt> or <tt>MAP_GLOBAL_VARS:</tt>.</td></tr>
+<tr><td>Blank lines</td><td>Lines whose first character is a newline are skipped.</td></tr>
+<tr><td><tt>//</tt> lines</td><td>Lines beginning with <tt>//</tt> are skipped.</td></tr>
+<tr><td>Variable name</td><td>Useful to humans and tools, but ignored by the engine's value parser.</td></tr>
+<tr><td><tt>=</tt></td><td>The parser searches for an equals sign and reads a signed decimal integer after it with <tt>sscanf("%d")</tt>.</td></tr>
+<tr><td><tt>;</tt></td><td>If present, the semicolon terminates the parsed part of the line. Text after it is ignored.</td></tr>
+<tr><td>Missing <tt>=</tt></td><td>The variable entry still counts as a variable, but its value defaults to <tt>0</tt>.</td></tr>
+</table>
+
+<p>Although many examples use Pascal-style <tt>:=</tt>, Fallout 2 CE only looks for the <tt>=</tt> character when parsing the initial value. The colon is part of the conventional syntax, not the part that makes the value parse.</p>
+
+<p>Keep lines short. Fallout 2 CE reads GAM lines into a fixed buffer and requests at most 258 characters per line. The older practical editing rule is still good: keep each line under 256 characters so an overlong line cannot spill into the following logical entry in older tools or engines.</p>
+
+<h2>Parser quirks</h2>
+
+<p>The CE parser is simple and line-oriented. A compatible tool should mimic these quirks when it needs engine-equivalent results:</p>
+
+<table>
+<tr><th>Quirk</th><th>Consequence</th></tr>
+<tr><td>Section matching uses <tt>strncmp(..., 16)</tt>.</td><td>The requested header prefix is matched by its first 16 characters. Use the canonical section lines anyway.</td></tr>
+<tr><td>Only lines whose first character is <tt>\n</tt> are treated as blank.</td><td>Whitespace-only lines are not skipped by that blank-line test.</td></tr>
+<tr><td>Only lines starting with <tt>//</tt> are skipped as comments.</td><td>Indented <tt>//</tt> comments are not skipped by the comment test and can become zero-valued variable entries.</td></tr>
+<tr><td>The semicolon is removed before parsing the value.</td><td>Trailing comments after <tt>;</tt> do not affect the value.</td></tr>
+<tr><td>The parser searches for <tt>=</tt>, not <tt>:=</tt>.</td><td><tt>name = 1;</tt> and <tt>name := 1;</tt> both provide a parseable value.</td></tr>
+<tr><td>Values are read with decimal <tt>sscanf("%d")</tt>.</td><td>Use plain signed decimal initial values for maximum compatibility.</td></tr>
+<tr><td>A non-skipped line without <tt>=</tt> still increments the variable count.</td><td>Formatting or comments in the wrong place can shift all later variable indexes.</td></tr>
+</table>
+
+<h2>Index stability</h2>
+
+<p>Variable names are documentation; variable positions are the ABI. Inserting, deleting, or reordering lines changes the numeric indexes used by scripts. This can silently retarget every later <tt>global_var</tt>, <tt>map_var</tt>, or local editor reference that expects the old order.</p>
+
+<ul>
+<li>Append new variables at the end when compatibility matters.</li>
+<li>Leave obsolete variables as dummy placeholders instead of deleting them.</li>
+<li>Keep the trailing number comments in sync, but do not rely on those comments for parsing.</li>
+<li>Use naming conventions such as <tt>GVAR_...</tt> and <tt>MVAR_...</tt> for readability; the engine does not require them.</li>
+</ul>
+
+<h2>Game global variables</h2>
+
+<p>At game initialization and reset, Fallout 2 CE reads <tt>data\vault13.gam</tt> with the <tt>GAME_GLOBAL_VARS:</tt> section and builds the game-global integer array. Scripts access this array through game-global opcodes. Some engine systems also use hard-coded global variable indexes for reputation, addiction, car state, timers, and game progression.</p>
+
+<p>During save-game writing, the current game-global array is written into <tt>SAVE.DAT</tt> as big-endian 32-bit integers. Fallout 2 CE's load/save handler table stores the game-global array twice: the first copy is loaded back into the live array, and the second copy is read and discarded. This is save-file behavior, not GAM text-file behavior.</p>
+
+<h2>SAVE.DAT variable blocks</h2>
+
+<p>Fallout 2 CE saves and loads <tt>SAVE.DAT</tt> through a fixed handler table. The game-global variable array appears twice in that sequence. The duplicate is historical/engine behavior; CE reads the first copy into the live array and skips the second copy.</p>
+
+<table>
+<tr><th>Handler index</th><th>Save handler</th><th>Load handler</th><th>Meaning</th></tr>
+<tr><td><tt>2</tt></td><td><tt>scriptsSaveGameGlobalVars</tt></td><td><tt>scriptsLoadGameGlobalVars</tt></td><td>Primary game-global variable array.</td></tr>
+<tr><td><tt>3</tt></td><td><tt>_GameMap2Slot</tt></td><td><tt>_SlotMap2Game</tt></td><td>Saved maps, party-member PRO snapshots, automap transfer, and current map restoration.</td></tr>
+<tr><td><tt>4</tt></td><td><tt>scriptsSaveGameGlobalVars</tt></td><td><tt>scriptsSkipGameGlobalVars</tt></td><td>Duplicate game-global variable array, discarded on load.</td></tr>
+</table>
+
+<p>A save editor should update both global-variable copies if it rewrites <tt>SAVE.DAT</tt> in place. A reader that only wants current values can read handler <tt>2</tt> and ignore handler <tt>4</tt>, as CE does.</p>
+
+<h2>Map variables</h2>
+
+<p>Map variables are map-wide values for the currently loaded map. The <a href="map.html">MAP file</a> contains a <tt>global_vars_count</tt> field and a serialized array of map variables immediately after the header. For a clean, non-saved map, Fallout 2 CE later reloads the matching <tt>maps\*.gam</tt> file and replaces the map-variable array with the text-defined initial values.</p>
+
+<p>For a saved map, the saved-map flag is set in the MAP header, and the serialized map-variable array from the saved MAP/SAV data is preserved. In that case the map GAM file is not used to reset the current runtime values.</p>
+
+<table>
+<tr><th>Situation</th><th>Map-variable source</th></tr>
+<tr><td>Clean mapper-authored map</td><td>Initial values from <tt>maps\NAME.GAM</tt>, section <tt>MAP_GLOBAL_VARS:</tt>, after the MAP structure is read.</td></tr>
+<tr><td>Saved map state</td><td>Serialized map-variable array stored inside the saved MAP/SAV data.</td></tr>
+<tr><td>Missing or unreadable map GAM</td><td>The MAP's serialized map-variable array remains the available source; tools should tolerate this case.</td></tr>
+</table>
+
+<h3>Map load lifecycle</h3>
+
+<table>
+<tr><th>Step</th><th>Clean map</th><th>Saved map</th></tr>
+<tr><td>Read MAP header</td><td>Reads <tt>global_vars_count</tt>, <tt>local_vars_count</tt>, and flags.</td><td>Same.</td></tr>
+<tr><td>Read serialized map variables</td><td>Reads the map-variable array stored after the header.</td><td>Reads the saved runtime map-variable array.</td></tr>
+<tr><td>Read serialized local variables</td><td>Reads the local-variable array stored after map variables.</td><td>Reads the saved runtime local-variable array.</td></tr>
+<tr><td>Check saved-map flag</td><td>Flag <tt>0x00000001</tt> is clear.</td><td>Flag <tt>0x00000001</tt> is set.</td></tr>
+<tr><td>Load matching <tt>maps\NAME.GAM</tt></td><td>CE derives the GAM path from the map filename, reads <tt>MAP_GLOBAL_VARS:</tt>, replaces the current map-variable array, and updates <tt>global_vars_count</tt>.</td><td>Skipped; saved runtime map variables are preserved.</td></tr>
+<tr><td>Script locals</td><td>Not loaded from GAM. Clean-map script local counts can be rebuilt from <tt>scripts.lst</tt> metadata.</td><td>Not loaded from GAM. Saved script local values and offsets are preserved from the MAP/SAV data.</td></tr>
+</table>
+
+<h2>Local variables</h2>
+
+<p>Script local variables are related but are not defined by GAM files. Script local counts come from <tt>scripts\scripts.lst</tt> metadata such as <tt>local_vars=N</tt>, and the actual local values are stored in the MAP local-variable array. A script record points into that array with <tt>local_vars_offset</tt> and <tt>local_vars_count</tt>.</p>
+
+<p>This distinction matters when comparing files: <tt>MAP_GLOBAL_VARS:</tt> defines map variables used by <tt>map_var</tt>; <tt>local_vars=N</tt> in <tt>scripts.lst</tt> defines how much local storage a script wants; the MAP file stores both map-variable values and local-variable values as separate arrays.</p>
+
+<h2>Save metadata</h2>
+
+<p>Save-slot metadata is stored in <tt>SAVE.DAT</tt>, not in a GAM file. It is included here because global variables and map variables are saved alongside this metadata, and tools that inspect save state often need both.</p>
+
+<table>
+<tr><th>Save header field</th><th>Size or type</th><th>Description</th></tr>
+<tr><td><tt>signature</tt></td><td><tt>char[24]</tt></td><td>Save signature, normally beginning with <tt>FALLOUT SAVE FILE</tt>.</td></tr>
+<tr><td><tt>version_minor</tt></td><td><tt>int16</tt></td><td>Minor version stored in the save header.</td></tr>
+<tr><td><tt>version_major</tt></td><td><tt>int16</tt></td><td>Major version stored in the save header.</td></tr>
+<tr><td><tt>version_release</tt></td><td><tt>uint8</tt></td><td>Release/build byte in the save header.</td></tr>
+<tr><td><tt>character_name</tt></td><td><tt>char[32]</tt></td><td>Player character name shown in the load/save UI.</td></tr>
+<tr><td><tt>description</tt></td><td><tt>char[30]</tt></td><td>User-entered save description.</td></tr>
+<tr><td><tt>file_month</tt>, <tt>file_day</tt>, <tt>file_year</tt>, <tt>file_time</tt></td><td>date/time fields</td><td>Real-world save timestamp metadata.</td></tr>
+<tr><td><tt>game_month</tt>, <tt>game_day</tt>, <tt>game_year</tt>, <tt>game_time</tt></td><td>date/time fields</td><td>In-game date and game-time tick.</td></tr>
+<tr><td><tt>elevation</tt></td><td><tt>int16</tt></td><td>Current elevation for the save preview/state.</td></tr>
+<tr><td><tt>map</tt></td><td><tt>int16</tt></td><td>Current map index.</td></tr>
+<tr><td><tt>file_name</tt></td><td><tt>char[16]</tt></td><td>Current map file name used when restoring the saved map.</td></tr>
+</table>
+
+<p>Save slots also carry compressed saved maps, party member PRO snapshots, automap data, the player object, critter data, queue data, worldmap state, interface state, and other subsystems. GAM text files provide initial variables; the save slot preserves current variables and broader runtime state.</p>
+
+<h2>Editing notes</h2>
+
+<ul>
+<li>Do not reorder existing variables unless all scripts and tools that use their numeric indexes are updated.</li>
+<li>Do not assume the number in a trailing comment is authoritative; it is only a human annotation.</li>
+<li>Use decimal integer initial values for compatibility with the engine parser.</li>
+<li>For clean maps, update the matching <tt>maps\*.gam</tt> when changing initial map variables.</li>
+<li>For saved maps, edit the serialized MAP/SAV variable arrays if the goal is to change current runtime state.</li>
+<li>When documenting save-game state, distinguish initial values from <tt>.GAM</tt> and current values from <tt>SAVE.DAT</tt> or saved MAP files.</li>
+</ul>
+
+<h2>Source References</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/game.cc">Fallout 2 CE - game.cc</a></li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/map.cc">Fallout 2 CE - map.cc</a></li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc">Fallout 2 CE - scripts.cc</a></li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/loadsave.cc">Fallout 2 CE - loadsave.cc</a></li>
+</ul>
+
+<hr/>
 <h2>History</h2>
+<p>
+2026-05-05 - Expanded with Fallout 2 CE source-backed notes by <a href="https://github.com/OpenAI">OpenAI</a><br/>
 2020-01-16 - Ported from <a href="https://falloutmods.fandom.com/wiki/GAM_File_Format">https://falloutmods.fandom.com/wiki/GAM_File_Format</a>
+</p>
 
 </div>
 </body>

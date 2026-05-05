@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MSG File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>MSG File Format</h1>
+
+<p>MSG files are Fallout and Fallout 2 text message lists. They store numbered strings for dialogue, object names and descriptions, UI labels, combat floats, map names, script errors, and editor-facing vocabulary. The files are plain text, but the engine parser is not line-oriented: it scans for brace-delimited fields and reads entries as repeated <tt>{number}{audio}{text}</tt> triplets.</p>
+
+<p>Most paths below are relative to <tt>master.dat</tt>, <tt>critter.dat</tt>, or an unpacked Fallout data directory. Runtime loading prepends <tt>text\&lt;language&gt;\</tt> to the path passed by the caller, so <tt>game\misc.msg</tt> is normally loaded from <tt>text\english\game\misc.msg</tt> in English installations.</p>
+
+<h2>Format properties</h2>
+
+<table>
+<tr><th>Property</th><th>Description</th></tr>
+<tr><td>File type</td><td>Plain text. There is no magic number, version field, entry count, or table header.</td></tr>
+<tr><td>Entry shape</td><td>Every loaded entry is exactly three brace-delimited fields: <tt>{number}{audio}{text}</tt>.</td></tr>
+<tr><td>Indexing</td><td>The numeric message id is the key. File order is not used after loading.</td></tr>
+<tr><td>Byte order</td><td>Not applicable; MSG files are not binary records.</td></tr>
+<tr><td>Encoding</td><td>Use the game's legacy text encoding for the target language. Treat MSG files as game text assets, not UTF-8 by default, unless the target engine/toolchain explicitly converts them.</td></tr>
+</table>
+
+<h2>Entry syntax</h2>
+
+<pre>
+{100}{narrator}{Welcome to the wasteland.}
+{101}{}{This line has no audio field.}
+{102}{v13_intro}{Line breaks inside a field are ignored by the parser.}
+</pre>
+
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td><tt>number</tt></td><td>Signed decimal message id. The parser accepts an optional leading <tt>+</tt> or <tt>-</tt>, then digits only. Whitespace inside this field makes the file fail to load.</td></tr>
+<tr><td><tt>audio</tt></td><td>Optional speech or sound name. Dialogue code uses it when speech playback is requested and the current dialogue head can play speech.</td></tr>
+<tr><td><tt>text</tt></td><td>The displayed string. The engine returns this field for normal message lookups.</td></tr>
+</table>
+
+<p>The audio and text fields may be empty. The number field may not be empty. The parser does not require one entry per physical line; formatting outside brace fields is ignored until the next opening brace.</p>
+
+<p>Because formatting outside fields is skipped, comments can use almost any convention as long as they remain outside braces and do not contain a stray closing brace before the next entry. Common files often place comments or visual separators between entries; those are not part of the loaded data.</p>
+
+<h2>Parser behavior</h2>
+
+<p>The engine repeatedly reads three fields. A field starts at the next <tt>{</tt> and ends at the next <tt>}</tt>. Anything before the next <tt>{</tt> is skipped, which is why comments and blank lines work when they are outside fields.</p>
+
+<table>
+<tr><th>Behavior</th><th>Consequence</th></tr>
+<tr><td>Entries are read as <tt>{number}{audio}{text}</tt>.</td><td>A missing second or third field makes the file fail to load.</td></tr>
+<tr><td>EOF before a new entry is normal.</td><td>Trailing whitespace or comments outside fields are safe.</td></tr>
+<tr><td>A stray <tt>}</tt> before the next <tt>{</tt> is an error.</td><td>Do not put unbalanced closing braces in comments.</td></tr>
+<tr><td>The parser has no escape syntax.</td><td>A literal <tt>}</tt> cannot be stored in a field. A literal <tt>{</tt> inside a field is read as normal text.</td></tr>
+<tr><td>Newline characters inside a field are skipped.</td><td>Wrapped text joins together without an inserted space unless the file already contains one.</td></tr>
+<tr><td>Each field uses a fixed 1024-byte buffer.</td><td>Keep each number, audio, and text field below 1024 stored characters; shorter is safer for old tools.</td></tr>
+<tr><td>Numbers are parsed with decimal validation and <tt>atoi</tt>.</td><td>Use plain signed decimal ids. Hex values, leading/trailing whitespace, and symbolic names are not accepted by the engine parser.</td></tr>
+<tr><td>Message ids are kept sorted in memory.</td><td>Lookups are by numeric id, not file order.</td></tr>
+<tr><td>Duplicate ids replace earlier entries while loading.</td><td>The last successfully parsed entry for a number is the one that matters.</td></tr>
+<tr><td>A missing lookup returns the engine's fallback error string.</td><td>Some call sites display <tt>Error</tt>; others log an error and return their own fallback.</td></tr>
+</table>
+
+<p>A compatible reader can be simple: repeatedly skip characters until <tt>{</tt>, read bytes until <tt>}</tt>, repeat two more times, validate the first field as a signed decimal id, and insert or replace that id in a sorted or hashed message table. EOF is successful only when it happens while searching for the next entry, not while reading an unfinished field.</p>
+
+<h2>Important locations</h2>
+
+<table>
+<tr><th>Path</th><th>Typical use</th></tr>
+<tr><td><tt>text\&lt;language&gt;\game\misc.msg</tt></td><td>General game messages loaded during game initialization.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\map.msg</tt></td><td>Map and city names.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\script.msg</tt></td><td>Script-system messages.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\proto.msg</tt></td><td>Prototype editor/type vocabulary such as materials, damage types, calibers, body types, and shared labels.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pro_item.msg</tt></td><td>Item prototype names and descriptions.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pro_crit.msg</tt></td><td>Critter prototype names and descriptions.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pro_scen.msg</tt></td><td>Scenery prototype names and descriptions.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pro_wall.msg</tt></td><td>Wall prototype names and descriptions.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pro_tile.msg</tt></td><td>Tile prototype names and descriptions.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pro_misc.msg</tt></td><td>Misc prototype names and descriptions.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\dialog\*.msg</tt></td><td>Script dialogue files, loaded lazily from the script filename.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\combatai.msg</tt></td><td>Combat AI floats referenced by <a href="ai_txt.html">AI.TXT</a>, <tt>AIBDYMSG.TXT</tt>, and <tt>AIGENMSG.TXT</tt>.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\combat.msg</tt></td><td>General combat messages.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\item.msg</tt></td><td>Shared item-use messages, book text hooks, explosive messages, and other item-system strings.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\stat.msg</tt>, <tt>skill.msg</tt>, <tt>perk.msg</tt>, <tt>trait.msg</tt></td><td>Displayed names and descriptions for character stats, skills, perks, and traits.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\worldmap.msg</tt></td><td>Worldmap UI and encounter text.</td></tr>
+</table>
+
+<p>Fallout 2 CE falls back to <tt>text\english\...</tt> when the configured language's message file is missing. The original executables should be treated more conservatively: ship the localized file in the language directory you expect the game to use.</p>
+
+<h2>PRO dependencies</h2>
+
+<p>PRO files do not store object names or descriptions directly. The common PRO header stores a base <tt>message_num</tt>, and the PID object type selects one of the six <tt>pro_*.msg</tt> files. The engine resolves <tt>message_num + 0</tt> as the object name and <tt>message_num + 1</tt> as the description.</p>
+
+<table>
+<tr><th>PID type</th><th>Message list</th><th>Lookup</th></tr>
+<tr><td><tt>0</tt> item</td><td><tt>game\pro_item.msg</tt></td><td><tt>message_num + 0</tt> name, <tt>message_num + 1</tt> description.</td></tr>
+<tr><td><tt>1</tt> critter</td><td><tt>game\pro_crit.msg</tt></td><td><tt>message_num + 0</tt> name, <tt>message_num + 1</tt> description.</td></tr>
+<tr><td><tt>2</tt> scenery</td><td><tt>game\pro_scen.msg</tt></td><td><tt>message_num + 0</tt> name, <tt>message_num + 1</tt> description.</td></tr>
+<tr><td><tt>3</tt> wall</td><td><tt>game\pro_wall.msg</tt></td><td><tt>message_num + 0</tt> name, <tt>message_num + 1</tt> description.</td></tr>
+<tr><td><tt>4</tt> tile</td><td><tt>game\pro_tile.msg</tt></td><td><tt>message_num + 0</tt> name, <tt>message_num + 1</tt> description.</td></tr>
+<tr><td><tt>5</tt> misc</td><td><tt>game\pro_misc.msg</tt></td><td><tt>message_num + 0</tt> name, <tt>message_num + 1</tt> description.</td></tr>
+</table>
+
+<p>Vanilla prototypes usually use base ids that are multiples of 100, but the engine only adds the small name/description offset to whatever base id the PRO file contains. Tools should not infer an object id from the MSG id; read the PRO header and the corresponding list file instead.</p>
+
+<h2>Proto editor vocabulary</h2>
+
+<p><tt>proto.msg</tt> is not the same as the six <tt>pro_*.msg</tt> name/description files. It supplies shared vocabulary used by the engine and tools: item types, scenery types, materials, damage types, calibers, body types, kill types, and labels such as <tt>&lt;None&gt;</tt>. PRO data fields often store small integer ids that are displayed through <tt>proto.msg</tt> or other standard message files such as <tt>stat.msg</tt> and <tt>perk.msg</tt>.</p>
+
+<h2>MAP dependencies</h2>
+
+<p><tt>map.msg</tt> is a companion table for map and city names. Fallout 2 CE loads <tt>game\map.msg</tt> during map initialization and exposes it as a standard message list.</p>
+
+<table>
+<tr><th>Lookup</th><th>Message id</th></tr>
+<tr><td>Map display name for map index <tt>m</tt> and elevation <tt>e</tt>.</td><td><tt>m * 3 + e + 200</tt></td></tr>
+<tr><td>Worldmap city name for city index <tt>c</tt>.</td><td><tt>1500 + c</tt></td></tr>
+</table>
+
+<p>This means map names depend on both <tt>maps.txt</tt> ordering and <tt>map.msg</tt> numbering. Reordering maps without updating <tt>map.msg</tt> can make the UI show the wrong map names even when the MAP files themselves still load.</p>
+
+<h2>Script and dialogue use</h2>
+
+<p>Compiled scripts call message operations by numeric message-list id and message id. For normal script dialogue, the engine converts the list id to a script index, reads that script's filename from <tt>scripts\scripts.lst</tt>, strips the extension, and loads <tt>dialog\&lt;scriptname&gt;.msg</tt> on first use.</p>
+
+<p>For example, a script file named <tt>VAULT13.INT</tt> expects dialogue text in <tt>text\&lt;language&gt;\dialog\VAULT13.msg</tt>. The dialogue MSG file is cached after the first lookup. During dialogue speech playback, the audio field is used as the speech name if it is non-empty.</p>
+
+<table>
+<tr><th>Script value</th><th>Meaning</th></tr>
+<tr><td><tt>message_str(list, id)</tt></td><td>Looks up <tt>id</tt> in the dialogue list selected by <tt>list</tt>. In normal dialogue use, <tt>list</tt> is one-based: list <tt>1</tt> maps to the first entry in <tt>scripts.lst</tt>, list <tt>2</tt> to the second, and so on.</td></tr>
+<tr><td><tt>message_str(0, 0)</tt></td><td>Returns an empty string.</td></tr>
+<tr><td><tt>message_str(-1, -1)</tt></td><td>Returns an empty string.</td></tr>
+<tr><td><tt>message_str(-2, -2)</tt></td><td>Returns message <tt>650</tt> from <tt>proto.msg</tt>.</td></tr>
+<tr><td>Negative message id</td><td>The script opcode returns <tt>Error</tt> without attempting a normal lookup.</td></tr>
+</table>
+
+<p>Use the script compiler's generated constants or the same list numbering convention as the game scripts. Passing an arbitrary non-special list id to <tt>message_str</tt> can point at the wrong <tt>scripts.lst</tt> line or fail to load the expected dialogue file.</p>
+
+<h2>Speech audio field</h2>
+
+<p>The second MSG field is only meaningful to call sites that ask for speech. Normal string lookups return the text field and ignore the audio field. In game dialogue with speech enabled, <tt>message_str</tt> can pass the audio field to the lip-sync system.</p>
+
+<p>The dialogue code strips any extension from the audio field, combines it with the talking head art filename, and looks below <tt>SOUND\SPEECH\&lt;head&gt;\</tt>. The lip-sync loader reads <tt>&lt;audio&gt;.LIP</tt>, then loads the speech ACM named by the LIP file's internal audio-name field. In normal assets the MSG audio token, LIP filename, internal audio name, and ACM filename all match. Keep the audio token short and extension-free for best compatibility with the original fixed-size buffers. See <a href="lip.html">LIP File Format</a> for the full lookup path.</p>
+
+<h2>Message-list repository ids</h2>
+
+<p>Fallout 2 CE and sfall-compatible script APIs also expose repository lookups such as <tt>message_str_game(listId, messageId)</tt>. These ids are not the same namespace as normal dialogue <tt>message_str</tt> list ids.</p>
+
+<table>
+<tr><th>Range</th><th>Meaning</th></tr>
+<tr><td><tt>0x0000</tt> to <tt>0x0013</tt></td><td>Standard game message lists. Examples include <tt>combat.msg</tt>, <tt>combatai.msg</tt>, <tt>misc.msg</tt>, <tt>item.msg</tt>, <tt>map.msg</tt>, <tt>proto.msg</tt>, <tt>script.msg</tt>, <tt>skill.msg</tt>, <tt>stat.msg</tt>, <tt>trait.msg</tt>, and <tt>worldmap.msg</tt>. Some standard lists are only initialized while their owning UI/system is active.</td></tr>
+<tr><td><tt>0x1000</tt> to <tt>0x1005</tt></td><td>Prototype message lists for <tt>pro_item.msg</tt>, <tt>pro_crit.msg</tt>, <tt>pro_scen.msg</tt>, <tt>pro_wall.msg</tt>, <tt>pro_tile.msg</tt>, and <tt>pro_misc.msg</tt> in object-type order.</td></tr>
+<tr><td><tt>0x2000</tt> to <tt>0x2FFF</tt></td><td>Persistent extra message lists loaded from sfall's <tt>ExtraGameMsgFileList</tt> setting.</td></tr>
+<tr><td><tt>0x3000</tt> to <tt>0x3FFF</tt></td><td>Temporary extra message-list ids reserved by the CE repository.</td></tr>
+</table>
+
+<p>Fallout 2 CE's standard-list enum uses these ids:</p>
+
+<table>
+<tr><th>Id</th><th>Enum name</th><th>Common file</th></tr>
+<tr><td><tt>0</tt></td><td><tt>STANDARD_MESSAGE_LIST_COMBAT</tt></td><td><tt>combat.msg</tt></td></tr>
+<tr><td><tt>1</tt></td><td><tt>STANDARD_MESSAGE_LIST_COMBAT_AI</tt></td><td><tt>combatai.msg</tt></td></tr>
+<tr><td><tt>2</tt></td><td><tt>STANDARD_MESSAGE_LIST_SCRNAME</tt></td><td><tt>scrname.msg</tt></td></tr>
+<tr><td><tt>3</tt></td><td><tt>STANDARD_MESSAGE_LIST_MISC</tt></td><td><tt>misc.msg</tt></td></tr>
+<tr><td><tt>4</tt></td><td><tt>STANDARD_MESSAGE_LIST_CUSTOM</tt></td><td><tt>custom.msg</tt></td></tr>
+<tr><td><tt>5</tt></td><td><tt>STANDARD_MESSAGE_LIST_INVENTORY</tt></td><td><tt>inventry.msg</tt></td></tr>
+<tr><td><tt>6</tt></td><td><tt>STANDARD_MESSAGE_LIST_ITEM</tt></td><td><tt>item.msg</tt></td></tr>
+<tr><td><tt>7</tt></td><td><tt>STANDARD_MESSAGE_LIST_LSGAME</tt></td><td><tt>lsgame.msg</tt></td></tr>
+<tr><td><tt>8</tt></td><td><tt>STANDARD_MESSAGE_LIST_MAP</tt></td><td><tt>map.msg</tt></td></tr>
+<tr><td><tt>9</tt></td><td><tt>STANDARD_MESSAGE_LIST_OPTIONS</tt></td><td><tt>options.msg</tt></td></tr>
+<tr><td><tt>10</tt></td><td><tt>STANDARD_MESSAGE_LIST_PERK</tt></td><td><tt>perk.msg</tt></td></tr>
+<tr><td><tt>11</tt></td><td><tt>STANDARD_MESSAGE_LIST_PIPBOY</tt></td><td><tt>pipboy.msg</tt></td></tr>
+<tr><td><tt>12</tt></td><td><tt>STANDARD_MESSAGE_LIST_QUESTS</tt></td><td><tt>quests.msg</tt></td></tr>
+<tr><td><tt>13</tt></td><td><tt>STANDARD_MESSAGE_LIST_PROTO</tt></td><td><tt>proto.msg</tt></td></tr>
+<tr><td><tt>14</tt></td><td><tt>STANDARD_MESSAGE_LIST_SCRIPT</tt></td><td><tt>script.msg</tt></td></tr>
+<tr><td><tt>15</tt></td><td><tt>STANDARD_MESSAGE_LIST_SKILL</tt></td><td><tt>skill.msg</tt></td></tr>
+<tr><td><tt>16</tt></td><td><tt>STANDARD_MESSAGE_LIST_SKILLDEX</tt></td><td><tt>skilldex.msg</tt></td></tr>
+<tr><td><tt>17</tt></td><td><tt>STANDARD_MESSAGE_LIST_STAT</tt></td><td><tt>stat.msg</tt></td></tr>
+<tr><td><tt>18</tt></td><td><tt>STANDARD_MESSAGE_LIST_TRAIT</tt></td><td><tt>trait.msg</tt></td></tr>
+<tr><td><tt>19</tt></td><td><tt>STANDARD_MESSAGE_LIST_WORLDMAP</tt></td><td><tt>worldmap.msg</tt></td></tr>
+</table>
+
+<p>These ids are useful for scripting and diagnostics, but they are not a guarantee that a list is currently loaded. Modal UI lists can be unavailable outside the screen that owns them.</p>
+
+<table>
+<tr><th>Repository id</th><th>Prototype message list</th></tr>
+<tr><td><tt>0x1000</tt></td><td><tt>pro_item.msg</tt></td></tr>
+<tr><td><tt>0x1001</tt></td><td><tt>pro_crit.msg</tt></td></tr>
+<tr><td><tt>0x1002</tt></td><td><tt>pro_scen.msg</tt></td></tr>
+<tr><td><tt>0x1003</tt></td><td><tt>pro_wall.msg</tt> in CE's current registration order.</td></tr>
+<tr><td><tt>0x1004</tt></td><td><tt>pro_tile.msg</tt> in CE's current registration order.</td></tr>
+<tr><td><tt>0x1005</tt></td><td><tt>pro_misc.msg</tt></td></tr>
+</table>
+
+<p>Extra message lists are loaded from the <tt>game</tt> message directory. In CE, an <tt>ExtraGameMsgFileList</tt> entry such as <tt>mytext:12</tt> loads <tt>text\&lt;language&gt;\game\mytext.msg</tt> and assigns it repository id <tt>0x2000 + 12</tt>. Without explicit ids, the order of entries determines the assigned ids, so stable mods should prefer explicit numbering.</p>
+
+<p>One compatibility wrinkle: Fallout 2 CE's public proto-list enum names tiles before walls, but the actual registration loop follows object type order from the prototype system, where walls are type <tt>3</tt> and tiles are type <tt>4</tt>. If a tool exposes raw <tt>0x1003</tt>/<tt>0x1004</tt> repository ids, verify the target engine's behavior instead of trusting enum names alone.</p>
+
+<h2>Filtering and gender words</h2>
+
+<p>Dialogue MSG files loaded through the script dialogue path can be filtered after loading. The bad-word filter reads <tt>data\badwords.txt</tt>, uppercases both the bad-word list and a temporary copy of each line, and replaces matching words in the original text when the language filter preference is enabled.</p>
+
+<p>Fallout 2 CE also supports optional sfall-style gender-specific words. When enabled, text in the form <tt>&lt;male^female&gt;</tt> is rewritten according to the player character's gender after the dialogue MSG file is loaded.</p>
+
+<p>These filters are applied by the script dialogue loading path. They should not be assumed for every MSG file. Object names, map names, and general UI strings are usually consumed directly from their loaded message lists.</p>
+
+<h2>Tool implementation notes</h2>
+
+<ul>
+<li>Preserve unknown comments and spacing when possible, but parse only brace triplets if the goal is engine-equivalent behavior.</li>
+<li>Report unmatched braces with file offset information. The engine reports load failure near the current file offset, which is often enough to find a bad entry.</li>
+<li>Warn on duplicate ids. The engine allows them by replacement, but duplicates are usually accidental in source files.</li>
+<li>Warn on ids that look like shifted PRO bases, map indexes, or script list ids when editing a known file type.</li>
+<li>When editing localized files, compare id coverage against the English source file and report missing ids before runtime.</li>
+<li>For dialogue files, optionally validate that non-empty audio fields have matching <tt>.LIP</tt> and <tt>.ACM</tt> assets for the expected talking head.</li>
+</ul>
+
+<h2>Editing notes</h2>
+
+<ul>
+<li>Keep message ids stable. Scripts, PRO records, map names, AI data, and UI code refer to numbers, not to file order.</li>
+<li>Append or reserve ids when compatibility matters. Reusing an id changes every caller that already points at it.</li>
+<li>Keep comments outside braces. A stray closing brace in a comment can break the whole file.</li>
+<li>Do not add spaces inside numeric fields. Use <tt>{100}</tt>, not <tt>{ 100 }</tt>.</li>
+<li>When translating, preserve the numbering and audio fields even if the text changes.</li>
+<li>Do not rely on line order to override behavior except for duplicate ids inside the same file; callers always request a numeric id.</li>
+<li>Avoid literal braces in player-visible text. There is no escape sequence for <tt>}</tt>, and <tt>{</tt> is visually confusing even though it can be stored inside a field.</li>
+</ul>
+
+<h2>Related formats</h2>
+
+<ul>
+<li><a href="pro.html">PRO File Format</a> stores object message base ids and selects <tt>pro_*.msg</tt> by PID type.</li>
+<li><a href="map.html">MAP File Format</a> stores map indexes that are displayed through <tt>map.msg</tt>.</li>
+<li><a href="lst.html">LST File Format</a> documents the indexed lists used by prototypes, art, and scripts.</li>
+<li><a href="ai_txt.html">AI.TXT</a> references combat message ranges that resolve through <tt>combatai.msg</tt>.</li>
+<li><a href="lip.html">LIP File Format</a> documents the lip-sync companion files used with dialogue MSG audio fields.</li>
+</ul>
+
+<h2>Source references</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/message.cc">Fallout 2 CE <tt>message.cc</tt></a> - MSG loading, field parsing, duplicate replacement, bad-word filtering, gender-word filtering, and message-list repository behavior.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/message.h">Fallout 2 CE <tt>message.h</tt></a> - message item structures, field buffer size, and standard/proto message list ids.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.cc">Fallout 2 CE <tt>proto.cc</tt></a> - <tt>pro_*.msg</tt> loading and PRO name/description lookup.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/map.cc">Fallout 2 CE <tt>map.cc</tt></a> - <tt>map.msg</tt> loading and map/city name lookup formulas.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc">Fallout 2 CE <tt>scripts.cc</tt></a> - <tt>script.msg</tt> loading, lazy <tt>dialog\*.msg</tt> loading, and <tt>message_str</tt> speech handling.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/sfall_opcodes.cc">Fallout 2 CE <tt>sfall_opcodes.cc</tt></a> - <tt>message_str_game</tt> repository lookups.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_dialog.cc">Fallout 2 CE <tt>game_dialog.cc</tt></a> and <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/lips.cc"><tt>lips.cc</tt></a> - dialogue audio-field and speech/lip-sync lookup behavior.</li>
+</ul>
+
+</div>
+</body>
+</html>

@@ -11,6 +11,24 @@
 
 <p>In Fallout 2, map files are normally loaded from <tt>maps\*.map</tt>. When a save-game version exists, the engine checks for a matching <tt>.sav</tt> map first and loads that instead. The saved map has the same broad structure, but includes runtime state that a clean mapper-authored MAP may not contain.</p>
 
+<h2>Clean maps and saved maps</h2>
+
+<p>Clean <tt>.MAP</tt> files and saved <tt>.SAV</tt> map files use the same main section order. The difference is mostly in the meaning and freshness of the stored values: a clean map describes the mapper-authored starting state, while a saved map records the state after scripts, combat, inventory changes, doors, locks, and player interaction have modified the map.</p>
+
+<table>
+<tr><th>Area</th><th>Clean <tt>.MAP</tt></th><th>Saved <tt>.SAV</tt> map</th></tr>
+<tr><td>Header flags</td><td>Saved-map flag <tt>0x00000001</tt> is normally clear.</td><td>Saved-map flag is set before the engine writes an in-game map save.</td></tr>
+<tr><td><tt>last_visit_time</tt></td><td>Often zero or mapper/default data.</td><td>Updated to the current game time when saving, then used for aging and healing logic when returning.</td></tr>
+<tr><td>Map variables</td><td>Often initial values or zero-filled arrays.</td><td>Contains runtime <tt>map_var</tt> and script local-variable values.</td></tr>
+<tr><td>Script records</td><td>Can be rebuilt or initialized from map/object script references.</td><td>Preserves runtime script fields, local-variable offsets/counts, fixed parameters, and queued/removed state.</td></tr>
+<tr><td>Object flags</td><td>Usually close to PRO defaults plus mapper placement choices.</td><td>May include hidden, seen, queued, equipped, open-door, and other runtime bits.</td></tr>
+<tr><td>Critter payloads</td><td>Initial critter state.</td><td>Current hit points, radiation, poison, combat maneuver/results, AI packet, team, and last-attacker combat id.</td></tr>
+<tr><td>Items and inventory</td><td>Initial placement, stack sizes, charges, ammo, and container contents.</td><td>Current quantities, weapon ammo, charges, equipped state, moved items, and nested inventory contents.</td></tr>
+<tr><td>Doors and containers</td><td>Initial open/locked/jammed state.</td><td>Current open, locked, jammed, searched, or script-modified state.</td></tr>
+</table>
+
+<p>Fallout 2 CE also treats saved and clean maps differently during load. For example, when the saved-map flag is not set, loaded script <tt>local_vars_count</tt> is cleared and can be recovered later from <tt>scripts.lst</tt>; when the flag is set, saved local variable state is preserved. Static parsers should therefore avoid assuming that zeroed runtime fields mean the format lacks those fields.</p>
+
 <h2>File order</h2>
 
 <p>The engine reads a MAP file in this order:</p>
@@ -38,7 +56,7 @@
 <tr><td><tt>0x0018</tt></td><td><tt>int32</tt></td><td><tt>entering_elevation</tt></td><td>Default starting elevation, <tt>0</tt> through <tt>2</tt>.</td></tr>
 <tr><td><tt>0x001C</tt></td><td><tt>int32</tt></td><td><tt>entering_rotation</tt></td><td>Default starting rotation, <tt>0</tt> through <tt>5</tt>.</td></tr>
 <tr><td><tt>0x0020</tt></td><td><tt>int32</tt></td><td><tt>local_vars_count</tt></td><td>Number of local map variables following the global variable array.</td></tr>
-<tr><td><tt>0x0024</tt></td><td><tt>int32</tt></td><td><tt>script_index</tt></td><td>Map script index. <tt>-1</tt> means no map script.</td></tr>
+<tr><td><tt>0x0024</tt></td><td><tt>int32</tt></td><td><tt>script_index</tt></td><td>Map script list index. Fallout 2 CE creates a map script only when this value is greater than zero, then subtracts one for the zero-based <tt>scripts.lst</tt> index.</td></tr>
 <tr><td><tt>0x0028</tt></td><td><tt>int32</tt></td><td><tt>flags</tt></td><td>Save/elevation flags.</td></tr>
 <tr><td><tt>0x002C</tt></td><td><tt>int32</tt></td><td><tt>darkness</tt></td><td>Mapper darkness field. Fallout 2 CE writes <tt>1</tt>.</td></tr>
 <tr><td><tt>0x0030</tt></td><td><tt>int32</tt></td><td><tt>global_vars_count</tt></td><td>Number of global map variables immediately after the header.</td></tr>
@@ -71,11 +89,21 @@
 
 <table>
 <tr><th>Bits</th><th>Meaning</th></tr>
-<tr><td><tt>31..16</tt></td><td>Roof tile value.</td></tr>
-<tr><td><tt>15..0</tt></td><td>Floor tile value.</td></tr>
+<tr><td><tt>31..16</tt></td><td>Roof tile halfword.</td></tr>
+<tr><td><tt>15..0</tt></td><td>Floor tile halfword.</td></tr>
 </table>
 
-<p>Tile ids refer to entries in <tt>art\tiles\tiles.lst</tt>. Tile id <tt>1</tt> is the default/no-tile value used when the engine resets the square grid.</p>
+<p>Within each halfword, the low 12 bits are the tile art id and the high 4 bits are tile flags:</p>
+
+<table>
+<tr><th>Halfword bits</th><th>Mask</th><th>Meaning</th></tr>
+<tr><td><tt>11..0</tt></td><td><tt>0x0FFF</tt></td><td>Tile art id, resolved through <tt>art\tiles\tiles.lst</tt>.</td></tr>
+<tr><td><tt>15..12</tt></td><td><tt>0xF000</tt></td><td>Tile flags. Preserve these bits when rewriting unless intentionally normalizing the map.</td></tr>
+</table>
+
+<p>For rendering or preview purposes, use <tt>roof_id = (entry &gt;&gt; 16) &amp; 0x0FFF</tt> and <tt>floor_id = entry &amp; 0x0FFF</tt>. Tile id <tt>1</tt> is the default/no-tile value used when the engine resets the square grid.</p>
+
+<p>Fallout 2 CE normalizes roof tile data while loading: it keeps the roof art id, keeps the high-nibble roof flags, but clears bit <tt>0x1000</tt> from the roof halfword. The floor halfword is left as read. A read-only parser can report the raw file value; an editor that writes maps should decide explicitly whether it preserves raw tile halfwords or follows CE's normalized in-memory value.</p>
 
 <p>The tile grid is 100 by 100 square cells, not the 200 by 200 hex grid used by objects. Readers should not use object tile coordinates to index this array directly.</p>
 
@@ -135,9 +163,40 @@
 
 <p>Record size therefore depends on script type: system, item, and critter records are <tt>16</tt> int32 values (<tt>0x40</tt> bytes), timed records are <tt>17</tt> int32 values (<tt>0x44</tt> bytes), and spatial records are <tt>18</tt> int32 values (<tt>0x48</tt> bytes). To skip a script list safely, skip <tt>ceil(script_count / 16)</tt> extents, not just <tt>script_count</tt> records. The byte size of one extent is <tt>16 * record_size + 8</tt>.</p>
 
+<h3>Script ownership and local variables</h3>
+
+<p>There are two related script references in play. A PRO file stores the default script id for an object prototype. A MAP file stores runtime script instances: the object <tt>sid</tt> at offset <tt>0x40</tt> points to a script record in the MAP script lists, and the script record's <tt>owner_id</tt> points back to the object's <tt>id</tt>.</p>
+
+<table>
+<tr><th>Place</th><th>Field</th><th>Meaning</th></tr>
+<tr><td>PRO</td><td><tt>sid</tt></td><td>Default packed script id for objects created from that prototype. The low bits identify an entry in <tt>scripts\scripts.lst</tt>.</td></tr>
+<tr><td>MAP header</td><td><tt>script_index</tt></td><td>Map script reference. Fallout 2 CE treats positive values as one-based and stores <tt>script_index - 1</tt> in the created system script record.</td></tr>
+<tr><td>MAP object</td><td><tt>sid</tt></td><td>Runtime script instance id attached to this placed object, or <tt>-1</tt> when no runtime script is attached.</td></tr>
+<tr><td>MAP object</td><td><tt>script_index</tt></td><td>Cached script-list index for the object. For critters, CE updates this from the runtime script when creating an instance.</td></tr>
+<tr><td>MAP script record</td><td><tt>sid</tt></td><td>Runtime script instance id. The high byte is the script type.</td></tr>
+<tr><td>MAP script record</td><td><tt>script_index</tt></td><td>Zero-based index into <tt>scripts\scripts.lst</tt>; this selects the <tt>.int</tt> program name.</td></tr>
+<tr><td>MAP script record</td><td><tt>owner_id</tt></td><td>Object id of the owning object. For spatial/map helper scripts, the engine may create hidden helper objects as owners.</td></tr>
+</table>
+
+<p>When CE creates a new object script instance, it allocates a fresh runtime <tt>sid</tt>, copies the script-list index from the PRO script id, and sets <tt>owner_id</tt> to the object's id. For spatial scripts it also initializes <tt>built_tile</tt> from the object's tile/elevation and gives the script a default radius of <tt>3</tt>.</p>
+
+<p>Script local variables are stored in the MAP local-variable array, not inside the script record itself. A script record's <tt>local_vars_offset</tt> is the starting index in that array, and <tt>local_vars_count</tt> is the number of values reserved for the script. The <tt>local_vars=N</tt> metadata in <tt>scripts.lst</tt> tells the engine how many locals a script wants when it needs to allocate or re-discover them.</p>
+
+<p>Saved maps preserve local variable values and set the saved-map flag <tt>0x00000001</tt>. For non-saved maps, Fallout 2 CE clears loaded script <tt>local_vars_count</tt>; the script engine can later recover the intended count from <tt>scripts.lst</tt> and allocate fresh zeroed local variables. This is why clean mapper-authored maps and runtime <tt>.sav</tt> maps can differ even when their script records point to the same <tt>.int</tt> files.</p>
+
 <h2>Objects</h2>
 
 <p>The object section begins with the total number of saved objects across all elevations. Then, for each of the three elevations, it stores that elevation's object count followed by the serialized objects for that elevation.</p>
+
+<table>
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td><tt>total_object_count</tt></td><td>Total number of top-level saved objects across all elevations.</td></tr>
+<tr><td><tt>elevation_object_count[0]</tt></td><td>Number of top-level saved objects serialized for elevation <tt>0</tt>.</td></tr>
+<tr><td><tt>elevation_object_count[1]</tt></td><td>Number of top-level saved objects serialized for elevation <tt>1</tt>.</td></tr>
+<tr><td><tt>elevation_object_count[2]</tt></td><td>Number of top-level saved objects serialized for elevation <tt>2</tt>.</td></tr>
+</table>
+
+<p>Inventory objects are not counted in the per-elevation object counts. They are serialized recursively under their owner after the owner's base object and subtype payload. Objects with <tt>OBJECT_NO_SAVE</tt> are skipped when the engine writes the object lists.</p>
 
 <table>
 <tr><th>Offset</th><th>Field</th><th>Description</th></tr>
@@ -162,6 +221,38 @@
 </table>
 
 <p>After these base fields, the engine reads object instance data. This part is not determined by the object's FID. It is determined by the object PID and, for items and scenery, by the subtype in the matching <a href="pro.html">PRO file</a>.</p>
+
+<h3>Object flags</h3>
+
+<p>The object <tt>flags</tt> field at offset <tt>0x24</tt> is the runtime instance flag word. New objects usually inherit many of these bits from the matching PRO record, but MAP stores the instance value that the engine actually uses for rendering, blocking, saving, and interaction state. Static tools should preserve bits they do not interpret.</p>
+
+<table>
+<tr><th>Flag</th><th>Name</th><th>Meaning</th></tr>
+<tr><td><tt>0x00000001</tt></td><td><tt>OBJECT_HIDDEN</tt></td><td>Object is hidden and should not be visible or trigger normal spatial processing.</td></tr>
+<tr><td><tt>0x00000004</tt></td><td><tt>OBJECT_NO_SAVE</tt></td><td>Runtime/system object should not be saved with the map.</td></tr>
+<tr><td><tt>0x00000008</tt></td><td><tt>OBJECT_FLAT</tt></td><td>Flat object; rendered in the flat/pre-roof layer.</td></tr>
+<tr><td><tt>0x00000010</tt></td><td><tt>OBJECT_NO_BLOCK</tt></td><td>Does not block movement on its tile.</td></tr>
+<tr><td><tt>0x00000020</tt></td><td><tt>OBJECT_LIGHTING</tt></td><td>Object participates in light handling.</td></tr>
+<tr><td><tt>0x00000400</tt></td><td><tt>OBJECT_NO_REMOVE</tt></td><td>Runtime/system object should not be freed or removed normally.</td></tr>
+<tr><td><tt>0x00000800</tt></td><td><tt>OBJECT_MULTIHEX</tt></td><td>Multi-hex object.</td></tr>
+<tr><td><tt>0x00001000</tt></td><td><tt>OBJECT_NO_HIGHLIGHT</tt></td><td>Suppresses normal object highlight outline.</td></tr>
+<tr><td><tt>0x00002000</tt></td><td><tt>OBJECT_QUEUED</tt></td><td>Object has or had a queued event.</td></tr>
+<tr><td><tt>0x00004000</tt></td><td><tt>OBJECT_TRANS_RED</tt></td><td>Red translucency mode.</td></tr>
+<tr><td><tt>0x00008000</tt></td><td><tt>OBJECT_TRANS_NONE</tt></td><td>Opaque/no translucency mode.</td></tr>
+<tr><td><tt>0x00010000</tt></td><td><tt>OBJECT_TRANS_WALL</tt></td><td>Wall translucency mode.</td></tr>
+<tr><td><tt>0x00020000</tt></td><td><tt>OBJECT_TRANS_GLASS</tt></td><td>Glass translucency mode.</td></tr>
+<tr><td><tt>0x00040000</tt></td><td><tt>OBJECT_TRANS_STEAM</tt></td><td>Steam translucency mode.</td></tr>
+<tr><td><tt>0x00080000</tt></td><td><tt>OBJECT_TRANS_ENERGY</tt></td><td>Energy translucency mode.</td></tr>
+<tr><td><tt>0x01000000</tt></td><td><tt>OBJECT_IN_LEFT_HAND</tt></td><td>Item is equipped in the left hand.</td></tr>
+<tr><td><tt>0x02000000</tt></td><td><tt>OBJECT_IN_RIGHT_HAND</tt></td><td>Item is equipped in the right hand.</td></tr>
+<tr><td><tt>0x04000000</tt></td><td><tt>OBJECT_WORN</tt></td><td>Item is worn as armor.</td></tr>
+<tr><td><tt>0x10000000</tt></td><td><tt>OBJECT_WALL_TRANS_END</tt></td><td>Wall-transparency end marker used by the transparency system.</td></tr>
+<tr><td><tt>0x20000000</tt></td><td><tt>OBJECT_LIGHT_THRU</tt></td><td>Light passes through the object.</td></tr>
+<tr><td><tt>0x40000000</tt></td><td><tt>OBJECT_SEEN</tt></td><td>Object has been seen/discovered in runtime state.</td></tr>
+<tr><td><tt>0x80000000</tt></td><td><tt>OBJECT_SHOOT_THRU</tt></td><td>Projectiles can pass through the object.</td></tr>
+</table>
+
+<p>The six translucency bits from <tt>0x00004000</tt> through <tt>0x00080000</tt> are a mutually meaningful group in engine code. Fallout 2 CE names their combined mask <tt>OBJECT_FLAG_0xFC000</tt>. Open doors are represented on the base object flags as <tt>OBJECT_OPEN_DOOR</tt>, which is <tt>OBJECT_SHOOT_THRU | OBJECT_LIGHT_THRU | OBJECT_NO_BLOCK</tt>.</p>
 
 <h3>Common instance data</h3>
 
@@ -195,7 +286,7 @@
 
 <h3>Non-critter instance data</h3>
 
-<p>All non-critter objects store an instance <tt>flags</tt> field at <tt>0x54</tt>. Fallout 2 CE normalizes the uninitialized debug value <tt>0xCCCCCCCC</tt> to <tt>0</tt> when reading.</p>
+<p>All non-critter objects store an additional instance <tt>flags</tt> field at <tt>0x54</tt>. Fallout 2 CE normalizes the uninitialized debug value <tt>0xCCCCCCCC</tt> to <tt>0</tt> when reading. For lockable containers this field uses <tt>0x02000000</tt> for locked and <tt>0x04000000</tt> for jammed. Door lock and jam state uses the door <tt>open_flags</tt> field instead.</p>
 
 <table>
 <tr><th>Object kind</th><th>Extra fields after <tt>0x54</tt></th><th>Notes</th></tr>
@@ -225,7 +316,7 @@
 <tr><td>Generic</td><td><tt>5</tt></td><td>No extra MAP instance field is read by Fallout 2 CE.</td></tr>
 </table>
 
-<p>Door <tt>open_flags</tt> is also used for lock and jam state. Stairs and ladders use packed built-tile values for tile, elevation, and rotation; the destination map is positive for a map transition, zero for same-map movement, and <tt>-1</tt> is commonly used by older data to mean worldmap/no local target depending on context.</p>
+<p>Door <tt>open_flags</tt> is also used for lock and jam state. Stairs and ladders use packed built-tile values for tile, elevation, and rotation. The destination map field determines whether the destination is on the current map or should be handed to the map-transition system.</p>
 
 <h3>Exit grid instance data</h3>
 
@@ -238,6 +329,20 @@
 <tr><td><tt>0x60</tt></td><td><tt>elevation</tt></td><td>Destination elevation.</td></tr>
 <tr><td><tt>0x64</tt></td><td><tt>rotation</tt></td><td>Destination rotation.</td></tr>
 </table>
+
+<h3>Map transitions</h3>
+
+<p>Stairs, ladders, and exit grids all describe movement, but the engine does not treat their map fields identically. Stairs create a cross-map transition only when <tt>destination_map &gt; 0</tt>; otherwise they move the object on the current map. Ladders create a transition when <tt>destination_map != 0</tt>; otherwise they move the object on the current map.</p>
+
+<table>
+<tr><th>Map value</th><th>Meaning in transition handling</th><th>Notes</th></tr>
+<tr><td><tt>0</tt></td><td>Usually same-map movement before a transition is created.</td><td>If a <tt>MapTransition</tt> is explicitly created with map <tt>0</tt>, Fallout 2 CE converts it to <tt>-2</tt>.</td></tr>
+<tr><td><tt>&gt; 0</tt></td><td>Load another map by map index.</td><td>The destination tile, elevation, and rotation are then applied after the map load when valid.</td></tr>
+<tr><td><tt>-1</tt></td><td>Town map transition in CE's transition handler.</td><td>Older notes sometimes describe negative values differently for specific scenery data, so preserve the original value when rewriting.</td></tr>
+<tr><td><tt>-2</tt></td><td>World map transition in CE's transition handler.</td><td>This value can be produced internally from transition map <tt>0</tt>.</td></tr>
+</table>
+
+<p>Exit-grid misc objects store separate <tt>map</tt>, <tt>tile</tt>, <tt>elevation</tt>, and <tt>rotation</tt> fields instead of a packed built-tile value. Scenery stairs and ladders store tile/elevation/rotation in <tt>destination_built_tile</tt> and store the destination map separately.</p>
 
 <h2>Inventory objects</h2>
 
@@ -265,6 +370,111 @@
 <p>A MAP object carries both <tt>fid</tt> and <tt>pid</tt>. The <tt>fid</tt> tells the renderer which art is currently displayed; the <tt>pid</tt> points to the prototype that supplies object type, subtype, default flags, name and description message ids, item data, critter data, and other base behavior.</p>
 
 <p>For lightweight object enrichment, the most useful PRO fields are the PID high byte, item/scenery subtype at offset <tt>0x20</tt>, script id at offset <tt>0x1C</tt> for script-bearing prototypes, and the common header FID/message fields.</p>
+
+<h2>Inter-file dependencies</h2>
+
+<p>A MAP file can be parsed as bytes on its own, but it cannot be fully named, rendered, or semantically classified without other game data. Most fields are indexes into lists or ids that are resolved elsewhere.</p>
+
+<table>
+<tr><th>Dependency</th><th>Used for</th><th>MAP fields that lead there</th></tr>
+<tr><td><tt>proto\items\items.lst</tt>, <tt>proto\critters\critters.lst</tt>, <tt>proto\scenery\scenery.lst</tt>, <tt>proto\walls\walls.lst</tt>, <tt>proto\tiles\tiles.lst</tt>, <tt>proto\misc\misc.lst</tt></td><td>Resolve a PID's low bits to a PRO filename.</td><td><tt>pid</tt>.</td></tr>
+<tr><td><tt>proto\...\*.pro</tt></td><td>Determine object type/subtype payloads, default flags, message ids, FID, material, scripts, critter stats, item data, and scenery behavior.</td><td><tt>pid</tt>.</td></tr>
+<tr><td><tt>art\items\items.lst</tt>, <tt>art\critters\critters.lst</tt>, <tt>art\scenery\scenery.lst</tt>, <tt>art\walls\walls.lst</tt>, <tt>art\tiles\tiles.lst</tt>, <tt>art\misc\misc.lst</tt></td><td>Resolve FID art ids to FRM filenames.</td><td><tt>fid</tt>, tile roof/floor ids, PRO FID fields.</td></tr>
+<tr><td><tt>art\...\*.frm</tt></td><td>Render objects, tiles, inventory images, critters, walls, scenery, and animation frames.</td><td>Resolved from <tt>fid</tt> and art LST entries.</td></tr>
+<tr><td><tt>scripts\scripts.lst</tt></td><td>Resolve script indexes to <tt>.int</tt> script names and read <tt>local_vars=N</tt> metadata.</td><td>Header <tt>script_index</tt>, object <tt>script_index</tt>, script record <tt>script_index</tt>, PRO <tt>sid</tt>.</td></tr>
+<tr><td><tt>scripts\*.int</tt></td><td>Executable script bytecode used by the engine.</td><td>Resolved through <tt>scripts.lst</tt>.</td></tr>
+<tr><td><tt>text\english\game\pro_item.msg</tt>, <tt>pro_crit.msg</tt>, <tt>pro_scen.msg</tt>, <tt>pro_wall.msg</tt>, <tt>pro_tile.msg</tt>, <tt>pro_misc.msg</tt></td><td>Object names and descriptions. See <a href="msg.html">MSG File Format</a>.</td><td>PRO message ids reached through object <tt>pid</tt>.</td></tr>
+<tr><td><tt>data\maps.txt</tt> / worldmap map list</td><td>Resolve map indexes used by the header, transitions, stairs, ladders, and exit grids. See <a href="worldmap_dat.html">Worldmap.dat File Format</a> for the surrounding world-map definitions.</td><td>Header <tt>map_index</tt>, exit-grid <tt>map</tt>, scenery <tt>destination_map</tt>.</td></tr>
+<tr><td><tt>elevators.ini</tt> / elevator definitions in modern engines</td><td>Resolve elevator type and level behavior.</td><td>Elevator scenery <tt>elevator_type</tt> and <tt>elevator_level</tt>.</td></tr>
+</table>
+
+<p>For a static object index, PRO files are the most important dependency because MAP object payload size depends on PID type and item/scenery subtype. For a visual map preview, art LSTs and FRM files become equally important. For script analysis, <tt>scripts.lst</tt> is required even if the <tt>.int</tt> bytecode itself is not parsed.</p>
+
+<h2>Minimal parser recipe</h2>
+
+<ol>
+<li>Read the <tt>0xEC</tt>-byte header and accept only known versions, normally <tt>19</tt> or <tt>20</tt>.</li>
+<li>Clamp negative <tt>global_vars_count</tt> and <tt>local_vars_count</tt> to zero, matching Fallout 2 CE behavior.</li>
+<li>Read <tt>global_vars_count</tt> big-endian 32-bit integers, then <tt>local_vars_count</tt> big-endian 32-bit integers.</li>
+<li>For each elevation <tt>0</tt> through <tt>2</tt>, read <tt>10000</tt> tile entries only when that elevation's map flag bit is clear.</li>
+<li>Read the five script lists in system, spatial, timed, item, critter order. For each list, read <tt>script_count</tt>, compute <tt>ceil(script_count / 16)</tt> extents, and remember that every extent stores 16 physical script slots plus two trailer integers.</li>
+<li>Read the object section's total object count, then each elevation's top-level object count and object records.</li>
+<li>For each object, read the base object fields through <tt>script_index</tt>, then the common inventory metadata.</li>
+<li>Use the object's <tt>pid</tt> to determine object type. For item and scenery payloads, read the matching PRO file or a cached PRO index to determine the subtype-specific MAP payload.</li>
+<li>After each top-level or nested object, if <tt>inventory_length</tt> is non-zero, read that many inventory entries. Each entry is a quantity followed by another full serialized object.</li>
+<li>When rewriting, preserve pointer placeholders, unknown fields, runtime flags, and unrecognized subtype data unless the tool is intentionally normalizing the map.</li>
+</ol>
+
+<h2>Minimal static parser subset</h2>
+
+<p>Tools that only need map indexing, object listings, or lightweight previews do not need to interpret every runtime field. They still need to stay byte-aligned, especially across scripts, subtype payloads, and recursive inventory objects.</p>
+
+<table>
+<tr><th>Goal</th><th>Required parsing</th><th>Can usually ignore</th></tr>
+<tr><td>Map metadata</td><td>Header, map flags, map index, entrance tile/elevation/rotation, visit time.</td><td>Script records, object payloads, inventory contents.</td></tr>
+<tr><td>Tile preview</td><td>Header, elevation flags, present tile arrays, low 12-bit roof/floor tile ids.</td><td>Scripts, objects, object payloads, tile flag semantics beyond preservation.</td></tr>
+<tr><td>Object listing</td><td>Object counts, base object records, recursive inventory structure, enough PRO data to skip subtype payloads.</td><td>Combat internals, script runtime fields, pointer placeholders, exact animation state.</td></tr>
+<tr><td>Object enrichment</td><td>Object <tt>pid</tt>, <tt>fid</tt>, <tt>sid</tt>, <tt>script_index</tt>, PRO type/subtype, PRO message ids, related LST files.</td><td>Most saved-game runtime values unless they are part of the search/index feature.</td></tr>
+<tr><td>Transition extraction</td><td>Misc exit-grid payloads, scenery subtype payloads for stairs/ladders, packed built-tile decoding.</td><td>Unrelated item/critter payload details after they have been skipped correctly.</td></tr>
+</table>
+
+<p>A practical static reader can treat many fields as opaque while still exposing useful results. The important rule is that opaque does not mean absent: read or skip the correct number of bytes, keep raw values available when rewriting, and use PRO subtype information before deciding how long an object payload is.</p>
+
+<h2>Loader normalization and validation</h2>
+
+<p>A parser can either expose raw on-disk values or values after applying the same cleanup Fallout 2 CE performs while loading. Both are useful, but they should not be mixed without saying so.</p>
+
+<table>
+<tr><th>Field or section</th><th>CE load behavior</th><th>Parser/editor note</th></tr>
+<tr><td>Header version</td><td>Accepts versions <tt>19</tt> and <tt>20</tt>.</td><td>Reject or warn on other versions unless the tool explicitly supports them.</td></tr>
+<tr><td>Variable counts</td><td>Negative global/local variable counts are clamped to zero before allocation.</td><td>Report the raw value if validating corrupt maps; use the clamped value for safe reading.</td></tr>
+<tr><td>Clean-map script locals</td><td>When the saved-map flag is clear, loaded script <tt>local_vars_count</tt> is cleared.</td><td>Use <tt>scripts.lst</tt> metadata to recover intended local counts for analysis.</td></tr>
+<tr><td>Tile roof halfword</td><td>Roof data is normalized and roof flag bit <tt>0x1000</tt> is cleared in memory.</td><td>Rendering tools usually want the normalized art id; preserving editors may want the raw halfword.</td></tr>
+<tr><td>Object elevation</td><td>Object load runs inside an elevation loop and forces the object's elevation to that loop value.</td><td>A mismatch between stored object elevation and containing list is suspicious.</td></tr>
+<tr><td>Non-critter instance flags</td><td><tt>0xCCCCCCCC</tt> is normalized to <tt>0</tt>.</td><td>Treat this as an uninitialized/debug fill value, not as meaningful flag bits.</td></tr>
+<tr><td>Pointer placeholders</td><td>Many pointer slots are read and discarded; CE writes some as <tt>0</tt>.</td><td>Do not interpret these as file offsets or references.</td></tr>
+</table>
+
+<p>Useful consistency checks include: the sum of the three elevation object counts should match <tt>total_object_count</tt>; object elevations should match the elevation list they were read from; normal object tiles should be <tt>-1</tt> or <tt>0..39999</tt>; normal elevations should be <tt>0..2</tt>; rotations should normally be <tt>0..5</tt>; PID/FID/SID high bytes should be in known object or script type ranges; and script list extents should be exactly the number implied by <tt>script_count</tt>.</p>
+
+<p>Inventory recursion should also be bounded by the actual file length and by reasonable tool limits. The engine format is recursive, so a defensive reader should fail gracefully on cyclic-looking or absurdly deep inventory data instead of trusting counts blindly.</p>
+
+<h2>Unknown and preserved fields</h2>
+
+<p>Some MAP fields are known to exist and are preserved by the engine, but their complete semantic meaning is not documented here. A reader can expose them as raw values; a writer should keep them unchanged unless it has a specific reason to normalize them.</p>
+
+<table>
+<tr><th>Field</th><th>Location</th><th>What is known</th><th>Recommendation</th></tr>
+<tr><td><tt>field_3C[44]</tt></td><td>Header <tt>0x003C</tt>-<tt>0x00EB</tt></td><td>Reserved/unknown header payload preserved by the header read/write code.</td><td>Preserve exactly when rewriting.</td></tr>
+<tr><td><tt>program</tt></td><td>Script record shared tail</td><td>Original-engine program pointer slot. Fallout 2 CE writes <tt>0</tt> and discards the read value.</td><td>Do not treat as an offset or file reference.</td></tr>
+<tr><td><tt>field_48</tt></td><td>Script record shared tail</td><td>Runtime/unknown script integer preserved in the serialized record.</td><td>Expose as raw integer; preserve on rewrite.</td></tr>
+<tr><td><tt>field_50</tt></td><td>Script record shared tail</td><td>Runtime script field; CE also uses it while finding script run information.</td><td>Preserve unless rebuilding scripts intentionally.</td></tr>
+<tr><td><tt>outline</tt></td><td>Object base offset <tt>0x3C</tt></td><td>Outline color/state in saved maps. Clean map loading may ignore this value.</td><td>Preserve for saved maps and round-trip editors.</td></tr>
+<tr><td><tt>inventory_items_ptr</tt></td><td>Object common data offset <tt>0x50</tt></td><td>Serialized pointer placeholder from the original engine; CE reads and discards it.</td><td>Do not interpret as a pointer in the file.</td></tr>
+<tr><td>Extent <tt>next</tt></td><td>Script list extent trailer</td><td>Serialized linked-list pointer placeholder. CE writes <tt>0</tt> and ignores the read value.</td><td>Write <tt>0</tt> for CE-style output, or preserve raw value for strict round trips.</td></tr>
+<tr><td>Tile flag bits</td><td>High nibble of roof/floor halfwords</td><td>Used by the tile system, but not fully described by this MAP page.</td><td>Use low 12 bits for art ids; preserve high bits unless normalizing.</td></tr>
+</table>
+
+<p>When documenting or implementing support for these fields, keep source-backed behavior separate from interpretation. For example, "CE writes this slot as zero" is known behavior; "the original engine used every possible value this way" would require stronger evidence.</p>
+
+<h2>Writing and rebuilding maps</h2>
+
+<p>Writing a MAP file is not just writing the same records back in place. Several counts and flags describe the serialized shape of the file, so they must match the data being written.</p>
+
+<table>
+<tr><th>Area</th><th>Writer responsibility</th></tr>
+<tr><td>Header variable counts</td><td>Set <tt>global_vars_count</tt> and <tt>local_vars_count</tt> to the number of 32-bit values actually written after the header.</td></tr>
+<tr><td>Saved-map flag</td><td>Set or clear <tt>0x00000001</tt> deliberately. Saved maps preserve runtime state; clean maps may have script locals rebuilt from <tt>scripts.lst</tt>.</td></tr>
+<tr><td>Elevation flags</td><td>Set elevation-absent flags only when the elevation has no non-default tiles and no saveable top-level objects.</td></tr>
+<tr><td>Tile arrays</td><td>Write exactly <tt>10000</tt> tile entries for each elevation whose absent flag is clear, and no tile array for elevations whose absent flag is set.</td></tr>
+<tr><td>Script lists</td><td>Recompute each script type's live <tt>script_count</tt>, write enough 16-slot extents, and write each extent's <tt>length</tt> plus trailer.</td></tr>
+<tr><td>Object counts</td><td>Recompute the total and per-elevation top-level object counts. Do not include nested inventory objects in these counts.</td></tr>
+<tr><td>Object payloads</td><td>Use PID and PRO subtype data to choose the correct instance payload shape before writing.</td></tr>
+<tr><td>Inventory</td><td>Write each inventory entry immediately after its owner object as <tt>quantity</tt> followed by a full nested object.</td></tr>
+<tr><td>Pointer placeholders</td><td>Either preserve raw placeholder values for strict round trips, or write CE-style zero placeholders consistently.</td></tr>
+</table>
+
+<p>A format-preserving editor should avoid silently converting a saved map into a clean map or vice versa. In particular, normalizing script locals, object flags, outline state, tile flags, or pointer placeholders can be reasonable for a map-cleaning tool, but it should be an explicit operation.</p>
 
 <h2>Editing notes</h2>
 

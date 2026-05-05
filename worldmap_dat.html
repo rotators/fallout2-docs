@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Worldmap.dat File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>Worldmap.dat File Format</h1>
+
+<p><tt>worldmap.dat</tt> is the serialized state of the Fallout and Fallout 2 world map. It records where the party and car are, which towns and town-map entrances have been revealed, which world-map subtiles are fogged or visited, and which limited-use encounter entries have changed counters. It does not contain the full world map definition.</p>
+
+<p>The static world map definition is split across text files: <tt>data\maps.txt</tt> defines map indexes and map-level behavior, <tt>data\city.txt</tt> defines towns and entrances, and <tt>data\worldmap.txt</tt> defines terrain, tiles, encounter frequencies, random maps, and encounter tables. A useful editor usually needs to understand all four files, not only <tt>worldmap.dat</tt>.</p>
+
+<h2>What the file is</h2>
+
+<table>
+<tr><th>Property</th><th>Description</th></tr>
+<tr><td>File type</td><td>Binary runtime state stream. There is no magic number, version field, checksum, or embedded section names.</td></tr>
+<tr><td>Integer byte order</td><td>All stored values are 32-bit big-endian integers. Engine booleans are also written as 32-bit integers: <tt>0</tt> or <tt>1</tt>.</td></tr>
+<tr><td>Static dependency</td><td>The file can only be interpreted safely after the matching <tt>maps.txt</tt>, <tt>city.txt</tt>, and <tt>worldmap.txt</tt> data have been loaded.</td></tr>
+<tr><td>Variable length</td><td>Length depends on the number of loaded cities, each city's entrance count, the number of world-map tiles, and the number of stored encounter counters.</td></tr>
+<tr><td>Typical location</td><td>The engine reads and writes a plain <tt>worldmap.dat</tt> through the normal file layer. Save-game code also serializes the same world-map state into the save data.</td></tr>
+</table>
+
+<p>Classic documentation describes <tt>worldmap.dat</tt> as a cache, and that is a good mental model. It is small state derived from larger configuration files. If <tt>city.txt</tt> or <tt>worldmap.txt</tt> is changed but an old saved world-map state is reused, the saved state can point at the wrong amount of city, entrance, tile, or encounter data.</p>
+
+<h2>Binary layout</h2>
+
+<p>The stream is written as a sequence of big-endian int32 values. Offsets after the fixed header are data-dependent, so this table uses order instead of absolute offsets.</p>
+
+<table>
+<tr><th>Order</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0</tt></td><td><tt>did_meet_frank_horrigan</tt></td><td>Bool. The one-time Horrigan world-map movie encounter has already fired.</td></tr>
+<tr><td><tt>1</tt></td><td><tt>current_area_id</tt></td><td>Current city/area index, or <tt>-1</tt> when the party is not inside a world-map area.</td></tr>
+<tr><td><tt>2</tt></td><td><tt>world_pos_x</tt></td><td>Party world-map X coordinate in pixels.</td></tr>
+<tr><td><tt>3</tt></td><td><tt>world_pos_y</tt></td><td>Party world-map Y coordinate in pixels.</td></tr>
+<tr><td><tt>4</tt></td><td><tt>encounter_icon_is_visible</tt></td><td>Bool. The flashing random-encounter icon is visible.</td></tr>
+<tr><td><tt>5</tt></td><td><tt>encounter_map_id</tt></td><td>Map index selected for the pending encounter, or <tt>-1</tt>.</td></tr>
+<tr><td><tt>6</tt></td><td><tt>encounter_table_id</tt></td><td>Encounter table index selected for the pending encounter, or <tt>-1</tt>.</td></tr>
+<tr><td><tt>7</tt></td><td><tt>encounter_entry_id</tt></td><td>Entry index inside the selected encounter table, or <tt>-1</tt>.</td></tr>
+<tr><td><tt>8</tt></td><td><tt>is_in_car</tt></td><td>Bool. The party is currently travelling in the Highwayman.</td></tr>
+<tr><td><tt>9</tt></td><td><tt>current_car_area_id</tt></td><td>Area index where the car is parked, or <tt>-1</tt>.</td></tr>
+<tr><td><tt>10</tt></td><td><tt>car_fuel</tt></td><td>Current fuel amount. Fallout 2 CE defines the maximum as <tt>80000</tt>.</td></tr>
+<tr><td><tt>11</tt></td><td><tt>city_count</tt></td><td>Number of city state records that follow.</td></tr>
+<tr><td>repeat <tt>city_count</tt></td><td><tt>city_state_record</tt></td><td>Variable-length city state record, described below.</td></tr>
+<tr><td>after cities</td><td><tt>tile_count</tt></td><td>Number of world-map tile state records that follow.</td></tr>
+<tr><td>after <tt>tile_count</tt></td><td><tt>num_horizontal_tiles</tt></td><td>Width of the tile grid in whole world-map tiles.</td></tr>
+<tr><td>repeat <tt>tile_count</tt></td><td><tt>subtile_states</tt></td><td>For each tile, 42 int32 subtile states: 6 rows of 7 columns.</td></tr>
+<tr><td>after tiles</td><td><tt>counter_count</tt></td><td>Number of encounter counter records that follow.</td></tr>
+<tr><td>repeat <tt>counter_count</tt></td><td><tt>encounter_counter_record</tt></td><td>Triplet <tt>{encounter_table_index, encounter_entry_index, counter_value}</tt>.</td></tr>
+</table>
+
+<h2>City state records</h2>
+
+<p>Each city record stores only mutable state. Static art, labels, entrance coordinates, destination maps, and town-map definitions are read from <tt>city.txt</tt>.</p>
+
+<table>
+<tr><th>Relative order</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0</tt></td><td><tt>x</tt></td><td>World-map X coordinate for the city marker.</td></tr>
+<tr><td><tt>1</tt></td><td><tt>y</tt></td><td>World-map Y coordinate for the city marker.</td></tr>
+<tr><td><tt>2</tt></td><td><tt>state</tt></td><td>City visibility state. Common values are <tt>0</tt> unknown, <tt>1</tt> known, <tt>2</tt> visited, and <tt>-66</tt> invisible.</td></tr>
+<tr><td><tt>3</tt></td><td><tt>visited_state</tt></td><td>Town-map/menu state. The engine uses this separately from <tt>state</tt>; a town can be known on the world map before its town map is fully available.</td></tr>
+<tr><td><tt>4</tt></td><td><tt>entrance_count</tt></td><td>Number of entrance-state values following this city. The static engine capacity is 10 entrances per city.</td></tr>
+<tr><td>repeat <tt>entrance_count</tt></td><td><tt>entrance_state</tt></td><td>One int32 per entrance. <tt>0</tt> means off/hidden and <tt>1</tt> means on/available.</td></tr>
+</table>
+
+<p>Special encounters can move a city marker at runtime before revealing it. The saved <tt>x</tt> and <tt>y</tt> fields are therefore state, not merely copies of <tt>city.txt</tt>.</p>
+
+<h2>Subtile fog records</h2>
+
+<p>The world map is divided into large image tiles. Each tile contains a <tt>7 x 6</tt> grid of subtiles. In the text definition, each subtile is addressed as <tt>row_column</tt>, with rows <tt>0</tt> through <tt>6</tt> and columns <tt>0</tt> through <tt>5</tt>. In the binary state stream, the engine writes them column-first: for each column <tt>0..5</tt>, each row <tt>0..6</tt>.</p>
+
+<table>
+<tr><th>State</th><th>Meaning</th></tr>
+<tr><td><tt>0</tt></td><td>Unknown. Rendered as black/unexplored.</td></tr>
+<tr><td><tt>1</tt></td><td>Known. The region has been revealed but is still fogged.</td></tr>
+<tr><td><tt>2</tt></td><td>Visited. The region is fully visible.</td></tr>
+</table>
+
+<p>The party position is stored in world-map pixels. A subtile is 50 pixels square; a tile is therefore <tt>350 x 300</tt> pixels. The engine marks nearby subtiles while travelling, with a larger reveal radius when the player has the Scout perk.</p>
+
+<p>The coordinate mapping used by the engine is:</p>
+
+<pre>
+tile_index = (x / 350) % num_horizontal_tiles + (y / 300) * num_horizontal_tiles
+subtile_x = (x % 350) / 50
+subtile_y = (y % 300) / 50
+</pre>
+
+<h2>Encounter counters</h2>
+
+<p>The final table stores only encounter-table entries whose <tt>counter</tt> value is not <tt>-1</tt>. The counter table is sparse: each saved record names the encounter table and the entry inside that table, then stores the current counter value. This is mainly relevant to special or limited random encounters declared in <tt>worldmap.txt</tt>.</p>
+
+<p>Readers should validate every table index and entry index against the already-loaded <tt>worldmap.txt</tt> encounter tables before applying a counter. The engine code assumes the saved counts and indexes match the current static configuration.</p>
+
+<h2>File size formula</h2>
+
+<p>Because all values are int32, the size can be checked after parsing:</p>
+
+<pre>
+44
++ 4
++ sum_for_each_city(20 + entrance_count * 4)
++ 8
++ tile_count * 42 * 4
++ 4
++ counter_count * 12
+</pre>
+
+<p>The first <tt>44</tt> bytes are the eleven fixed state fields through <tt>car_fuel</tt>. The following <tt>4</tt> bytes store <tt>city_count</tt>. The two tile count fields take <tt>8</tt> bytes, and the counter count takes <tt>4</tt> bytes. A mismatch usually means the file was read with the wrong static data, the wrong endian order, or a corrupt count.</p>
+
+<h2>data\city.txt</h2>
+
+<p><tt>city.txt</tt> supplies static area definitions. Fallout 2 CE reads sections named <tt>[Area 00]</tt>, <tt>[Area 01]</tt>, and so on until the next required area is missing. For Fallout 2, the loaded area count is expected to match the compiled city count; CE's Fallout 2 city enum contains 76 entries, including normal towns, special encounter markers, fake/special states, and the car-out-of-gas marker.</p>
+
+<table>
+<tr><th>Key</th><th>Description</th></tr>
+<tr><td><tt>townmap_art_idx</tt></td><td>Interface art list index for the town map image. <tt>-1</tt> means no town-map art.</td></tr>
+<tr><td><tt>townmap_label_art_idx</tt></td><td>Optional interface art list index for the town-map label.</td></tr>
+<tr><td><tt>area_name</tt></td><td>Internal area lookup name. Displayed city names are normally read from <tt>map.msg</tt> with id <tt>1500 + area_index</tt>.</td></tr>
+<tr><td><tt>world_pos</tt></td><td>Two integers: world-map X and Y coordinate for the city marker.</td></tr>
+<tr><td><tt>start_state</tt></td><td><tt>off</tt> or <tt>on</tt>. Initial world-map visibility.</td></tr>
+<tr><td><tt>lock_state</tt></td><td>Optional <tt>off</tt> or <tt>on</tt>. Locked areas resist normal reveal behavior.</td></tr>
+<tr><td><tt>size</tt></td><td><tt>small</tt>, <tt>medium</tt>, or <tt>large</tt>. Selects the city marker size and hit-test behavior.</td></tr>
+<tr><td><tt>entrance_N</tt></td><td>One town-map entrance. The parsed fields are <tt>state</tt>, <tt>x</tt>, <tt>y</tt>, <tt>map_lookup_name</tt>, <tt>elevation</tt>, <tt>tile</tt>, and <tt>rotation</tt>.</td></tr>
+</table>
+
+<p>Entrance map names are matched against <tt>lookup_name</tt> values from <tt>data\maps.txt</tt>, not against raw <tt>.MAP</tt> filenames. The state field again uses <tt>off</tt>/<tt>on</tt>.</p>
+
+<h2>data\maps.txt</h2>
+
+<p>The world-map system reads <tt>maps.txt</tt> before <tt>city.txt</tt>. It defines the map index namespace used by MAP headers, city entrances, random encounters, scripts, and map loading.</p>
+
+<table>
+<tr><th>Key</th><th>Description</th></tr>
+<tr><td><tt>[Map 000]</tt>, <tt>[Map 001]</tt>, ...</td><td>Map sections are read in numeric order until <tt>lookup_name</tt> is missing.</td></tr>
+<tr><td><tt>lookup_name</tt></td><td>Symbolic name used by <tt>city.txt</tt>, <tt>worldmap.txt</tt>, and engine helpers.</td></tr>
+<tr><td><tt>map_name</tt></td><td>Base MAP filename. The engine lowercases it and appends <tt>.MAP</tt> when resolving by map index.</td></tr>
+<tr><td><tt>music</tt></td><td>Optional background music name started when the map loads.</td></tr>
+<tr><td><tt>ambient_sfx</tt></td><td>Optional comma-separated <tt>name:chance</tt> list. The engine stores up to six ambient sound definitions per map.</td></tr>
+<tr><td><tt>saved</tt></td><td><tt>yes</tt> or <tt>no</tt>. Controls whether the map is saveable and whether entering it marks the containing area visited.</td></tr>
+<tr><td><tt>dead_bodies_age</tt></td><td><tt>yes</tt> or <tt>no</tt>. Controls corpse aging behavior.</td></tr>
+<tr><td><tt>can_rest_here</tt></td><td>Three <tt>yes</tt>/<tt>no</tt> values, one per elevation.</td></tr>
+<tr><td><tt>pipboy_active</tt></td><td><tt>yes</tt> or <tt>no</tt> map flag. CE parses this flag, but the current CE <tt>wmMapPipboyActive</tt> helper returns the vault-suit movie state instead.</td></tr>
+<tr><td><tt>automap</tt></td><td>Optional sfall/CE automap display flag.</td></tr>
+<tr><td><tt>random_start_point_N</tt></td><td>Random encounter start points. Each entry can contain <tt>elev:</tt> and <tt>tile_num:</tt> values. Rotation defaults to <tt>-1</tt> in CE's start-point structure.</td></tr>
+</table>
+
+<p>Fallout 2 CE's source enum names 150 vanilla Fallout 2 map indexes, <tt>0</tt> through <tt>149</tt>, but the runtime map list is still loaded from <tt>data\maps.txt</tt>. Treat the text file as the authoritative ordering for a particular data set.</p>
+
+<h2>data\worldmap.txt</h2>
+
+<p><tt>worldmap.txt</tt> supplies world-map terrain, encounter probabilities, random encounter maps, tile art, mask names, and encounter table definitions.</p>
+
+<h3>[data]</h3>
+
+<table>
+<tr><th>Key</th><th>Description</th></tr>
+<tr><td><tt>none</tt>, <tt>rare</tt>, <tt>uncommon</tt>, <tt>common</tt>, <tt>frequent</tt>, <tt>forced</tt></td><td>Encounter-frequency percentage values. The symbolic names are later used by tile subtiles.</td></tr>
+<tr><td><tt>terrain_types</tt></td><td>Comma-separated <tt>name:difficulty</tt> list. Names are lowercased by the parser. Each terrain can have a companion <tt>[Random Maps: name]</tt> section.</td></tr>
+</table>
+
+<h3>[Random Maps: terrain]</h3>
+
+<p>Each terrain section can list up to 20 map lookup names as <tt>map_00</tt>, <tt>map_01</tt>, and so on. These are the candidate MAPs used for normal random encounters on that terrain.</p>
+
+<h3>[Tile Data] and [Tile N]</h3>
+
+<table>
+<tr><th>Key</th><th>Description</th></tr>
+<tr><td><tt>num_horizontal_tiles</tt></td><td>Width of the world-map tile grid in whole image tiles.</td></tr>
+<tr><td><tt>art_idx</tt></td><td>Interface art list index for the world-map tile FRM.</td></tr>
+<tr><td><tt>encounter_difficulty</tt></td><td>Optional modifier applied to the Outdoorsman check for detecting random encounters.</td></tr>
+<tr><td><tt>walk_mask_name</tt></td><td>Optional world-map mask name. Masks mark impassable parts of a tile. See <a href="msk.html">MSK File Format</a>.</td></tr>
+<tr><td><tt>row_column</tt></td><td>Subtile definition. Required for every <tt>0_0</tt> through <tt>6_5</tt> entry.</td></tr>
+</table>
+
+<p>A subtile definition is parsed as:</p>
+
+<pre>
+terrain fill morning_frequency afternoon_frequency night_frequency encounter_table
+</pre>
+
+<p>Valid fill tokens are <tt>no_fill</tt>, <tt>fill_n</tt>, <tt>fill_s</tt>, <tt>fill_e</tt>, <tt>fill_w</tt>, <tt>fill_nw</tt>, <tt>fill_ne</tt>, <tt>fill_sw</tt>, and <tt>fill_se</tt>. Fill controls how the fog/visited overlay blends at subtile edges.</p>
+
+<h3>[Encounter Table N]</h3>
+
+<table>
+<tr><th>Key</th><th>Description</th></tr>
+<tr><td><tt>lookup_name</tt></td><td>Name used by tile subtiles to select this encounter table.</td></tr>
+<tr><td><tt>maps</tt></td><td>Optional list of up to six map lookup names associated with the encounter table.</td></tr>
+<tr><td><tt>enc_00</tt>, <tt>enc_01</tt>, ...</td><td>Encounter entries. CE accepts up to 40 entries per table.</td></tr>
+</table>
+
+<p>An encounter-table entry can contain <tt>chance:</tt>, <tt>counter:</tt>, <tt>special</tt>, <tt>map:</tt>, one or more <tt>enc:</tt> clauses, <tt>scenery:</tt>, and optional <tt>if(...)</tt> conditions. Scenery tokens are <tt>none</tt>, <tt>light</tt>, <tt>normal</tt>, and <tt>heavy</tt>. Encounter situations are <tt>nothing</tt>, <tt>ambush</tt>, <tt>fighting</tt>, and <tt>and</tt>.</p>
+
+<p>The <tt>enc:</tt> clause names an encounter base type, optionally with a count range and situation:</p>
+
+<pre>
+enc:(2-4) gecko ambush
+enc:player
+</pre>
+
+<p>The special name <tt>player</tt> is accepted as a sub-encounter target and is stored internally as <tt>-1</tt>.</p>
+
+<h3>[Encounter: name]</h3>
+
+<p>Encounter base types are loaded on demand from sections named <tt>[Encounter: name]</tt>. Each section has <tt>type_00</tt>, <tt>type_01</tt>, and so on, with optional <tt>team_num</tt> and <tt>position</tt> keys.</p>
+
+<table>
+<tr><th>Token/key</th><th>Description</th></tr>
+<tr><td><tt>ratio:</tt></td><td>Weight or ratio for selecting this critter/object entry inside the encounter base type.</td></tr>
+<tr><td><tt>dead,</tt></td><td>Marks spawned critters from this entry as dead.</td></tr>
+<tr><td><tt>pid:</tt></td><td>PID to spawn. <tt>0</tt> is normalized to <tt>-1</tt>.</td></tr>
+<tr><td><tt>distance:</tt></td><td>Placement distance override.</td></tr>
+<tr><td><tt>tilenum:</tt></td><td>Fixed map tile number for placement.</td></tr>
+<tr><td><tt>item:</tt></td><td>Item PID to add. A quantity can be written as <tt>(min-max)</tt> before the PID. <tt>{wielded}</tt>, <tt>(wielded)</tt>, <tt>{worn}</tt>, or <tt>(worn)</tt> marks it equipped.</td></tr>
+<tr><td><tt>script:</tt></td><td>Script index to attach to the spawned entry.</td></tr>
+<tr><td><tt>team_num</tt></td><td>Team number applied to critter PID entries in the encounter.</td></tr>
+<tr><td><tt>position</tt></td><td>Formation token: <tt>surrounding</tt>, <tt>straight_line</tt>, <tt>double_line</tt>, <tt>wedge</tt>, <tt>cone</tt>, or <tt>huddle</tt>. Optional <tt>spacing:</tt> and <tt>distance:</tt> values can follow.</td></tr>
+</table>
+
+<h3>Encounter conditions</h3>
+
+<p>Encounter table entries and encounter base entries can include up to three conditions joined with <tt>and</tt> or <tt>or</tt>. Operators are <tt>==</tt>, <tt>!=</tt>, <tt>&lt;</tt>, <tt>&gt;</tt>, and the special placeholder <tt>_</tt> used by random checks.</p>
+
+<table>
+<tr><th>Condition</th><th>Meaning</th></tr>
+<tr><td><tt>if(rand(N))</tt></td><td>Random percentage-style condition parameter.</td></tr>
+<tr><td><tt>if(global(GVAR) == value)</tt></td><td>Global variable condition.</td></tr>
+<tr><td><tt>if(player(level) &gt; value)</tt></td><td>Player level condition.</td></tr>
+<tr><td><tt>if(days_played &gt; value)</tt></td><td>Game-days elapsed condition.</td></tr>
+<tr><td><tt>if(time_of_day &lt; value)</tt></td><td>Current time-of-day condition.</td></tr>
+<tr><td><tt>if(enctr(num_critters) &lt; value)</tt></td><td>Condition based on the number of encounter critters.</td></tr>
+</table>
+
+<p>The parser is forgiving in some places and brittle in others: it lowercases condition strings, searches for keywords inside comma-separated fragments, and mutates parse buffers in place. Tools should normalize only when they can preserve comments and original text that the engine ignores.</p>
+
+<h2>Runtime behavior</h2>
+
+<ul>
+<li>World-map initialization loads <tt>worldmap.msg</tt>, initializes general state, reads static configuration, marks nearby subtiles, and writes a temporary <tt>worldmap.dat</tt>.</li>
+<li>World-map reset starts the party near the default Arroyo coordinates, clears transient encounter fields, restores car fuel to <tt>80000</tt>, and reinitializes the fog state.</li>
+<li>Entering a saveable map can mark the containing area visited. Town-map entrances can be revealed independently by map and elevation.</li>
+<li>The world-map loop updates travel, car fuel, party healing, game time, fog reveal, and random encounter checks.</li>
+<li>Random encounter frequency is read from the current subtile's morning/afternoon/night frequency token, adjusted by game difficulty and car travel, then checked against Outdoorsman for detection.</li>
+</ul>
+
+<h2>Forced encounters</h2>
+
+<p>Forced encounters are part of the world-map runtime API, but the queued forced-encounter request is not written by <tt>wmWorldMap_save</tt>. If a tool is inspecting only <tt>worldmap.dat</tt>, it will see pending random encounter ids and icon state, not the separate transient forced-encounter request.</p>
+
+<table>
+<tr><th>Flag</th><th>Meaning</th></tr>
+<tr><td><tt>0x01</tt></td><td><tt>NO_CAR</tt>. If the party is in the car, park/update the car area before entering the forced encounter.</td></tr>
+<tr><td><tt>0x02</tt></td><td><tt>LOCK</tt>. Encounter flag parsed by the world-map API; behavior depends on the call path using it.</td></tr>
+<tr><td><tt>0x04</tt></td><td><tt>NO_ICON</tt>. Do not show the blinking encounter icon.</td></tr>
+<tr><td><tt>0x08</tt></td><td><tt>ICON_SP</tt>. Use the special encounter icon style.</td></tr>
+<tr><td><tt>0x10</tt></td><td><tt>FADEOUT</tt>. Fade out directly instead of using the encounter icon path.</td></tr>
+</table>
+
+<h2>Messages and names</h2>
+
+<p><tt>worldmap.msg</tt> stores world-map UI and encounter text, including the default random encounter prompt. City and map display names are a separate dependency: <tt>map.msg</tt> supplies map names with <tt>map_index * 3 + elevation + 200</tt> and city names with <tt>1500 + city_index</tt>. See <a href="msg.html">MSG File Format</a> for the message-list syntax.</p>
+
+<h2>Validation notes</h2>
+
+<ul>
+<li>Read every numeric value as a signed big-endian int32.</li>
+<li>Validate <tt>city_count</tt> against the loaded <tt>city.txt</tt> area count before applying city records.</li>
+<li>Validate every <tt>entrance_count</tt> against the static entrance count and the engine capacity of 10.</li>
+<li>Validate <tt>tile_count</tt> and <tt>num_horizontal_tiles</tt> against the loaded <tt>worldmap.txt</tt> tile grid.</li>
+<li>Require exactly 42 subtile states per tile and allow only known fog states unless you are preserving unknown modded data.</li>
+<li>Validate encounter counter indexes against the loaded encounter tables before writing into them.</li>
+<li>When comparing files, remember that moving a special encounter or revealing an entrance legitimately changes state that originally came from text files.</li>
+</ul>
+
+<h2>Editing notes</h2>
+
+<ul>
+<li>For new world-map content, edit <tt>maps.txt</tt>, <tt>city.txt</tt>, <tt>worldmap.txt</tt>, art, masks, MAP files, PROs, scripts, and messages first. Rebuild or discard stale <tt>worldmap.dat</tt> state afterward.</li>
+<li>Keep map indexes stable once saves exist. MAP headers, city entrances, encounter tables, scripts, and <tt>map.msg</tt> all depend on the same ordering.</li>
+<li>Do not treat old absolute-offset tables as universal. They describe one generated file for one static data set; this format is count-driven.</li>
+<li>When importing a save or state file into a different mod, report count and index mismatches instead of silently truncating or extending records.</li>
+<li>Use <tt>worldmap.dat</tt> edits for state repair, testing revealed areas, car location/fuel, encounter flags, and fog state. Use text-file edits for real world-map design.</li>
+</ul>
+
+<h2>Inter-file dependencies</h2>
+
+<table>
+<tr><th>File</th><th>Used for</th></tr>
+<tr><td><tt>data\maps.txt</tt></td><td>Map indexes, MAP filenames, music, ambient sound, save/rest flags, start points, and lookup names used by city and encounter definitions.</td></tr>
+<tr><td><tt>data\city.txt</tt></td><td>World-map areas, town-map art, marker positions, city size, visibility defaults, entrances, and entrance destination maps.</td></tr>
+<tr><td><tt>data\worldmap.txt</tt></td><td>Encounter frequencies, terrain types, world-map tile art/masks, subtile terrain/fog fill rules, random map pools, and random encounter definitions.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\worldmap.msg</tt></td><td>World-map UI and encounter text.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\map.msg</tt></td><td>City and map display names.</td></tr>
+<tr><td><tt>art\intrface\intrface.lst</tt> and FRMs</td><td>World-map tile art, city circles, town-map art, labels, and interface pieces.</td></tr>
+<tr><td><a href="msk.html">MSK files</a></td><td>Walk masks for impassable world-map regions, named by <tt>walk_mask_name</tt>.</td></tr>
+<tr><td><tt>maps\*.map</tt></td><td>Destination maps for city entrances and random encounters.</td></tr>
+<tr><td><tt>proto\...\*.pro</tt> and PRO LSTs</td><td>Encounter spawned objects and items through PIDs.</td></tr>
+<tr><td><tt>scripts\scripts.lst</tt> and <tt>scripts\*.int</tt></td><td>Scripts attached to random encounter entries or reached by destination maps.</td></tr>
+<tr><td>Sound and music assets</td><td>Map background music and ambient SFX named from <tt>maps.txt</tt>.</td></tr>
+</table>
+
+<h2>Related formats</h2>
+
+<ul>
+<li><a href="map.html">MAP File Format</a> uses map indexes that resolve through the world-map map list.</li>
+<li><a href="msg.html">MSG File Format</a> documents <tt>worldmap.msg</tt> and <tt>map.msg</tt> message lookup behavior.</li>
+<li><a href="msk.html">MSK File Format</a> documents the per-tile world-map walk masks referenced by <tt>walk_mask_name</tt>.</li>
+<li><a href="pro.html">PRO File Format</a> documents PIDs and prototypes used by random encounter spawn definitions.</li>
+<li><a href="lst.html">LST File Format</a> documents the art, prototype, and script list files that world-map definitions reference.</li>
+<li><a href="frm.html">FRM File Format</a> documents the interface art frames used for world-map tiles and town maps.</li>
+</ul>
+
+<h2>Source references</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc">Fallout 2 CE <tt>worldmap.cc</tt></a> - world-map static configuration loading, binary save/load order, city/map helpers, subtile fog, and encounter parsing.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.h">Fallout 2 CE <tt>worldmap.h</tt></a> - map flags, city states, Fallout 2 city/map indexes, encounter flags, and public world-map APIs.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/db.cc">Fallout 2 CE <tt>db.cc</tt></a> - big-endian int32 and bool read/write helpers used by the world-map state stream.</li>
+<li><a href="https://fallout.wiki/wiki/Worldmap.txt_File_Format">The Fallout Wiki <tt>Worldmap.txt</tt> File Format</a> - human-readable notes on the editable terrain and encounter definition file.</li>
+<li><a href="https://falloutmods.fandom.com/wiki/Worldmap.dat_File_Format">Vault-Tec Labs <tt>Worldmap.dat</tt> File Format</a> - older cache/table description for vanilla generated data.</li>
+</ul>
+
+</div>
+</body>
+</html>
