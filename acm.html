@@ -280,6 +280,21 @@ mid[-count] = -count * val
 
 <p>Fallout 2 CE's audio wrapper asks the ACM decoder for <tt>sample_count</tt> and then doubles it to get the decoded byte size. This is another useful confirmation that the header count is a count of 16-bit sample values, not bytes.</p>
 
+<h2>Channel Interpretation and Playback Context</h2>
+
+<p>The ACM header has a <tt>channels</tt> field, but Fallout-era playback code should not be treated as a pure "decode header, play header" pipeline. The compressed stream decodes to a flat sequence of signed 16-bit sample values. Grouping those values into frames is a playback decision: mono uses one sample value per frame, while stereo uses two interleaved sample values per frame.</p>
+
+<p>This distinction matters because some narration or speech-like files can play at the wrong speed if a tool trusts a stereo interpretation where the game context expects mono. In that failure mode, every two decoded values are incorrectly paired into one stereo frame, so the frame count is halved and the audio plays roughly twice as fast. Downmixing that mistaken stereo stream to mono does not fix the duration; the stream must be reinterpreted as mono before frame construction.</p>
+
+<table>
+<tr><th>Interpretation</th><th>Frame construction</th><th>Duration formula</th><th>Typical use</th></tr>
+<tr><td>Mono stream</td><td>Each decoded sample value is one frame.</td><td><tt>sample_count / sample_rate</tt></td><td>Speech, narration, many effects.</td></tr>
+<tr><td>Stereo stream</td><td>Pairs of decoded sample values form left/right frames.</td><td><tt>sample_count / (2 * sample_rate)</tt></td><td>Music and stereo assets.</td></tr>
+<tr><td>Header-driven</td><td>Uses <tt>channels</tt> from the ACM header.</td><td><tt>sample_count / (channels * sample_rate)</tt></td><td>Useful default for well-behaved standalone tools.</td></tr>
+</table>
+
+<p>For a format viewer, it is useful to expose both operations separately: reinterpret the sample stream as mono or stereo, and optionally downmix stereo to mono for listening. Reinterpretation changes duration; downmixing changes only channel count after the frame grouping has already happened.</p>
+
 <h2>WAVC Wrapper</h2>
 
 <p>Some Interplay/BioWare-era files use a <tt>WAVC</tt> wrapper before an ACM stream. This is not the normal Fallout 1/2 standalone <tt>.ACM</tt> file layout, but it appears in broader Interplay ACM documentation and tooling.</p>
@@ -311,6 +326,7 @@ struct WavcHeader {
 <li><tt>levels</tt> should produce a reasonable <tt>cols = 1 &lt;&lt; levels</tt>; very large values can overflow allocations.</li>
 <li><tt>rows</tt> should be nonzero and <tt>rows * cols</tt> should fit the decoder's block buffer limits.</li>
 <li>Decode should stop after exactly <tt>sample_count</tt> sample values even if the last block has padding or unused bitstream data.</li>
+<li>If a speech or narration file has the right pitch but plays too fast, test mono stream interpretation before assuming the ACM bitstream decode is wrong.</li>
 <li>Reject or explicitly handle filler codes not supported by the target engine.</li>
 </ul>
 
@@ -318,7 +334,8 @@ struct WavcHeader {
 
 <ul>
 <li>For Fallout 1/2 compatibility, encode to 16-bit PCM ACM and prefer <tt>22050 Hz</tt>.</li>
-<li>Use mono or stereo according to the playback path. Speech and many SFX are effectively mono; music is commonly treated as stereo by playback code.</li>
+<li>Use mono or stereo according to the playback path. Speech, narration, and many SFX are effectively mono; music is commonly treated as stereo by playback code.</li>
+<li>When converting or previewing audio, keep "reinterpret stream as mono/stereo" separate from "downmix to mono". Reinterpretation changes duration; downmixing does not.</li>
 <li>Dialogue speech file names are usually referenced from MSG without path or extension.</li>
 <li>When replacing talking-head speech, update or regenerate the matching <a href="lip.html">LIP</a> timing file if the duration or phrasing changes.</li>
 <li>Do not wrap Fallout replacement speech/music in WAV unless the target engine/tool explicitly supports that wrapper.</li>
