@@ -1,254 +1,1256 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>ACM File Format</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
+    <style>
+        .acm-player {
+            border: 1px solid #535b5aba;
+            background: #111;
+            padding: 12px;
+            margin: 10px 3px 18px 3px;
+        }
+
+        .acm-player-controls {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            align-items: end;
+        }
+
+        .acm-player label {
+            display: block;
+            color: #E0E0E0;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .acm-player input,
+        .acm-player select,
+        .acm-player button {
+            width: 100%;
+            box-sizing: border-box;
+            background: #222;
+            color: #CDCDCD;
+            border: 1px solid #535b5aba;
+            padding: 6px;
+            font: inherit;
+        }
+
+        .acm-player button {
+            cursor: pointer;
+            color: #F49205;
+            font-weight: bold;
+        }
+
+        .acm-player button:disabled {
+            color: #777;
+            cursor: default;
+        }
+
+        #acmWaveform {
+            display: block;
+            width: 100%;
+            height: 120px;
+            margin-top: 12px;
+            background: #050805;
+            border: 1px solid #333;
+        }
+
+        #acmStatus {
+            margin-top: 10px;
+            color: #F49205;
+        }
+
+        #acmMetadata {
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 <div style="width: 1200px; margin: auto;">
 <h1>ACM File Format</h1>
-<p>Description of ACM-file format. v1.0, written 2000-06-18 by Abel.</p> 
 
-<p>NOTE1: This is only an attempt to describe the author's current understanding of the format, so the names of all variables and items are pure relative, they can have absolutely different actual meaning. </p>
-<p>NOTE2: I cannot explain the unpacking algorithm at the moment, so I have toappeal to sources of unpacker. </p>
-<p>NOTE3: This description uses the following integer types: </p>
- 
- <pre style="background: #222; padding: 10px;">
-  DWORD      32-bit signed integer
-  WORD       16-bit signed integer
- </pre>
- 
- <p>Also C-like declarations and expressions are used. ACM file consists of two main parts: </p>
- <ul>
-   <li>short header</li>
-   <li>ACM-Stream, containing packed information </li>
- </ul>
- 
- <h3>Header</h3>
- <p>This table describes the meaning of header's fields:</p>
- <pre>
-  # of bits |     Value           |  Description
------------+---------------------+-----------------
-    24     | 0x97 0x28 0x03      | ACM-signature1
-     8     | 0x01                | ACM-signature2
-    32     | count of samples    | a sample is 16 bit
-    16     | # of channels       | 1-mono, 2-stereo (actually not used)
-    16     | frequency (bitrate) | 22050 in all known ACMs (actually not used)
-     4     | packAttrs           | (see below)
-    12     | packAttrs2          |
- </pre>
- <p>Explanation:</p>
- <p>I. First 4 bytes of every ACM-file contain 0x01032897, this is kind of signature and its exact meaning is opaque. </p>
- <p>Taking in account that Sig1 and Sig2 are read separately, one can conclude that Sig1 is an actual ACM-signature, while Sig2 is, for example, a version of ACM. </p>
- <p>II. Number of channels and Bitrate are specified in ACM-file, but they are not used in the games I know (Fallout1, Fallout2 and Planescape). All the known at the moment files are 22050 Hz. The # of channels are 1 or 2, but actual count of channels depends on actual usage of a resulting sound samples. </p>
- <p>III. The next two values specify the behaviour of unpacking algorithm. The packAttrs denotes the level of recursion in packed-data processing. If this value is zero, no actual data-unpacking is performed. The packAttrs2 is number of sub-blocks in a Packed-Block (see section 2). </p>
- 
- <h4>Actions</h4>
- <p>Based on header values the next variables are defined (the names correspond to the source code): </p>
- 
- <p>a) someSize = 1 << packAttrs (size of one sub-block)<br/>
- b) someSize2 = someSize * packAttrs2 (size of one PackedBlock)<br/>
- c) decBuff_size = 3*someSize/2 - 2 (size of "memory"-buffer), this values the sum of following geometric progression: <br/>
- <pre>2 + 4 + 8 +...+ ( 1 << (packAttrs-1) )</pre>
- <p>plus ( 1 << (packAttrs-1) ) once again. </p>
- <p>II. The following arrays are created (their names differs from source): </p>
- <p>a) PackedBlock = DWORD [someSize2] (corresponds to someBuff). It is more convenient to think of this array as of variable-length array DWORD [packAttrs2][someSize] or DWORD [cnt_of_blocks][block_len]. This array is used to process packed data. </p>
- <p>b) if packAttrs is not zero, then the following array is created and initialized with zero: MemoryBuffer = DWORD [decBuff_size] (corresponds to decompBuff). This array can be thought of as the following structure: </p>
- <pre>
-  {
-	  WORD  [someSize/2][2],
-	  DWORD [someSize/4][2],
-	  DWORD [someSize/16][2],
-		...
-	  DWORD [1][2]
-  }
-</pre>
-<p>Each item is used at a corresponding recursion level. This buffer is used as a seam, as a glue between two consecutive PackedBlocks during data-unpacking. </p>
-<p>c) AmplitudeBuffer = WORD [0x10000], and Buff_Middle = &amplitudeBuffer[0x8000], the latter is used as an array of WORDs with indices from -0x8000 to 0x7FFF. The buffer is filled with amplitude values used in subsequent unpacking.</p>
+<p>ACM is Interplay's compressed audio format. Fallout and Fallout 2 use it for music, speech, and sound effects. It is not related to Microsoft's Windows Audio Compression Manager despite sharing the same extension.</p>
 
-<h3>ACM-Stream</h3>
-<p>This is a bit-stream. It is organized as a collection of bit-blocks, each of which can be unpacked into someSize2 samples, i.e. into one PackedBlock. Let's call such a bit-block just a BitBlock. Then an ACM-Stream is just a sequence of BitBlocks (with various length). </p>
-<p>Each BitBlock contains information about amplitudes used in corresponding PackedBlock and the description of how to manage these amplitudes in order to produce sound samples. </p>
-<p>I. The first 20 bits of BitBlock can be considered as its header: </p>
+<p>An ACM file contains a 14-byte header followed by a little-endian bitstream. Decoding produces signed 16-bit PCM samples. The common Fallout rate is <tt>22050 Hz</tt>, with mono and stereo files both appearing in Interplay-era games. Modern decoders should read the channel count and sample rate from the header, but Fallout's own playback paths also make contextual assumptions about how the sound is used.</p>
+
+<h2>Browser ACM Player</h2>
+
+<p>The player below decodes ACM directly in the browser. The decoder mode controls how strict the parser is about Fallout-style standalone files, WAVC wrappers, and the Fallout 2 CE raw-block extension; the playback-channel mode controls how the decoded sample stream is grouped into audio frames. This matters because Fallout's playback context can override what the ACM header appears to say.</p>
+
+<p>If narration or speech sounds too fast, try <tt>Speech / narration mono</tt>. That mode treats each decoded sample value as one mono frame instead of pairing values as stereo; merely downmixing a stereo interpretation to mono still keeps the wrong duration.</p>
+
+<div class="acm-player">
+<div class="acm-player-controls">
+    <div>
+        <label for="acmFileInput">ACM file</label>
+        <input id="acmFileInput" type="file" accept=".acm,.wavc,.wav,audio/*" />
+    </div>
+    <div>
+        <label for="acmDecoderMode">Decoder mode</label>
+        <select id="acmDecoderMode">
+            <option value="auto">Auto / compatibility</option>
+            <option value="strict">Fallout strict</option>
+            <option value="ce">Fallout 2 CE extensions</option>
+            <option value="wavc">WAVC wrapper allowed</option>
+        </select>
+    </div>
+    <div>
+        <label for="acmOutputMode">Playback channels</label>
+        <select id="acmOutputMode">
+            <option value="context">Auto / context</option>
+            <option value="original">Use file header</option>
+            <option value="mono">Mono stream</option>
+            <option value="stereo">Stereo stream</option>
+            <option value="downmix">Header, downmix to mono</option>
+            <option value="speech">Speech / narration mono</option>
+            <option value="music">Music stereo</option>
+        </select>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button id="acmDecodeButton" type="button">Decode</button>
+    </div>
+</div>
+
+<div class="acm-player-controls" style="margin-top: 10px;">
+    <button id="acmPlayButton" type="button" disabled>Play</button>
+    <button id="acmStopButton" type="button" disabled>Stop</button>
+    <button id="acmDownloadWavButton" type="button" disabled>Download WAV</button>
+    <button id="acmClearButton" type="button">Clear</button>
+</div>
+
+<canvas id="acmWaveform" width="1160" height="120"></canvas>
+<div id="acmStatus">Choose an ACM file and decode it.</div>
+<pre id="acmMetadata"></pre>
+</div>
+
+<h2>Where Fallout Uses It</h2>
+
+<table>
+<tr><th>Folder</th><th>Use</th><th>Notes</th></tr>
+<tr><td><tt>sound\sfx\</tt></td><td>Interface, combat, ambient, scenery, weapon, and item sound effects.</td><td>Often loaded through the sound effects cache.</td></tr>
+<tr><td><tt>sound\music\</tt></td><td>Background music.</td><td>Map music names come from <tt>maps.txt</tt> or engine calls and are loaded as <tt>.ACM</tt>.</td></tr>
+<tr><td><tt>sound\speech\</tt></td><td>Spoken dialogue.</td><td>Dialogue <a href="msg.html">MSG</a> entries reference speech base names without the extension.</td></tr>
+</table>
+
+<p>ACM files may be loose in the data tree or stored in <a href="dat.html">DAT</a> archives. The DAT layer is independent: a DAT2 entry may be stored compressed with zlib, and the entry payload may itself be an ACM compressed audio file.</p>
+
+<h2>Relationship to MSG and LIP</h2>
+
+<p>Dialogue lines can reference an ACM file in the second field of an MSG entry:</p>
 
 <pre>
- bits | name
-------+------
-   4  | pwr
-  16  | val´
- </pre>
- 
- <p>Using these values the AmplitudeBuffer is filled as following: </p>
- <pre>
- count = 1 << pwr
- Buff_Middle [+0] = 0
- Buff_Middle [+1] = val
- Buff_Middle [+2] = 2*val
- ...
- Buff_Middle [+(count-1)] = (count-1)*val
- Buff_Middle [-1] = -val
- Buff_Middle [-2] = -2*val
- ...
- Buff_Middle [-count] = -count*val
- </pre>
- <p>II. PackedBlock is filled with values from AmplitudeBuffer. This is done with help of special filling subroutines (or Fillers).</p>
- <p>There are 14 different Fillers (their description will be given later): </p>
- 
- <pre>
-     Zero, Ret0, Linear, k13, k12, t15, k24,
-     k23, t27, k35, k34, k45, k44 and t37.
- </pre>
- <p>Each (well, almost each) Filler is intended to fill only one column of PackedBlock, which is considered as DWORD[packAttrs2][someSize] (n-th column in this case is an array { PB[0][n], PB[1][n], ... , PB[pa2-1][n] }). </p>
- <p>For each column of PackedBlock one of Fillers is invoked. To select the Filler, 5 bits are read from BitBlock, and this 5-bit value is used as an index in the following array: </p>
- 
- <pre>
-      Filler[32] = {Zero, Ret0, Ret0, Linear, Linear, Linear, Linear, Linear,
-        Linear, Linear, Linear, Linear, Linear, Linear, Linear, Linear,
-        Linear, k13, k12, t15, k24, k23, t27, k35,
-        k34, Ret0, k45, k44, Ret0, t37, Ret0, Ret0};
- </pre>
- <p>Two parameters are passed to a Filler: its index in the array and the number of a column it is applied to. </p>
- 
- <p>Thus the filling of PackedBlock with amplitudes can be outlined with the following C-pseudocode: </p>
- <pre>
-      for (int i=0; i&lt;someSize&semi i++) {
-        int Ind = get_bits_from_BitBlock (5)&semi;
-        (Fillers [Ind]) (Ind, i)&semi;
-     }
- </pre>
- <p>III. Description of Fillers. </p>
- <p>1) Zero. Fills the column with zero. Does not use any bits from BitBlock. </p>
- <p>2) Ret0. Breaks the filling of current PackedBlock, discards its contents and starts a new BitBlock. In rather large ACM-files I've tested I have not found this kind of Filler. </p>
- <p>3) Linear. 'Ind' parameter is the number of bits from BitBlocks which are used as an index of a value in AmplitudeBuffer. In pseudocode: </p>
- <pre>
-  Linear (int Ind, int column_n) {
-	for (int i=0; i&lt;packAttrs2; i++) {
-	   int val = get_bits_from_BitBlock (Ind);
-	   PackedBlock [i][column_n] = Buff_Middle [val];
-	}
- }
- </pre>
- <p>4) k13. Uses variable count of bits (up to 3) from BitBlock to fill the column: </p>
- <pre>
-     bit-sequence | action
-     (in order of |
-      appearance) |
-    --------------+-------------
-      0           | PB[i][n] = 0; PB[++i][n] = 0
-      1, 0        | PB[i][n] = 0
-      1, 1, 0     | PB[i][n] = Buff_Middle [-1]
-      1, 1, 1     | PB[i][n] = Buff_Middle [+1]
- </pre>
- <p>5) k12. Up to 2 bits: </p>
- <pre>
-  bit-seq. | value
-----------+-----------
-  0       | 0
-  1, 0    | Buff_Middle [-1]
-  1, 1    | Buff_Middle [+1]
- </pre>
- <p>6) k24. Up to 4 bits: </p>
- <pre>
-  bit-seq. | value(s)
-----------+-----------
-  0       | 0, 0
-  1,0     | 0
-  1,1,0,0 | Buff_Middle [-2]
-  1,1,1,0 | Buff_Middle [-1]
-  1,1,0,1 | Buff_Middle [+1]
-  1,1,1,1 | Buff_Middle [+2]
- </pre>
- <p>7) k23. Up to 3 bits: </p>
- <pre>
-  bit-seq. | value
-----------+-----------
-  0       | 0
-  1,0,0   | Buff_Middle [-2]
-  1,1,0   | Buff_Middle [-1]
-  1,0,1   | Buff_Middle [+1]
-  1,1,1   | Buff_Middle [+2]
- </pre>
- <p>8) k35. Up to 5 bits: </p>
- <pre>
-  bit-seq.     | value(s)            /---->  2bits | B_M index
---------------+-----------          |      -------+-----------
- 0            | 0, 0                |        0,0  | -3
- 1,0          | 0                   |        1,0  | -2
- 1,1,0,0      | Buff_Middle [-1]    |        0,1  | +2
- 1,1,0,1      | Buff_Middle [+1]    |        1,1  | +3
- 1,1,1, 2bits |    (*) -------------/
- </pre>
- <p>9) k34. Up to 4 bits: </p>
- <pre>
-  bit-seq.   | value               /---->  2bits | B_M index
-------------+-----------          |      -------+-----------
- 0          | 0                   |        0,0  | -3
- 1,0,0      | Buff_Middle [-1]    |        1,0  | -2
- 1,0,1      | Buff_Middle [-1]    |        0,1  | +2
- 1,1, 2bits |    (*) -------------/        1,1  | +3
- </pre>
- <p>10) k45. Up to 5 bits: </p>
- <pre>
-  bit-seq.    | value
--------------+-----------
-  0          | 0, 0
-  1,0        | 0
-  1,1, 3bits | 3bits->B_M index:  000-> -4, 100-> -3, 010-> -2, 110-> -1
-                                  001-> +1, 101-> +2, 011-> +3, 111-> +4
- </pre>
- <p>11) k44. Up to 4 bits: </p>
- <pre>
-  bit-seq.  | value
------------+-----------
-  0        | 0
-  1, 3bits | 3bits->index:  000-> -4, 100-> -3, 010-> -2, 110-> -1
-                            001-> +1, 101-> +2, 011-> +3, 111-> +4
- </pre>
- <p>12) t15. Takes 5 bits from BitBlock. This value is considered as a base-3 number with 3 digits. Each digit is used as an index in Buff_Middle. So 3 consecutive items of a column are filled. </p>
- <p>13) t27. Reads 7 bits and treats obtained value as base-5 number with 3 digits. Each digit is used as an index in Buff_Middle, in this way 3 consecutive items of a column are filled. </p>
- <p>14) t37. Takes 7 bits and treats their value as base-11 number with 2 digits. Each digit is used as an index in Buff_Middle, in this way two consecutive items of a column are filled. </p>
- <p>IV. Processing of data in PackedBlock. </p>
- <p>If packAttrs is zero, we do not have do to anything else, we've got the sound samples in PackedBlock. Otherwise we need to apply unpacking algorithm to values in PackedBlock to gain sound samples. This is done in functions unpackValues, sub_4d3fcc and sub_4d420c (see source). </p>
- <p>All I can tell about the unpacking is that it is recursive. During the process the PackedBlock is treated as DWORD [cnt_of_blocks][block_len]. At the beginning of the processing </p>
- <pre>
-  cnt_of_blocks = packAttrs2*2
-  block_len = someSize/2.
- </pre>
- <p>From some recursion level to the next level cnt_of_blocks is multiplied by 2 and block_len is divided by 2, so the value cnt_of_blocks*block_len is a constant. </p>
- <p>Also I can describe the properties of results from this data processing. NOTE: to study these properties, an algorithm was slightly altered: in unpackValues function the for-loop with increment of items of PackedBlock was commented out. This increment just adds a constant value to all the items of resulting array, so it is not a core part of algorithm. </p>
- <p>Let's call F(PB) the result of applying of functions mentioned above to a PackedBlock PB. And denote by PB{[i]=v} a PackedBlock where all the items are equal zero, except for the i-th one, which is assigned a value of v. That is PB{[1]=5} symbolizes the array {0,5,0,...,0}. </p>
- <p>The following properties of F can be observed: </p>
- <p>1) Compact support. </p>
- <pre>
-      F (PB{[i]=v}) is zero everywhere, except for items from i to i+2*someSize-1.
- </pre>
- <p>2) Periodicity with period someSize. </p>
- <pre>
-     F (PB{[i]=v}) and F (PB{i+someSize}=v) differ only in the way, that the latter one is shifted by someSize.
- </pre>
- <p>3) Linearity. </p>
- <pre>
-     F (PB{[i]=a, [j]=b}) = a*F (PB{[i]=1}) + b*F (PB{[j]=1}).
- </pre>
- <p>4) Almost orthogonality (a strange one). </p>
- <pre>
-      Let's denote f_i = F (PB{[i]=1}), where i=0..someSize-1. w_i =
-  F (PB{ [i]=1, [i+someSize]=1, [i+2*someSize]=1, ... } ), shifted to the left
-  by (2*someSize) items (that is we simply discard first items). And group
-  their indices in the following way:
-     g0 = {0}
-     g1 = {1}
-     g2 = {2, 3}
-     g3 = {4, 5, 6, 7}
-     ...
-     g_packAttrs = { ..., (someSize-1) }
- </pre>
- <p>Then any two vectors w_i and f_j are orthogonal (in sense of inner product) if their indices belong to different groups. </p>
- <p>Moreover, w_i and f_j belonging to the same group are orthogonal if i and j are of different parity (I am not sure of this term; what I mean to say is that one of them is even while the another is odd). May be w_i can be treated as test-functions for presence of f_j in a signal. </p>
- 
- <h3>Tools</h3>
- <a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#sound">TeamX utils</a><br/>
- <a href="https://fodev.net/files/archive/gap.zip">Game Audio Player</a>
+{104}{hak001}{Greetings, Chosen.}
+</pre>
 
- </div>
- </body>
- </html>
+<p>The engine resolves the speech name through the speech sound path and appends <tt>.ACM</tt>. If a talking-head line has lip sync, the corresponding <a href="lip.html">LIP</a> file stores mouth-shape timing; the ACM stores only audio. The two files must agree in duration closely enough for the animation to remain synchronized.</p>
+
+<h2>Header</h2>
+
+<p>All multi-byte header fields are little-endian. The packed stream after the header is read least-significant bit first.</p>
+
+<table>
+<tr><th>Offset</th><th>Size</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0x00</tt></td><td>4</td><td><tt>signature</tt></td><td>Bytes <tt>97 28 03 01</tt>. Often written as FourCC/value <tt>0x01032897</tt> in little-endian order.</td></tr>
+<tr><td><tt>0x04</tt></td><td>4</td><td><tt>sample_count</tt></td><td>Total number of decoded 16-bit sample values. For stereo, this counts interleaved left+right sample values, not just sample frames.</td></tr>
+<tr><td><tt>0x08</tt></td><td>2</td><td><tt>channels</tt></td><td>Usually <tt>1</tt> or <tt>2</tt>. Some decoders warn that some ACMs can lie about this value, so callers should also know the intended playback context.</td></tr>
+<tr><td><tt>0x0A</tt></td><td>2</td><td><tt>sample_rate</tt></td><td>Commonly <tt>22050</tt> Hz in Fallout data.</td></tr>
+<tr><td><tt>0x0C</tt></td><td>2</td><td><tt>attributes</tt></td><td>Low 4 bits are <tt>levels</tt>; high 12 bits are <tt>rows</tt> / <tt>subblocks</tt>.</td></tr>
+</table>
+
+<pre>
+struct AcmHeader {
+    uint32_t signature;     // 0x01032897, bytes 97 28 03 01
+    uint32_t sample_count;  // decoded int16 sample values
+    uint16_t channels;
+    uint16_t sample_rate;
+    uint16_t attributes;    // levels in low nibble, rows in high 12 bits
+};
+</pre>
+
+<h2>Derived Values</h2>
+
+<p>The attributes word drives block shape and transform depth:</p>
+
+<pre>
+levels = attributes & 0x000F
+rows   = attributes >> 4
+cols   = 1 << levels
+block_sample_values = rows * cols
+transform_state_values = levels == 0 ? 0 : (3 * cols / 2 - 2)
+</pre>
+
+<p>Older Fallout documentation calls <tt>levels</tt> <tt>packAttrs</tt> and <tt>rows</tt> <tt>packAttrs2</tt>. Both names describe the same header bits. A decoded block contains <tt>rows * (1 &lt;&lt; levels)</tt> 16-bit sample values before channel grouping. Decoder implementations name and size the previous-block transform buffer differently; the formula above matches the classic Fallout/CE-style description.</p>
+
+<p>Fallout 2 CE additionally processes the inverse transform in slices. It computes:</p>
+
+<pre>
+block_rows_per_step = 2048 / cols - 2
+if block_rows_per_step &lt; 1:
+    block_rows_per_step = 1
+</pre>
+
+<p>This limits how much previous-block state is needed while reconstructing the waveform.</p>
+
+<h2>High-Level Decode Flow</h2>
+
+<ol>
+<li>Read and validate the 14-byte header.</li>
+<li>Allocate a coefficient block of <tt>rows * cols</tt> integer values.</li>
+<li>Allocate a wrap/previous-sample buffer if <tt>levels != 0</tt>.</li>
+<li>For each encoded block, read a 20-bit scale header: 4-bit <tt>pwr</tt> and 16-bit <tt>val</tt>.</li>
+<li>Build the amplitude lookup table around index zero using multiples of <tt>val</tt>.</li>
+<li>For each column/subband, read a 5-bit filler code and decode coefficient values into the block.</li>
+<li>If <tt>levels != 0</tt>, apply the inverse transform using the wrap buffer from previous blocks.</li>
+<li>Output each reconstructed value shifted right by <tt>levels</tt> as signed 16-bit PCM.</li>
+<li>Stop after <tt>sample_count</tt> sample values have been produced.</li>
+</ol>
+
+<h2>Block Scale Header</h2>
+
+<p>Every encoded block starts with:</p>
+
+<table>
+<tr><th>Bits</th><th>Field</th><th>Description</th></tr>
+<tr><td>4</td><td><tt>pwr</tt></td><td>Amplitude table power. <tt>count = 1 &lt;&lt; pwr</tt>.</td></tr>
+<tr><td>16</td><td><tt>val</tt></td><td>Amplitude step value.</td></tr>
+</table>
+
+<p>The decoder fills the midpoint of a 65536-entry amplitude table so signed indexes can be used directly:</p>
+
+<pre>
+mid[0] = 0
+mid[1] = val
+mid[2] = 2 * val
+...
+mid[count - 1] = (count - 1) * val
+
+mid[-1] = -val
+mid[-2] = -2 * val
+...
+mid[-count] = -count * val
+</pre>
+
+<h2>Filler Codes</h2>
+
+<p>After the scale header, the decoder reads one 5-bit filler code per column. The column count is <tt>cols = 1 &lt;&lt; levels</tt>. Each filler writes values down that column across all rows.</p>
+
+<table>
+<tr><th>Code range</th><th>Name</th><th>Purpose</th></tr>
+<tr><td><tt>0</tt></td><td>zero</td><td>Fill the column with zero coefficients.</td></tr>
+<tr><td><tt>1</tt>, <tt>2</tt>, <tt>25</tt>, <tt>28</tt>, <tt>30</tt>, <tt>31</tt></td><td>invalid / fail in strict decoders</td><td>Classic notes called these <tt>Ret0</tt> or failed fillers. Standard ACMs should not need them.</td></tr>
+<tr><td><tt>3..16</tt></td><td>linear</td><td>Read the code number of bits per row and index the amplitude table directly.</td></tr>
+<tr><td><tt>17</tt></td><td><tt>k13</tt></td><td>Sparse coding for values <tt>0</tt>, <tt>-1</tt>, <tt>+1</tt>, with repeated-zero shortcuts.</td></tr>
+<tr><td><tt>18</tt></td><td><tt>k12</tt></td><td>Sparse coding for <tt>0</tt>, <tt>-1</tt>, <tt>+1</tt>.</td></tr>
+<tr><td><tt>19</tt></td><td><tt>t15</tt></td><td>5 bits encode three base-3 digits, mapping to <tt>-1, 0, +1</tt>.</td></tr>
+<tr><td><tt>20</tt></td><td><tt>k24</tt></td><td>Sparse coding for <tt>0</tt>, <tt>-2</tt>, <tt>-1</tt>, <tt>+1</tt>, <tt>+2</tt>, with repeated-zero shortcuts.</td></tr>
+<tr><td><tt>21</tt></td><td><tt>k23</tt></td><td>Sparse coding for <tt>0</tt> and nearby two-bit nonzero values.</td></tr>
+<tr><td><tt>22</tt></td><td><tt>t27</tt></td><td>7 bits encode three base-5 digits, mapping to <tt>-2..+2</tt>.</td></tr>
+<tr><td><tt>23</tt></td><td><tt>k35</tt></td><td>Sparse coding for <tt>0</tt>, <tt>-3</tt>, <tt>-2</tt>, <tt>-1</tt>, <tt>+1</tt>, <tt>+2</tt>, <tt>+3</tt>.</td></tr>
+<tr><td><tt>24</tt></td><td><tt>k34</tt></td><td>Sparse coding similar to <tt>k35</tt>, without the double-zero shortcut.</td></tr>
+<tr><td><tt>26</tt></td><td><tt>k45</tt></td><td>Sparse coding for <tt>0</tt> and three-bit nonzero values <tt>-4..-1</tt>, <tt>+1..+4</tt>.</td></tr>
+<tr><td><tt>27</tt></td><td><tt>k44</tt></td><td>Compact coding for <tt>0</tt> and three-bit nonzero values.</td></tr>
+<tr><td><tt>29</tt></td><td><tt>t37</tt></td><td>7 bits encode two base-11 digits, mapping to <tt>-5..+5</tt>.</td></tr>
+</table>
+
+<p>Fallout 2 CE also contains a handler for filler code <tt>31</tt> used by some Russian localizations. That handler reads raw 16-bit values for the entire block and acts as both filler and transformer. Standard Fallout ACM files and most general decoders treat code <tt>31</tt> as invalid.</p>
+
+<h2>Inverse Transform</h2>
+
+<p>The filled block is not always PCM yet. If <tt>levels</tt> is nonzero, the decoder applies a recursive inverse transform over subbands. Implementations often call this step <tt>juggle</tt>, <tt>untransform</tt>, or unpacking.</p>
+
+<p>The transform uses previous-block state, which is why a decoder must keep the wrap buffer between blocks. It also adds <tt>1</tt> to a subset of reconstructed values during processing before later output scaling. The final PCM sample value is the reconstructed integer shifted right by <tt>levels</tt> and written as signed little-endian 16-bit audio.</p>
+
+<p>For seeking backward in ACM audio, CE resets the decoder and decodes forward until the requested byte position is reached. A robust standalone decoder can use the same strategy for arbitrary seeks, but it is not cheap because the bitstream has no independent seek table.</p>
+
+<h2>PCM Output</h2>
+
+<table>
+<tr><th>Property</th><th>Decoded output</th></tr>
+<tr><td>Sample format</td><td>Signed 16-bit PCM</td></tr>
+<tr><td>Byte order</td><td>Little-endian when written to WAV/raw files on PC</td></tr>
+<tr><td>Sample count</td><td><tt>sample_count</tt> 16-bit values from the header</td></tr>
+<tr><td>Byte count</td><td><tt>sample_count * 2</tt></td></tr>
+<tr><td>Frame count</td><td><tt>sample_count / channels</tt>, if the channel count is trusted</td></tr>
+<tr><td>Duration</td><td><tt>sample_count / (channels * sample_rate)</tt> seconds</td></tr>
+</table>
+
+<p>Fallout 2 CE's audio wrapper asks the ACM decoder for <tt>sample_count</tt> and then doubles it to get the decoded byte size. This is another useful confirmation that the header count is a count of 16-bit sample values, not bytes.</p>
+
+<h2>WAVC Wrapper</h2>
+
+<p>Some Interplay/BioWare-era files use a <tt>WAVC</tt> wrapper before an ACM stream. This is not the normal Fallout 1/2 standalone <tt>.ACM</tt> file layout, but it appears in broader Interplay ACM documentation and tooling.</p>
+
+<pre>
+struct WavcHeader {
+    char     signature[4];      // "WAVC"
+    char     version[4];        // "V1.0"
+    uint32_t uncompressed_size;
+    uint32_t compressed_size;
+    uint32_t header_size;       // often 28
+    uint16_t channels;
+    uint16_t bits;
+    uint16_t sample_rate;
+    uint16_t unknown;
+};
+</pre>
+
+<p>If a file starts with <tt>WAVC</tt>, a general-purpose tool should skip to the embedded ACM header using the wrapper's header size rather than expecting <tt>97 28 03 01</tt> at offset <tt>0</tt>.</p>
+
+<h2>Validation Checklist</h2>
+
+<ul>
+<li>File should contain at least 14 bytes.</li>
+<li>Standalone Fallout ACM signature should be bytes <tt>97 28 03 01</tt>.</li>
+<li><tt>sample_count</tt> should be nonzero for normal playable files.</li>
+<li><tt>channels</tt> should normally be <tt>1</tt> or <tt>2</tt>.</li>
+<li><tt>sample_rate</tt> should usually be <tt>22050</tt> for Fallout data, though the format can carry other rates.</li>
+<li><tt>levels</tt> should produce a reasonable <tt>cols = 1 &lt;&lt; levels</tt>; very large values can overflow allocations.</li>
+<li><tt>rows</tt> should be nonzero and <tt>rows * cols</tt> should fit the decoder's block buffer limits.</li>
+<li>Decode should stop after exactly <tt>sample_count</tt> sample values even if the last block has padding or unused bitstream data.</li>
+<li>Reject or explicitly handle filler codes not supported by the target engine.</li>
+</ul>
+
+<h2>Authoring Notes</h2>
+
+<ul>
+<li>For Fallout 1/2 compatibility, encode to 16-bit PCM ACM and prefer <tt>22050 Hz</tt>.</li>
+<li>Use mono or stereo according to the playback path. Speech and many SFX are effectively mono; music is commonly treated as stereo by playback code.</li>
+<li>Dialogue speech file names are usually referenced from MSG without path or extension.</li>
+<li>When replacing talking-head speech, update or regenerate the matching <a href="lip.html">LIP</a> timing file if the duration or phrasing changes.</li>
+<li>Do not wrap Fallout replacement speech/music in WAV unless the target engine/tool explicitly supports that wrapper.</li>
+<li>When storing ACM in DAT2, remember that DAT compression is separate and optional. Recompressing already-compressed ACM data may not save much space.</li>
+</ul>
+
+<h2>Related Formats</h2>
+
+<ul>
+<li><a href="msg.html">MSG File Format</a> - dialogue lines can reference speech ACM base names.</li>
+<li><a href="lip.html">LIP File Format</a> - talking-head mouth timing paired with speech audio.</li>
+<li><a href="dat.html">DAT File Format</a> - archive container that often stores ACM resources.</li>
+<li><a href="map.html">MAP File Format</a> - maps select background music indirectly through map indexes and world-map configuration.</li>
+<li><a href="pro.html">PRO File Format</a> - item, scenery, and weapon sound IDs feed SFX name construction.</li>
+<li><a href="worldmap_config.html">World-map Text Configuration Files</a> - map music and ambient sound effects are referenced from text configuration.</li>
+</ul>
+
+<h2>Source References</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/sound_decoder.cc">Fallout 2 CE <tt>sound_decoder.cc</tt></a> - ACM header parsing, bitstream reader, filler table, inverse transform, and PCM output.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/audio_file.cc">Fallout 2 CE <tt>audio_file.cc</tt></a> - compressed audio file wrapper, decoded byte-size handling, and seek behavior.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_sound.cc">Fallout 2 CE <tt>game_sound.cc</tt></a> - Fallout music, speech, and SFX paths and ACM playback integration.</li>
+<li><a href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/interplayacm.c">FFmpeg <tt>interplayacm.c</tt></a> - independent Interplay ACM decoder, filler functions, block transform, and output model.</li>
+<li><a href="https://wiki.multimedia.cx/index.php/Interplay_ACM">MultimediaWiki Interplay ACM</a> - concise header summary, broader game usage, and WAVC wrapper note.</li>
+<li><a href="https://falloutmods.fandom.com/wiki/ACM_File_Format">Vault-Tec Labs ACM File Format</a> - Abel's original Fallout-oriented ACM notes.</li>
+</ul>
+
+<h2>Tools</h2>
+
+<ul>
+<li><a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#sound">TeamX sound utilities</a></li>
+<li><a href="https://fodev.net/files/archive/gap.zip">Game Audio Player</a></li>
+<li><a href="https://sourceforge.net/projects/libacm.berlios/">libacm</a></li>
+<li><a href="https://ffmpeg.org/">FFmpeg</a> with the <tt>interplayacm</tt> decoder</li>
+<li><a href="https://www.moddb.com/games/fallout-2/downloads/snd2acm">SND2ACM</a></li>
+</ul>
+
+<h2>Credits</h2>
+
+<p>The original Fallout ACM write-up was written by Abel in 2000. Later decoder work by Marko Kreen, Adam Gashlin, Paul B Mahol, Fallout 2 CE contributors, and other open-source authors makes the format much easier to verify today.</p>
+
+</div>
+<script>
+(function () {
+    "use strict";
+
+    var fileInput = document.getElementById("acmFileInput");
+    var decoderMode = document.getElementById("acmDecoderMode");
+    var outputMode = document.getElementById("acmOutputMode");
+    var decodeButton = document.getElementById("acmDecodeButton");
+    var playButton = document.getElementById("acmPlayButton");
+    var stopButton = document.getElementById("acmStopButton");
+    var downloadButton = document.getElementById("acmDownloadWavButton");
+    var clearButton = document.getElementById("acmClearButton");
+    var canvas = document.getElementById("acmWaveform");
+    var status = document.getElementById("acmStatus");
+    var metadata = document.getElementById("acmMetadata");
+    var ctx = canvas.getContext("2d");
+
+    var audioContext = null;
+    var sourceNode = null;
+    var decodedFile = null;
+    var renderedAudio = null;
+    var wavUrl = null;
+
+    var MAP_1BIT = [-1, 1];
+    var MAP_2BIT_NEAR = [-2, -1, 1, 2];
+    var MAP_2BIT_FAR = [-3, -2, 2, 3];
+    var MAP_3BIT = [-4, -3, -2, -1, 1, 2, 3, 4];
+
+    function BitReader(bytes, offset, strict) {
+        this.bytes = bytes;
+        this.byteOffset = offset;
+        this.bitBuffer = 0;
+        this.bitCount = 0;
+        this.strict = strict;
+        this.paddedBits = 0;
+    }
+
+    BitReader.prototype.getBits = function (count) {
+        var value = 0;
+        var written = 0;
+
+        while (written < count) {
+            if (this.bitCount === 0) {
+                if (this.byteOffset >= this.bytes.length) {
+                    if (this.strict) {
+                        throw new Error("Unexpected end of ACM bitstream.");
+                    }
+                    this.bitBuffer = 0;
+                    this.paddedBits += 8;
+                } else {
+                    this.bitBuffer = this.bytes[this.byteOffset++];
+                }
+                this.bitCount = 8;
+            }
+
+            var take = Math.min(this.bitCount, count - written);
+            var mask = (1 << take) - 1;
+            value += (this.bitBuffer & mask) * Math.pow(2, written);
+            this.bitBuffer = Math.floor(this.bitBuffer / Math.pow(2, take));
+            this.bitCount -= take;
+            written += take;
+        }
+
+        return value;
+    };
+
+    function readU16LE(bytes, offset) {
+        return bytes[offset] | (bytes[offset + 1] << 8);
+    }
+
+    function readU32LE(bytes, offset) {
+        return (bytes[offset] | (bytes[offset + 1] << 8) | (bytes[offset + 2] << 16) | (bytes[offset + 3] << 24)) >>> 0;
+    }
+
+    function readAscii(bytes, offset, length) {
+        var text = "";
+        for (var i = 0; i < length; i++) {
+            text += String.fromCharCode(bytes[offset + i] || 0);
+        }
+        return text;
+    }
+
+    function sign16(value) {
+        value &= 0xFFFF;
+        return value & 0x8000 ? value - 0x10000 : value;
+    }
+
+    function clamp16(value) {
+        if (value < -32768) {
+            return -32768;
+        }
+        if (value > 32767) {
+            return 32767;
+        }
+        return value | 0;
+    }
+
+    function AcmDecoder(buffer, mode) {
+        this.bytes = new Uint8Array(buffer);
+        this.mode = mode;
+        this.allowWavc = mode !== "strict";
+        this.allowCode31 = mode === "auto" || mode === "ce";
+        this.strict = mode === "strict";
+        this.wrapper = null;
+        this.parseHeader();
+    }
+
+    AcmDecoder.prototype.parseHeader = function () {
+        var offset = 0;
+
+        if (this.bytes.length >= 4 && readAscii(this.bytes, 0, 4) === "WAVC") {
+            if (!this.allowWavc) {
+                throw new Error("WAVC wrapper found, but Fallout strict mode expects a standalone ACM header.");
+            }
+            if (this.bytes.length < 28) {
+                throw new Error("WAVC wrapper is too short.");
+            }
+
+            var headerSize = readU32LE(this.bytes, 16);
+            if (headerSize < 28 || headerSize + 14 > this.bytes.length) {
+                throw new Error("WAVC header size does not point to an embedded ACM stream.");
+            }
+
+            this.wrapper = {
+                version: readAscii(this.bytes, 4, 4),
+                uncompressedSize: readU32LE(this.bytes, 8),
+                compressedSize: readU32LE(this.bytes, 12),
+                headerSize: headerSize,
+                channels: readU16LE(this.bytes, 20),
+                bits: readU16LE(this.bytes, 22),
+                sampleRate: readU16LE(this.bytes, 24)
+            };
+            offset = headerSize;
+        }
+
+        if (offset + 14 > this.bytes.length) {
+            throw new Error("File is too short for an ACM header.");
+        }
+
+        if (this.bytes[offset] !== 0x97 || this.bytes[offset + 1] !== 0x28 || this.bytes[offset + 2] !== 0x03 || this.bytes[offset + 3] !== 0x01) {
+            throw new Error("Missing ACM signature bytes 97 28 03 01.");
+        }
+
+        this.streamOffset = offset;
+        this.sampleCount = readU32LE(this.bytes, offset + 4);
+        this.channels = readU16LE(this.bytes, offset + 8);
+        this.sampleRate = readU16LE(this.bytes, offset + 10);
+        this.attributes = readU16LE(this.bytes, offset + 12);
+        this.levels = this.attributes & 0x0F;
+        this.rows = this.attributes >>> 4;
+        this.cols = Math.pow(2, this.levels);
+        this.blockLength = this.rows * this.cols;
+        this.reader = new BitReader(this.bytes, offset + 14, this.strict);
+
+        if (this.sampleCount === 0) {
+            throw new Error("ACM header reports zero sample values.");
+        }
+        if (this.channels < 1 || this.channels > 2) {
+            throw new Error("This player supports mono and stereo ACM files; header channels=" + this.channels + ".");
+        }
+        if (this.sampleRate < 4000 || this.sampleRate > 192000) {
+            throw new Error("Sample rate looks unreasonable: " + this.sampleRate + " Hz.");
+        }
+        if (this.levels > 15 || this.rows === 0 || this.blockLength <= 0 || this.blockLength > 1048576) {
+            throw new Error("ACM block shape is not reasonable: rows=" + this.rows + ", levels=" + this.levels + ".");
+        }
+
+        this.block = new Int32Array(this.blockLength);
+        this.wrap = new Int32Array(Math.max(0, 2 * this.cols - 2, Math.floor(3 * this.cols / 2 - 2)));
+        this.mid = new Int32Array(0x10000);
+        this.midBase = 0x8000;
+        this.usedCode31 = false;
+        this.blocksDecoded = 0;
+    };
+
+    AcmDecoder.prototype.midValue = function (index) {
+        var pos = this.midBase + index;
+        if (pos < 0 || pos >= this.mid.length) {
+            throw new Error("Amplitude-table index out of range: " + index + ".");
+        }
+        return this.mid[pos];
+    };
+
+    AcmDecoder.prototype.setPos = function (row, col, index) {
+        this.block[row * this.cols + col] = this.midValue(index);
+    };
+
+    AcmDecoder.prototype.decode = function () {
+        var out = new Int16Array(this.sampleCount);
+        var outPos = 0;
+
+        while (outPos < out.length) {
+            this.decodeBlock();
+            var count = Math.min(this.blockLength, out.length - outPos);
+            for (var i = 0; i < count; i++) {
+                out[outPos++] = clamp16(this.block[i] >> this.levels);
+            }
+            this.blocksDecoded++;
+        }
+
+        return {
+            samples: out,
+            sampleCount: this.sampleCount,
+            channels: this.channels,
+            sampleRate: this.sampleRate,
+            levels: this.levels,
+            rows: this.rows,
+            cols: this.cols,
+            blockLength: this.blockLength,
+            attributes: this.attributes,
+            wrapper: this.wrapper,
+            usedCode31: this.usedCode31,
+            paddedBits: this.reader.paddedBits,
+            blocksDecoded: this.blocksDecoded
+        };
+    };
+
+    AcmDecoder.prototype.decodeBlock = function () {
+        var pwr = this.reader.getBits(4);
+        var val = this.reader.getBits(16);
+        var count = Math.pow(2, pwr);
+        var x = 0;
+
+        this.mid.fill(0);
+        for (var i = 0; i < count; i++) {
+            this.mid[this.midBase + i] = x;
+            x += val;
+        }
+
+        x = -val;
+        for (i = 1; i <= count; i++) {
+            this.mid[this.midBase - i] = x;
+            x -= val;
+        }
+
+        var transformed = this.fillBlock();
+        if (transformed) {
+            this.juggleBlock();
+        }
+    };
+
+    AcmDecoder.prototype.fillBlock = function () {
+        for (var col = 0; col < this.cols; col++) {
+            var code = this.reader.getBits(5);
+            if (code === 31 && this.allowCode31) {
+                this.readRawCode31Block();
+                return false;
+            }
+            this.runFiller(code, col);
+        }
+        return true;
+    };
+
+    AcmDecoder.prototype.runFiller = function (code, col) {
+        if (code === 0) {
+            for (var row = 0; row < this.rows; row++) {
+                this.setPos(row, col, 0);
+            }
+        } else if (code >= 3 && code <= 16) {
+            this.linear(code, col);
+        } else if (code === 17) {
+            this.k13(col);
+        } else if (code === 18) {
+            this.k12(col);
+        } else if (code === 19) {
+            this.t15(col);
+        } else if (code === 20) {
+            this.k24(col);
+        } else if (code === 21) {
+            this.k23(col);
+        } else if (code === 22) {
+            this.t27(col);
+        } else if (code === 23) {
+            this.k35(col);
+        } else if (code === 24) {
+            this.k34(col);
+        } else if (code === 26) {
+            this.k45(col);
+        } else if (code === 27) {
+            this.k44(col);
+        } else if (code === 29) {
+            this.t37(col);
+        } else {
+            throw new Error("Unsupported ACM filler code " + code + " at column " + col + ".");
+        }
+    };
+
+    AcmDecoder.prototype.linear = function (bits, col) {
+        var middle = Math.pow(2, bits - 1);
+        for (var row = 0; row < this.rows; row++) {
+            this.setPos(row, col, this.reader.getBits(bits) - middle);
+        }
+    };
+
+    AcmDecoder.prototype.k13 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            var bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row++, col, 0);
+                if (row >= this.rows) {
+                    break;
+                }
+                this.setPos(row, col, 0);
+                continue;
+            }
+            bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row, col, 0);
+                continue;
+            }
+            this.setPos(row, col, MAP_1BIT[this.reader.getBits(1)]);
+        }
+    };
+
+    AcmDecoder.prototype.k12 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            if (this.reader.getBits(1) === 0) {
+                this.setPos(row, col, 0);
+            } else {
+                this.setPos(row, col, MAP_1BIT[this.reader.getBits(1)]);
+            }
+        }
+    };
+
+    AcmDecoder.prototype.k24 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            var bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row++, col, 0);
+                if (row >= this.rows) {
+                    break;
+                }
+                this.setPos(row, col, 0);
+                continue;
+            }
+            bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row, col, 0);
+                continue;
+            }
+            this.setPos(row, col, MAP_2BIT_NEAR[this.reader.getBits(2)]);
+        }
+    };
+
+    AcmDecoder.prototype.k23 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            if (this.reader.getBits(1) === 0) {
+                this.setPos(row, col, 0);
+            } else {
+                this.setPos(row, col, MAP_2BIT_NEAR[this.reader.getBits(2)]);
+            }
+        }
+    };
+
+    AcmDecoder.prototype.k35 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            var bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row++, col, 0);
+                if (row >= this.rows) {
+                    break;
+                }
+                this.setPos(row, col, 0);
+                continue;
+            }
+            bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row, col, 0);
+                continue;
+            }
+            bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row, col, MAP_1BIT[this.reader.getBits(1)]);
+                continue;
+            }
+            this.setPos(row, col, MAP_2BIT_FAR[this.reader.getBits(2)]);
+        }
+    };
+
+    AcmDecoder.prototype.k34 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            var bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row, col, 0);
+                continue;
+            }
+            bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row, col, MAP_1BIT[this.reader.getBits(1)]);
+                continue;
+            }
+            this.setPos(row, col, MAP_2BIT_FAR[this.reader.getBits(2)]);
+        }
+    };
+
+    AcmDecoder.prototype.k45 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            var bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row++, col, 0);
+                if (row >= this.rows) {
+                    break;
+                }
+                this.setPos(row, col, 0);
+                continue;
+            }
+            bit = this.reader.getBits(1);
+            if (bit === 0) {
+                this.setPos(row, col, 0);
+                continue;
+            }
+            this.setPos(row, col, MAP_3BIT[this.reader.getBits(3)]);
+        }
+    };
+
+    AcmDecoder.prototype.k44 = function (col) {
+        for (var row = 0; row < this.rows; row++) {
+            if (this.reader.getBits(1) === 0) {
+                this.setPos(row, col, 0);
+            } else {
+                this.setPos(row, col, MAP_3BIT[this.reader.getBits(3)]);
+            }
+        }
+    };
+
+    AcmDecoder.prototype.t15 = function (col) {
+        for (var row = 0; row < this.rows;) {
+            var bits = this.reader.getBits(5);
+            if (bits > 26) {
+                throw new Error("Invalid t15 ACM tuple value " + bits + ".");
+            }
+            this.setPos(row++, col, bits % 3 - 1);
+            bits = Math.floor(bits / 3);
+            if (row >= this.rows) {
+                break;
+            }
+            this.setPos(row++, col, bits % 3 - 1);
+            bits = Math.floor(bits / 3);
+            if (row >= this.rows) {
+                break;
+            }
+            this.setPos(row++, col, bits % 3 - 1);
+        }
+    };
+
+    AcmDecoder.prototype.t27 = function (col) {
+        for (var row = 0; row < this.rows;) {
+            var bits = this.reader.getBits(7);
+            if (bits > 124) {
+                throw new Error("Invalid t27 ACM tuple value " + bits + ".");
+            }
+            this.setPos(row++, col, bits % 5 - 2);
+            bits = Math.floor(bits / 5);
+            if (row >= this.rows) {
+                break;
+            }
+            this.setPos(row++, col, bits % 5 - 2);
+            bits = Math.floor(bits / 5);
+            if (row >= this.rows) {
+                break;
+            }
+            this.setPos(row++, col, bits % 5 - 2);
+        }
+    };
+
+    AcmDecoder.prototype.t37 = function (col) {
+        for (var row = 0; row < this.rows;) {
+            var bits = this.reader.getBits(7);
+            if (bits > 120) {
+                throw new Error("Invalid t37 ACM tuple value " + bits + ".");
+            }
+            this.setPos(row++, col, bits % 11 - 5);
+            bits = Math.floor(bits / 11);
+            if (row >= this.rows) {
+                break;
+            }
+            this.setPos(row++, col, bits % 11 - 5);
+        }
+    };
+
+    AcmDecoder.prototype.readRawCode31Block = function () {
+        var scale = Math.pow(2, this.levels);
+        for (var i = 0; i < this.blockLength; i++) {
+            this.block[i] = sign16(this.reader.getBits(16)) * scale;
+        }
+        this.usedCode31 = true;
+    };
+
+    AcmDecoder.prototype.juggle = function (wrapOffset, blockOffset, subLen, subCount) {
+        for (var i = 0; i < subLen; i++) {
+            var p = blockOffset + i;
+            var r0 = this.wrap[wrapOffset];
+            var r1 = this.wrap[wrapOffset + 1];
+
+            for (var j = 0; j < subCount / 2; j++) {
+                var r2 = this.block[p];
+                this.block[p] = r1 * 2 + r0 + r2;
+                p += subLen;
+                var r3 = this.block[p];
+                this.block[p] = r2 * 2 - r1 - r3;
+                p += subLen;
+                r0 = r2;
+                r1 = r3;
+            }
+
+            this.wrap[wrapOffset++] = r0;
+            this.wrap[wrapOffset++] = r1;
+        }
+    };
+
+    AcmDecoder.prototype.juggleBlock = function () {
+        if (this.levels === 0) {
+            return;
+        }
+
+        var stepRows = this.levels > 9 ? 1 : Math.floor(2048 / this.cols) - 2;
+        if (stepRows < 1) {
+            stepRows = 1;
+        }
+
+        var remainingRows = this.rows;
+        var blockOffset = 0;
+
+        while (true) {
+            var wrapOffset = 0;
+            var subCount = Math.min(stepRows, remainingRows);
+            var subLen = this.cols / 2;
+            subCount *= 2;
+
+            this.juggle(wrapOffset, blockOffset, subLen, subCount);
+            wrapOffset += subLen * 2;
+
+            for (var i = 0, p = blockOffset; i < subCount; i++, p += subLen) {
+                this.block[p]++;
+            }
+
+            while (subLen > 1) {
+                subLen = Math.floor(subLen / 2);
+                subCount *= 2;
+                this.juggle(wrapOffset, blockOffset, subLen, subCount);
+                wrapOffset += subLen * 2;
+            }
+
+            if (remainingRows <= stepRows) {
+                break;
+            }
+            remainingRows -= stepRows;
+            blockOffset += stepRows * this.cols;
+        }
+    };
+
+    function inferPlaybackMode(file) {
+        var name = file ? (file.webkitRelativePath || file.name || "").toLowerCase() : "";
+        if (/(^|[\\\/_-])(nar|narr|narrat|narrator|voice|speech|dialog|dialogue)/.test(name) || name.indexOf("sound\\speech") !== -1 || name.indexOf("sound/speech") !== -1) {
+            return "speech";
+        }
+        if (/(^|[\\\/_-])(mus|music|theme|world|ambient)/.test(name) || name.indexOf("sound\\music") !== -1 || name.indexOf("sound/music") !== -1) {
+            return "music";
+        }
+        return "original";
+    }
+
+    function chooseChannelPlan(decoded, mode, file) {
+        var headerChannels = decoded.channels === 2 ? 2 : 1;
+        var effectiveMode = mode === "context" ? inferPlaybackMode(file) : mode;
+
+        if (effectiveMode === "mono" || effectiveMode === "speech") {
+            return {
+                sourceChannels: 1,
+                outputChannels: 1,
+                mode: effectiveMode,
+                description: effectiveMode === "speech" ? "speech/narration mono stream" : "mono stream"
+            };
+        }
+        if (effectiveMode === "stereo" || effectiveMode === "music") {
+            return {
+                sourceChannels: 2,
+                outputChannels: 2,
+                mode: effectiveMode,
+                description: effectiveMode === "music" ? "music stereo stream" : "stereo stream"
+            };
+        }
+        if (effectiveMode === "downmix") {
+            return {
+                sourceChannels: headerChannels,
+                outputChannels: 1,
+                mode: effectiveMode,
+                description: "header channels downmixed to mono"
+            };
+        }
+        return {
+            sourceChannels: headerChannels,
+            outputChannels: headerChannels,
+            mode: "original",
+            description: "header channels"
+        };
+    }
+
+    function renderSamples(decoded, mode, file) {
+        var plan = chooseChannelPlan(decoded, mode, file);
+        var sourceChannels = plan.sourceChannels;
+        var outChannels = plan.outputChannels;
+        var frameCount = Math.floor(decoded.samples.length / sourceChannels);
+        var channels = [];
+
+        for (var ch = 0; ch < outChannels; ch++) {
+            channels[ch] = new Float32Array(frameCount);
+        }
+
+        for (var frame = 0; frame < frameCount; frame++) {
+            var left;
+            var right;
+
+            if (sourceChannels === 2) {
+                left = decoded.samples[frame * 2] / 32768;
+                right = decoded.samples[frame * 2 + 1] / 32768;
+            } else {
+                left = decoded.samples[frame] / 32768;
+                right = left;
+            }
+
+            if (outChannels === 1) {
+                channels[0][frame] = (left + right) / 2;
+            } else {
+                channels[0][frame] = left;
+                channels[1][frame] = right;
+            }
+        }
+
+        return {
+            channels: channels,
+            channelCount: outChannels,
+            sourceChannelCount: sourceChannels,
+            frameCount: frameCount,
+            sampleRate: decoded.sampleRate,
+            duration: frameCount / decoded.sampleRate,
+            channelPlan: plan,
+            droppedSamples: decoded.samples.length - frameCount * sourceChannels
+        };
+    }
+
+    function buildAudioBuffer(rendered) {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        var buffer = audioContext.createBuffer(rendered.channelCount, rendered.frameCount, rendered.sampleRate);
+        for (var ch = 0; ch < rendered.channelCount; ch++) {
+            buffer.copyToChannel(rendered.channels[ch], ch);
+        }
+        return buffer;
+    }
+
+    function drawWaveform(rendered) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#050805";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "#535b5a";
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+
+        if (!rendered || rendered.frameCount === 0) {
+            return;
+        }
+
+        var data = rendered.channels[0];
+        var step = Math.max(1, Math.floor(data.length / canvas.width));
+
+        ctx.strokeStyle = "#F49205";
+        ctx.beginPath();
+        for (var x = 0; x < canvas.width; x++) {
+            var start = x * step;
+            var end = Math.min(start + step, data.length);
+            var min = 1;
+            var max = -1;
+
+            for (var i = start; i < end; i++) {
+                if (data[i] < min) {
+                    min = data[i];
+                }
+                if (data[i] > max) {
+                    max = data[i];
+                }
+            }
+
+            var y1 = (1 - max) * canvas.height / 2;
+            var y2 = (1 - min) * canvas.height / 2;
+            ctx.moveTo(x + 0.5, y1);
+            ctx.lineTo(x + 0.5, y2);
+        }
+        ctx.stroke();
+    }
+
+    function formatDuration(seconds) {
+        if (!isFinite(seconds)) {
+            return "unknown";
+        }
+        var minutes = Math.floor(seconds / 60);
+        var rest = seconds - minutes * 60;
+        return minutes + ":" + rest.toFixed(3).padStart(6, "0");
+    }
+
+    function updateMetadata(file, decoded, rendered) {
+        var lines = [
+            "File: " + file.name + " (" + file.size.toLocaleString() + " bytes)",
+            "Header: " + decoded.sampleRate + " Hz, " + decoded.channels + " channel(s), " + decoded.sampleCount.toLocaleString() + " sample values",
+            "Block shape: rows=" + decoded.rows + ", levels=" + decoded.levels + ", cols=" + decoded.cols + ", block values=" + decoded.blockLength,
+            "Decoded blocks: " + decoded.blocksDecoded.toLocaleString(),
+            "Playback: " + rendered.sampleRate + " Hz, " + rendered.channelCount + " channel(s), " + rendered.frameCount.toLocaleString() + " frames, " + formatDuration(rendered.duration),
+            "Channel interpretation: " + rendered.channelPlan.description + " (source grouping: " + rendered.sourceChannelCount + ", output: " + rendered.channelCount + ")"
+        ];
+
+        if (decoded.wrapper) {
+            lines.push("WAVC wrapper: " + decoded.wrapper.version + ", header size=" + decoded.wrapper.headerSize + ", wrapper rate=" + decoded.wrapper.sampleRate + " Hz, bits=" + decoded.wrapper.bits);
+        }
+        if (decoded.usedCode31) {
+            lines.push("Compatibility note: CE filler code 31 raw-block extension was used.");
+        }
+        if (decoded.paddedBits) {
+            lines.push("Compatibility note: " + decoded.paddedBits + " zero padding bit(s) were read at end of stream.");
+        }
+        if (rendered.droppedSamples) {
+            lines.push("Compatibility note: " + rendered.droppedSamples + " trailing sample value(s) did not fit the selected channel grouping.");
+        }
+
+        metadata.textContent = lines.join("\n");
+    }
+
+    function makeWavBlob(rendered) {
+        var bytesPerFrame = rendered.channelCount * 2;
+        var buffer = new ArrayBuffer(44 + rendered.frameCount * bytesPerFrame);
+        var view = new DataView(buffer);
+
+        function writeString(offset, text) {
+            for (var i = 0; i < text.length; i++) {
+                view.setUint8(offset + i, text.charCodeAt(i));
+            }
+        }
+
+        writeString(0, "RIFF");
+        view.setUint32(4, 36 + rendered.frameCount * bytesPerFrame, true);
+        writeString(8, "WAVE");
+        writeString(12, "fmt ");
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, rendered.channelCount, true);
+        view.setUint32(24, rendered.sampleRate, true);
+        view.setUint32(28, rendered.sampleRate * bytesPerFrame, true);
+        view.setUint16(32, bytesPerFrame, true);
+        view.setUint16(34, 16, true);
+        writeString(36, "data");
+        view.setUint32(40, rendered.frameCount * bytesPerFrame, true);
+
+        var offset = 44;
+        for (var frame = 0; frame < rendered.frameCount; frame++) {
+            for (var ch = 0; ch < rendered.channelCount; ch++) {
+                var sample = Math.max(-1, Math.min(1, rendered.channels[ch][frame]));
+                view.setInt16(offset, sample < 0 ? sample * 32768 : sample * 32767, true);
+                offset += 2;
+            }
+        }
+
+        return new Blob([buffer], { type: "audio/wav" });
+    }
+
+    function resetWavUrl() {
+        if (wavUrl) {
+            URL.revokeObjectURL(wavUrl);
+            wavUrl = null;
+        }
+    }
+
+    function stopPlayback() {
+        if (sourceNode) {
+            sourceNode.onended = null;
+            sourceNode.stop();
+            sourceNode.disconnect();
+            sourceNode = null;
+        }
+        stopButton.disabled = true;
+    }
+
+    async function decodeSelectedFile() {
+        var file = fileInput.files && fileInput.files[0];
+        if (!file) {
+            status.textContent = "Choose an ACM file first.";
+            return;
+        }
+
+        stopPlayback();
+        resetWavUrl();
+        playButton.disabled = true;
+        downloadButton.disabled = true;
+        status.textContent = "Reading and decoding " + file.name + "...";
+        metadata.textContent = "";
+        drawWaveform(null);
+
+        try {
+            var buffer = await file.arrayBuffer();
+            var decoder = new AcmDecoder(buffer, decoderMode.value);
+            decodedFile = decoder.decode();
+            renderedAudio = renderSamples(decodedFile, outputMode.value, file);
+            drawWaveform(renderedAudio);
+            updateMetadata(file, decodedFile, renderedAudio);
+            status.textContent = "Decoded successfully. Ready to play.";
+            playButton.disabled = false;
+            downloadButton.disabled = false;
+        } catch (error) {
+            decodedFile = null;
+            renderedAudio = null;
+            status.textContent = "Decode failed: " + error.message;
+            metadata.textContent = "";
+        }
+    }
+
+    decodeButton.addEventListener("click", decodeSelectedFile);
+
+    outputMode.addEventListener("change", function () {
+        if (!decodedFile) {
+            return;
+        }
+        stopPlayback();
+        resetWavUrl();
+        renderedAudio = renderSamples(decodedFile, outputMode.value, fileInput.files && fileInput.files[0]);
+        drawWaveform(renderedAudio);
+        if (fileInput.files && fileInput.files[0]) {
+            updateMetadata(fileInput.files[0], decodedFile, renderedAudio);
+        }
+    });
+
+    playButton.addEventListener("click", async function () {
+        if (!renderedAudio) {
+            return;
+        }
+        stopPlayback();
+        var buffer = buildAudioBuffer(renderedAudio);
+        if (audioContext.state === "suspended") {
+            await audioContext.resume();
+        }
+        sourceNode = audioContext.createBufferSource();
+        sourceNode.buffer = buffer;
+        sourceNode.connect(audioContext.destination);
+        sourceNode.onended = function () {
+            sourceNode = null;
+            stopButton.disabled = true;
+            status.textContent = "Playback finished.";
+        };
+        sourceNode.start();
+        stopButton.disabled = false;
+        status.textContent = "Playing.";
+    });
+
+    stopButton.addEventListener("click", function () {
+        stopPlayback();
+        status.textContent = renderedAudio ? "Playback stopped." : "Choose an ACM file and decode it.";
+    });
+
+    downloadButton.addEventListener("click", function () {
+        if (!renderedAudio) {
+            return;
+        }
+        resetWavUrl();
+        wavUrl = URL.createObjectURL(makeWavBlob(renderedAudio));
+        var link = document.createElement("a");
+        var file = fileInput.files && fileInput.files[0];
+        var baseName = file ? file.name.replace(/\.[^.]+$/, "") : "decoded";
+        link.href = wavUrl;
+        link.download = baseName + "-" + outputMode.value + ".wav";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    });
+
+    clearButton.addEventListener("click", function () {
+        stopPlayback();
+        resetWavUrl();
+        decodedFile = null;
+        renderedAudio = null;
+        fileInput.value = "";
+        playButton.disabled = true;
+        downloadButton.disabled = true;
+        metadata.textContent = "";
+        status.textContent = "Choose an ACM file and decode it.";
+        drawWaveform(null);
+    });
+
+    drawWaveform(null);
+})();
+</script>
+</body>
+</html>
