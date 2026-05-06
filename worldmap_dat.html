@@ -10,7 +10,7 @@
 
 <p><tt>worldmap.dat</tt> is the serialized state of the Fallout and Fallout 2 world map. It records where the party and car are, which towns and town-map entrances have been revealed, which world-map subtiles are fogged or visited, and which limited-use encounter entries have changed counters. It does not contain the full world map definition.</p>
 
-<p>The static world map definition is split across text files: <tt>data\maps.txt</tt> defines map indexes and map-level behavior, <tt>data\city.txt</tt> defines towns and entrances, and <tt>data\worldmap.txt</tt> defines terrain, tiles, encounter frequencies, random maps, and encounter tables. A useful editor usually needs to understand all four files, not only <tt>worldmap.dat</tt>.</p>
+<p>The static world map definition is split across text files: <tt>data\maps.txt</tt> defines map indexes and map-level behavior, <tt>data\city.txt</tt> defines towns and entrances, and <tt>data\worldmap.txt</tt> defines terrain, tiles, encounter frequencies, random maps, and encounter tables. See <a href="worldmap_config.html">World-map Text Configuration Files</a> for the editable source definitions.</p>
 
 <h2>What the file is</h2>
 
@@ -306,6 +306,7 @@ enc:player
 <h2>Related formats</h2>
 
 <ul>
+<li><a href="worldmap_config.html">World-map Text Configuration Files</a> documents <tt>maps.txt</tt>, <tt>city.txt</tt>, and <tt>worldmap.txt</tt>.</li>
 <li><a href="map.html">MAP File Format</a> uses map indexes that resolve through the world-map map list.</li>
 <li><a href="msg.html">MSG File Format</a> documents <tt>worldmap.msg</tt> and <tt>map.msg</tt> message lookup behavior.</li>
 <li><a href="msk.html">MSK File Format</a> documents the per-tile world-map walk masks referenced by <tt>walk_mask_name</tt>.</li>

@@ -384,7 +384,7 @@
 <tr><td><tt>scripts\scripts.lst</tt></td><td>Resolve script indexes to <tt>.int</tt> script names and read <tt>local_vars=N</tt> metadata.</td><td>Header <tt>script_index</tt>, object <tt>script_index</tt>, script record <tt>script_index</tt>, PRO <tt>sid</tt>.</td></tr>
 <tr><td><tt>scripts\*.int</tt></td><td>Executable script bytecode used by the engine.</td><td>Resolved through <tt>scripts.lst</tt>.</td></tr>
 <tr><td><tt>text\english\game\pro_item.msg</tt>, <tt>pro_crit.msg</tt>, <tt>pro_scen.msg</tt>, <tt>pro_wall.msg</tt>, <tt>pro_tile.msg</tt>, <tt>pro_misc.msg</tt></td><td>Object names and descriptions. See <a href="msg.html">MSG File Format</a>.</td><td>PRO message ids reached through object <tt>pid</tt>.</td></tr>
-<tr><td><tt>data\maps.txt</tt> / worldmap map list</td><td>Resolve map indexes used by the header, transitions, stairs, ladders, and exit grids. See <a href="worldmap_dat.html">Worldmap.dat File Format</a> for the surrounding world-map definitions.</td><td>Header <tt>map_index</tt>, exit-grid <tt>map</tt>, scenery <tt>destination_map</tt>.</td></tr>
+<tr><td><tt>data\maps.txt</tt> / worldmap map list</td><td>Resolve map indexes used by the header, transitions, stairs, ladders, and exit grids. See <a href="worldmap_config.html">World-map Text Configuration Files</a>.</td><td>Header <tt>map_index</tt>, exit-grid <tt>map</tt>, scenery <tt>destination_map</tt>.</td></tr>
 <tr><td><tt>elevators.ini</tt> / elevator definitions in modern engines</td><td>Resolve elevator type and level behavior.</td><td>Elevator scenery <tt>elevator_type</tt> and <tt>elevator_level</tt>.</td></tr>
 </table>
 

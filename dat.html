@@ -1,268 +1,324 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>DAT file format</title>
+    <title>DAT File Format</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
 <div style="width: 1200px; margin: auto;">
-<h1>DAT file format</h1>
+<h1>DAT File Format</h1>
 
-<p>DAT files are archived data files. They contain the bulk of the data for Fallout and Fallout 2, including all game artwork, critters, scripts, message/dialogue files, sounds and speech audio files, and much more. The two DAT files used by the games are master.dat and critter.dat, both of which are located in the root game folder. </p>
-<h3>DAT1 vs DAT2</h3>
-<p>There were two different DAT file formats used for the Fallout games. Both Fallout 1 and Fallout 2 used different formats but used the same file ending: *.dat. To avoid misunderstandings, we'll refer to DAT1 (for the Fallout 1 DAT format) and DAT2 (for the Fallout 2 version) in this document. Note that DAT2 is not an improved version of DAT1, but a completely rewritten file type that shares little in common with DAT1. </p>
-<h3>DAT1</h3>
-<p>This specific DAT file type stores data in the <a href="http://en.wikipedia.org/wiki/Endianness">big-endian</a> format.</p>
-<h4>Structure</h4>
-<pre style="background: #222; padding: 10px;">
-int32   4   DirectoryCount
-int32   4   FolderAllocationHint. Usually 0x0A (0x5E for master.dat). Must not be less than DirectoryCount or Fallout will crash.
-int32   4   Reserved1. Always 0.
-int32   4   Timestamp. Unix timestamp of when the archive was created.
+<p>DAT files are Fallout archive containers. They hold most of the game's loose resources: artwork, palettes, fonts, maps, prototypes, scripts, message files, sound effects, music, speech, movies, and assorted text configuration. The archive layer does not change the inner file formats; it only stores paths, compressed or uncompressed byte streams, and lookup metadata.</p>
 
-// Directory Name Block - for each directory (DirectoryCount times)
-// master.dat starts its listing with a root node, called '.'. This node contains COLOR.PAL and several font files; be careful not to skip it, as it may appear like two extraneous bytes
-byte    1   Length (number of charactes) in DirectoryName
-char    *   DirectoryName
+<p>There are two incompatible archive formats with the same <tt>.dat</tt> extension:</p>
 
-// Directory Content Block - for each directory (DirectoryCount times)
-int32   4   FileCount. Number of files in the directory.
-int32   4   FileAllocationHint. Similar to FolderAllocationHint, must be at least FileCount.
-int32   4   FixedMetadataSize. Always 0x10 (16 bytes), which is the size of the 4 DWORDS in the File List Block.
-int32   4   Timestamp. Creation timestamp for this directory block.
-    // File List Block - for each file in directory (FileCount times).
-    byte    1   Name length (number of characters)
-    char    *   Name
-    int32   4   Attributes. 0x20 means plain-text, 0x40 - compressed with LZSS.
-    int32   4   Offset. Position in the file (from the beginning of the DAT file), where the file contets start.
-    int32   4   Size. Original (uncompressed) file size.
-    int32   4   PackedSize. Size of the compressed file in dat. If file is not compressed, PackedSize is 0.
+<table>
+<tr><th>Name used here</th><th>Game</th><th>Endian</th><th>Compression</th><th>Directory location</th></tr>
+<tr><td>DAT1</td><td>Fallout 1</td><td>Big-endian metadata</td><td>Fallout LZSS blocks</td><td>Header and directory tables at the start</td></tr>
+<tr><td>DAT2</td><td>Fallout 2</td><td>Little-endian metadata</td><td>zlib streams</td><td>Directory tree and footer at the end</td></tr>
+</table>
 
-// Data block
-byte    *   File data for all files (use Offset and [Packed]Size to find where a specific file starts and ends).
+<p><tt>save.dat</tt>, <tt>worldmap.dat</tt>, and many other files with a <tt>.dat</tt> extension are not DAT archives. They are independent binary formats documented separately.</p>
+
+<h2>Archive Files</h2>
+
+<p>Fallout 2 normally uses these archive/search roots:</p>
+
+<table>
+<tr><th>Path/source</th><th>Role</th></tr>
+<tr><td><tt>master.dat</tt></td><td>Main game resources.</td></tr>
+<tr><td><tt>critter.dat</tt></td><td>Critter animation and critter-related resources.</td></tr>
+<tr><td><tt>data\</tt> or other patch directories</td><td>Loose-file override roots configured by the game's system paths.</td></tr>
+<tr><td><tt>patch000.dat</tt>, <tt>patch001.dat</tt>, ...</td><td>Optional patch archives opened after the base archives by CE.</td></tr>
+<tr><td><tt>f2_res.dat</tt></td><td>High-resolution patch resources, when present.</td></tr>
+</table>
+
+<p>Paths stored inside DAT archives are relative game paths such as <tt>art\intrface\iface.frm</tt> or <tt>text\english\game\worldmap.msg</tt>. The same relative paths are used when resources are unpacked under <tt>data\</tt>.</p>
+
+<h2>Lookup Behavior</h2>
+
+<p>Fallout 2 CE opens resource roots into an internal list. New or reopened roots are moved to the front, and relative file lookup searches that list from front to back. In the CE startup order, this means later-opened patch archives can override earlier archives. If a file is not found in any open DAT or patch directory, the engine tries the current working directory as a final fallback.</p>
+
+<p>With the usual CE startup flow and default patch directory, effective lookup precedence is approximately:</p>
+
+<table>
+<tr><th>Priority</th><th>Root</th><th>Notes</th></tr>
+<tr><td>Highest</td><td><tt>f2_res.dat</tt></td><td>Opened last when present.</td></tr>
+<tr><td></td><td>Highest-numbered <tt>patchNNN.dat</tt></td><td>Patch archives are opened from <tt>patch000.dat</tt> upward, so later numbers sit earlier in the search list.</td></tr>
+<tr><td></td><td>Lower-numbered <tt>patchNNN.dat</tt></td><td>Still above the base archives.</td></tr>
+<tr><td></td><td>Configured patch/data directory</td><td>Commonly <tt>data\</tt>; loose files here override <tt>master.dat</tt> and <tt>critter.dat</tt> in CE's normal order.</td></tr>
+<tr><td></td><td><tt>critter.dat</tt></td><td>Opened after <tt>master.dat</tt>.</td></tr>
+<tr><td>Lowest</td><td><tt>master.dat</tt></td><td>Main base archive.</td></tr>
+</table>
+
+<p>Different executable builds, launchers, or mods can change which roots are opened and in what order, so archive tools should not assume this table is universal. It is the behavior visible in Fallout 2 CE's resource-opening code.</p>
+
+<p>Absolute paths and paths beginning with <tt>.</tt>, <tt>\</tt>, or <tt>/</tt> bypass the DAT search list and are opened directly from the filesystem. Normal game asset references should therefore be relative paths.</p>
+
+<p>Loose filesystem files can be gzip-compressed: CE checks the first two bytes of a plain file for gzip magic <tt>1F 8B</tt> and reopens it as a gzip stream. This is separate from DAT2 entry compression. DAT2 compressed entries are zlib streams inside the archive, not gzip files.</p>
+
+<h2>Path Rules</h2>
+
+<ul>
+<li>DAT2 entry lookup is case-insensitive in CE because archive entries are found with a case-insensitive binary search.</li>
+<li>Directory separators in documentation are normally written as backslashes. Cross-platform tools should normalize both <tt>\</tt> and <tt>/</tt> where appropriate.</li>
+<li>DAT2 entries must be sorted case-insensitively for CE's binary search to find them reliably.</li>
+<li>Older DAT2 documentation says paths are DOS 8.3. Many shipped resources are 8.3-like, but tools should not rely on that as the archive format's hard limit; the entry stores a 32-bit path length.</li>
+<li>File listing APIs merge archive and filesystem names, then sort and deduplicate them case-insensitively.</li>
+</ul>
+
+<h2>DAT2 Overview</h2>
+
+<p>DAT2 is the Fallout 2 archive format. It has no global magic number. A reader identifies it by the footer and by successfully parsing the directory tree near the end of the file.</p>
+
+<pre>
++-----------------------------+
+| File data block             |
+| compressed/plain file bytes |
++-----------------------------+
+| uint32 file_count           |
+| directory entries           |
++-----------------------------+
+| uint32 tree_size            |
+| uint32 data_size            |
++-----------------------------+
 </pre>
 
-<h4>Technical Analysis of "Unknown" Fields</h4>
-<p>Through community reverse-engineering (notably by TeamX and the Falltergeist project), the purposes of the previously unknown header fields in the DAT1 format have been identified:</p>
+<table>
+<tr><th>Part</th><th>Location</th><th>Description</th></tr>
+<tr><td>Data block</td><td>Usually offset <tt>0</tt></td><td>Raw stored bytes for every entry.</td></tr>
+<tr><td>File count</td><td>Start of directory tree</td><td>Little-endian <tt>uint32</tt> count of entries.</td></tr>
+<tr><td>Directory entries</td><td>After file count</td><td>Variable-length entry metadata.</td></tr>
+<tr><td>Tree size</td><td>Last 8 bytes, first field</td><td>Little-endian <tt>uint32</tt> size of <tt>file_count + entries</tt>.</td></tr>
+<tr><td>Data size</td><td>Last 4 bytes</td><td>Little-endian <tt>uint32</tt> size of the DAT data region.</td></tr>
+</table>
 
-<h5>Allocation Hints (Unknown1 & Unknown4)</h5>
-<p>The Fallout engine uses these fields as **memory allocation hints** rather than dynamic counts. When the engine calls its internal <code>db_init</code> function, it uses <code>FolderAllocationHint</code> to determine the size of the memory buffer to allocate for the directory list (e.g., <code>malloc(FolderAllocationHint * sizeof(DirEntry))</code>). It then loops <code>DirectoryCount</code> times to read the data. If <code>DirectoryCount</code> exceeds the allocation hint, the engine writes out of bounds, leading to a heap corruption crash. This explains why <code>master.dat</code> has exactly 94 folders and a hint of 94, while <code>critter.dat</code> has 10 folders and a hint of 10.</p>
+<p>CE computes the start of the archive data region as:</p>
 
-<h5>FixedMetadataSize (Unknown5)</h5>
-<p>This field is always 16 (<code>0x10</code>). This corresponds exactly to the size of the four 32-bit integers (Attributes, Offset, Size, PackedSize) that define a file entry. The engine likely uses this value as an offset jump or a validation check for the record size.</p>
-
-<h5>Timestamps (Unknown3 & Unknown6)</h5>
-<p>These fields store a standard 32-bit Unix Timestamp (seconds since Jan 1, 1970). For example, the <code>master.dat</code> in the original Fallout release contains <code>0x34110398</code>, which translates to **September 5, 1997**, just weeks before the game's gold release. While the engine reads these values, it does not validate them, which is why modding tools can safely ignore them or set them to zero without causing issues.</p>
-
-<h4>Fallout 1 LZSS uncompression algorithm</h4>
-<p>Originally <a href="https://www.nma-fallout.com/threads/fallout-dat-files.160366/">written by Shadowbird</a> on NMA forum.</p>
-<ul>
-<li>This is a <b>decompression algorithm for files compressed with Fallout's LZSS algorithm</b>, not a file extraction algorithm for getting them out of the DAT file! DAT unpackers already incorporate this.</li>
-<li>It's pretty much a generic LZSS decompression algorithm, with a possible difference from other implementations in that it doesn't prevent overwriting dictionary values while they're being output (see the loop in @FLeven).</li>
-</ul>
-<hr/>
-<pre style="background: #222; padding: 10px;">
-DICT_SIZE = 4096; // Dictionary (a.k.a. sliding window / ring / buffer) size
-MIN_MATCH = 3;
-MAX_MATCH = 18;
-
-Int16 N = 0;                      // number of bytes to read
-Int16 DO = 0;                     // Dictionary offset - for reading
-Int16 DI = DICT_SIZE - MAX_MATCH; // Dictionary index - for writing
-Byte L = 0;                       // Match length
-Byte FL = 0;                      // Flags indicating the compression status of up to 8 next characters.
-
-@Start
-* If at the end of file, exit.
-* Read N from input. The absolute value of N is how many bytes of data to read (if N=0, exit).
-* Go to @N<0 or @N>0 accordingly.
-
-@N<0
-* Take the absolute value of N (or multiply N by -1), and write that many bytes directly from input to output (without
-        putting anything in Dictionary).
-* Go to @Start.
-
-@N>0
-* Clear dictionary (fill with spaces — 0x20)
-* DI = DICT_SIZE - MAX_MATCH;
-* Go to @Flag.
-
-@Flag
-* Read FL from input.
-* If N bytes have been read from input, go to @Start, otherwise, go to @Next.
-
-@Next
-* If this is the 9th time here since last @Flag, go to @Flag.
-* Go to @FLeven or @FLodd as appropriate.
-
-@FLodd
-* Read 1 byte from input, write it to output and to Dictionary (at position DI).
-* If N bytes have been read from input, go to @Start.
-* DI = DI + 1, or DI = 0 (if past the end of Dictionary).
-* Goto @FlagNext.
-
-@FLeven
-* Read 1 byte from input to DO.
-* If N bytes have been read from input, go to @Start (in a correctly compressed file this should not ever happen).
-* Read L from input.
-* Prepend the high-nibble (first 4 bits) from L to DO (DO = DO | ((L & 0xF0) << 4)) and remove it from L (L = L & 0x0F).
-* (L + MIN_MATCH) times:
-  * Read a byte from dictionary at offset DO (wrap to the start of dictionary if past the end), and write to the output.
-  * Write the byte to the Dictionary also, at position DI.
-  * DI = DI + 1, or DI = 0 (if past the end of Dictionary).
-  * DO = DO + 1.
-* Go to @FlagNext.
-
-@FlagNext
-* Divide FL by 2, rounding down (FL = FL >> 1).
+<pre>
+data_base = physical_file_size - data_size
 </pre>
-<hr/>
-<a href="https://github.com/rotators/Fo1in2/blob/master/Tools/UndatUI/src/dat.cs#L12-L158">C# implementation of the above</a><br/><br/>
-<b>Read more</b><br/>
-<a href="https://web.archive.org/web/20160110174426/https://oku.edu.mie-u.ac.jp/~okumura/compression/history.html">History of Data Compression in Japan</a><br/>
-<a href="https://en.wikipedia.org/wiki/Lempel-Ziv-Storer-Szymanski">LZSS compression</a>
 
-<h3>DAT2 (Little-endian)</h3>
-<p>DAT2 files are divided in 3 parts, Data Block, Directory Tree and Fixed DAT Information block. Data Blocks contains all the files stored in the DAT, some of them are compressed with zlib streams, others are stored as-is. The Directory Tree contains all the information about each file stored in Data Block, as well as the offset where it's located, if it's compressed or not, packed/unpacked sizes, etc. And finally the Fixed DAT Information block contains the size in bytes of both the archive data and the Directory Tree. Here you can see a small scheme of DAT's structure:</p>
-<table style="background: #222; margin: 10px;">
-<thead>
-<tr>
-<th style="width: 150px;">Part</th>
-<th style="width: 150px;">Location</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-	<tr>
-		<td>DataBlock</td>
-		<td>.............X </td>
-		<td>Files stored in the archive</td>
-	</tr>
-	<tr>
-		<td>FilesTotal</td>
-		<td>X+1</td>
-		<td>Number of files in the archive</td>
-	</tr>
-	<tr>
-		<td>DirTree </td>
-		<td>X+5.............Z</td>
-		<td>Directory listing entries</td>
-	</tr>
-	<tr>
-		<td>TreeSize</td>
-		<td>Z+1</td>
-		<td>Size of DirTree in bytes</td>
-	</tr>
-	<tr>
-		<td>DataSize</td>
-		<td>Z+5</td>
-		<td>Full size of the archive in bytes</td>
-	</tr>
-</tbody>
+<p>For normal DAT2 files, <tt>data_base</tt> is <tt>0</tt>. The formula allows arbitrary leading bytes before the DAT data region, because entry offsets are relative to <tt>data_base</tt>, not always to the physical start of the file.</p>
+
+<h2>DAT2 Footer</h2>
+
+<p>To locate the directory tree, read the last 8 physical bytes:</p>
+
+<pre>
+tree_size = read_u32_le(file_size - 8)
+data_size = read_u32_le(file_size - 4)
+
+data_base = file_size - data_size
+tree_offset = file_size - tree_size - 8
+</pre>
+
+<p>The first 4 bytes at <tt>tree_offset</tt> are <tt>file_count</tt>. The remaining <tt>tree_size - 4</tt> bytes are directory entries.</p>
+
+<h2>DAT2 Entry Structure</h2>
+
+<table>
+<tr><th>Field</th><th>Size</th><th>Description</th></tr>
+<tr><td><tt>path_length</tt></td><td>4</td><td>Little-endian length of the path string in bytes.</td></tr>
+<tr><td><tt>path</tt></td><td><tt>path_length</tt></td><td>Entry path bytes. No null terminator is stored in the DAT.</td></tr>
+<tr><td><tt>compressed</tt></td><td>1</td><td><tt>1</tt> for zlib-compressed data, <tt>0</tt> for plain stored data.</td></tr>
+<tr><td><tt>uncompressed_size</tt></td><td>4</td><td>Size returned to callers after decompression.</td></tr>
+<tr><td><tt>data_size</tt></td><td>4</td><td>Stored byte count in the data block. For compressed entries, this is the compressed zlib stream length.</td></tr>
+<tr><td><tt>data_offset</tt></td><td>4</td><td>Offset of the stored bytes relative to <tt>data_base</tt>.</td></tr>
 </table>
-<ul>
-	<li>FilesTotal + DirTree corresponds to Directory Tree block</li>
-	<li>TreeSize + DataSize corresponds to Fixed DAT Information block</li>
-</ul>
-<h4>The Data Block</h4>
-<p>The Data Block contains the actual file data. Technical information for these files is located in the Directory Tree. In normal Fallout 2 DATs the Data Block starts from the very beginning of a DAT file. The engine also supports an archive data section that begins later in the file: it calculates <code>dataOffset = physicalFileSize - DataSize</code>, then adds each entry's <code>Offset</code> to that base.</p>
-<p>Files can be compressed or uncompressed. Compressed entries are zlib streams (RFC-1950/RFC-1951), not gzip files. Common compressed data begins with the zlib bytes <code>78 DA</code>, but parsers should trust the directory entry's <code>Type</code> flag and feed the entry data to a zlib inflate stream rather than relying only on those first two bytes.</p>
 
-<h4>The Directory Tree</h4>
-<p>The Directory Tree contains entries that specify the properties of each file stored in the Data Block. These entries vary in size depending on the FilenameSize (Path + Filename). As shown in the scheme above, the Directory Tree is divided into two parts: <b>FilesTotal</b> and the <b>DirTree</b> entries. FilesTotal is a DWORD (4 bytes) indicating how many files are stored in the DAT, read in little-endian format. The DirTree entries follow, each with a variable length structure. All numeric entries are DWORDs unless specified otherwise. Entries are sorted alphabetically for case-insensitive binary search by the engine. All DWORDs are read in little-endian format.</p>
-
-<table style="background: #222; margin: 10px;">
-<thead>
-<tr>
-  <th style="width: 150px;">Name</th>
-  <th style="width: 125px;">Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-	<tr>
-		<td>FilenameSize</td>
-		<td>Dword</td>
-		<td>Length of the ASCII filename. </td>
-	</tr>
-	<tr>
-		<td>Filename</td>
-		<td>String</td>
-		<td>Path and name of the file, For example, "text\english\game\WORLDMP.MSG". The length of the Filename is <b>FilenameSize</b>.</td>
-	</tr>
-	<tr>
-		<td>Type</td>
-		<td>Byte</td>
-		<td>1 = Compressed 0 = Decompressed</td>
-	</tr>
-	<tr>
-		<td>RealSize </td>
-		<td>Dword</td>
-		<td>Size of the file without compression.</td>
-	</tr>
-	<tr>
-		<td>PackedSize</td>
-		<td>Dword</td>
-		<td>Size of the compressed file.</td>
-	</tr>
-	<tr>
-		<td>Offset</td>
-		<td>Dword</td>
-		<td>Offset of the entry's data, relative to the start of the archive data section (<code>physicalFileSize - DataSize</code>).</td>
-	</tr>
-</tbody>
-</table>
-<ul>
-<li>Dword stands for 4 bytes/long integers 0xNN NN NN NN </li>
-<li>Word stands for 2 bytes integers 0xNN NN </li>
-<li>Byte stands for 1 byte integer 0xNN  </li>
-<li>String stands for common string bytes "ABCDEF123456!@#$%/][\", etc. </li>
-</ul>
-
-<b>Declaration of a DirEntry (C)</b>
-<pre style="background: #222; padding: 10px;">
-struct DirEntry {
-    uint32_t filenameSize;
-    char     filename[filenameSize];
-    uint8_t  type; // 1 for compressed
-    uint32_t realSize;
-    uint32_t packedSize;
-    uint32_t offset;
+<pre>
+struct Dat2Entry {
+    uint32_t path_length;
+    char     path[path_length];
+    uint8_t  compressed;
+    uint32_t uncompressed_size;
+    uint32_t data_size;
+    uint32_t data_offset;
 };
 </pre>
 
-<b>How to find the Directory Tree</b>
-<p>The Directory Tree is located at the end of the DAT data section, just before the 8-byte footer. To find it, read the last 8 bytes of the physical file: the first 4 bytes are the <b>TreeSize</b>, and the next 4 bytes are the <b>DataSize</b>. In normal DAT2 archives <code>DataSize</code> matches the total file size. The engine uses the physical file size when seeking, so the most robust formula is <code>physicalFileSize - TreeSize - 8</code>.</p>
+<p>The physical byte range for an entry is:</p>
 
-<h4>Engine behavior</h4>
+<pre>
+stored_start = data_base + data_offset
+stored_end   = stored_start + data_size
+</pre>
+
+<p>For uncompressed entries, <tt>data_size</tt> should match <tt>uncompressed_size</tt>. For compressed entries, <tt>data_size</tt> is usually smaller, but a validator should still check both the stored byte range and the inflated byte count.</p>
+
+<h2>DAT2 Compression</h2>
+
+<p>Compressed DAT2 entries are zlib streams. They are not gzip streams, even though older documentation sometimes says "gzipped". Common compressed entries begin with zlib header bytes such as <tt>78 DA</tt>, but a reader should trust the directory entry's <tt>compressed</tt> flag and use zlib inflate rather than only sniffing the first bytes.</p>
+
+<p>CE reads compressed entries with a <tt>0x400</tt>-byte input buffer and zlib <tt>inflate</tt>. Stream position is tracked in uncompressed bytes. Seeking backward in a compressed entry rewinds the stream and inflates forward to the requested offset; seeking forward inflates and discards bytes until the destination is reached.</p>
+
+<h2>DAT2 Text Reads</h2>
+
+<p>When a DAT entry is opened in text mode, CE normalizes Windows CRLF line endings to a single LF character while reading. The same logic is used for compressed and uncompressed DAT entries. This matters for text formats such as <a href="msg.html">MSG</a>, <a href="lst.html">LST</a>, and world-map text configuration files.</p>
+
+<p>Text-mode seeks are restricted. CE only supports rewinding or seeking to an absolute offset; arbitrary relative/end seeks in text streams are rejected because CRLF normalization makes byte positions ambiguous.</p>
+
+<h2>DAT2 Reader Algorithm</h2>
+
+<ol>
+<li>Open the file as binary and get its physical size.</li>
+<li>Read <tt>tree_size</tt> and <tt>data_size</tt> from the last 8 bytes.</li>
+<li>Set <tt>data_base = physical_size - data_size</tt>.</li>
+<li>Seek to <tt>physical_size - tree_size - 8</tt>.</li>
+<li>Read little-endian <tt>file_count</tt>.</li>
+<li>Read <tt>file_count</tt> variable-length entries.</li>
+<li>Sort-check entries case-insensitively if the archive will be used by an engine that binary-searches the directory.</li>
+<li>For each entry, read from <tt>data_base + data_offset</tt> for <tt>data_size</tt> bytes.</li>
+<li>If <tt>compressed == 1</tt>, inflate with zlib and require <tt>uncompressed_size</tt> output bytes.</li>
+</ol>
+
+<h2>DAT2 Writer Notes</h2>
+
 <ul>
-<li>The engine opens only entries whose mode starts with <code>r</code>; DAT2 archives are read-only to the game.</li>
-<li>Compressed entries use a 0x400-byte input buffer and zlib <code>inflate</code>. Seeking backwards in compressed entries rewinds and inflates forward to the requested uncompressed offset.</li>
-<li>Text reads normalize CRLF to LF for both compressed and uncompressed DAT entries.</li>
+<li>Write entry paths exactly as game-relative paths, preferably with backslashes for classic-tool compatibility.</li>
+<li>Sort directory entries case-insensitively by path before writing.</li>
+<li>Use <tt>compressed = 0</tt> for already-compressed media when recompression is not worthwhile.</li>
+<li>Use zlib stream compression, not raw deflate and not gzip, when <tt>compressed = 1</tt>.</li>
+<li>Write <tt>tree_size</tt> as the byte length of <tt>file_count + all directory entries</tt>.</li>
+<li>Write <tt>data_size</tt> as the byte length from <tt>data_base</tt> through the 8-byte footer. For normal files with no leading prefix, this is the physical file size.</li>
+<li>Keep paths unique under case-insensitive comparison. Duplicate paths make lookup order ambiguous and can break binary search assumptions.</li>
 </ul>
 
-<h3>Credits</h3>
-<p>DAT1 format reverse engineered by Shadowbird (gmail.com, account "shadowbird.lv").</p>
-<p>DAT2 format reverse engineered by MatuX (matip@fibertel.com.ar).</p>
+<h2>DAT2 Validation Checklist</h2>
 
-<h3>Tools</h3>
-<a href="https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar">Dat Explorer 1.43</a><br/>
-<a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat">Various TeamX tools</a>
+<ul>
+<li><tt>physical_size &gt;= 8</tt>.</li>
+<li><tt>data_size &lt;= physical_size</tt>.</li>
+<li><tt>tree_size &gt;= 4</tt> and <tt>tree_size + 8 &lt;= data_size</tt>.</li>
+<li><tt>tree_offset = physical_size - tree_size - 8</tt> is inside the file.</li>
+<li>All directory entries fit inside the tree.</li>
+<li>Every <tt>data_base + data_offset + data_size</tt> fits inside the physical file.</li>
+<li><tt>compressed</tt> is <tt>0</tt> or <tt>1</tt>.</li>
+<li>Uncompressed entries have matching stored and real sizes.</li>
+<li>Compressed entries inflate successfully to <tt>uncompressed_size</tt>.</li>
+<li>Entries are sorted case-insensitively and have no duplicate paths.</li>
+</ul>
 
-<h3>Source code</h3>
-<a href="https://github.com/rotators/Fo1in2/blob/master/Tools/UndatUI/src/dat.cs">Fallout 1 DAT unpacking - C#</a><br/>
-<a href="https://github.com/ghost2238/2055/tree/master/tools/undat">Fallout 1 DAT-file extractor by Abel - Pascal / ASM</a><br/>
-<a href="https://github.com/rotators/tools/tree/master/DATLib">Fallout 2 DAT reading - C#</a><br/>
-<a href="https://github.com/rotators/Fo1in2/blob/master/Tools/Packrat/src/dat.cs">Fallout 2 DAT creation - C#</a><br/>
-<a href="https://github.com/berenm/game-data-reverse-engineering/tree/master/python">DAT unpacking for both Fallout 1 and 2 DATs - Python</a><br/>
-<a href="https://github.com/falltergeist/dat-unpacker">Console utility for unpacking 1 &amp; 2 DATs - C++</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.cc">Fallout 2 Community Edition DAT2 reader - C++</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.h">Fallout 2 Community Edition DAT2 structures - C++</a>
+<h2>DAT1 Overview</h2>
 
+<p>DAT1 is the Fallout 1 archive format. It is structurally unrelated to DAT2. Metadata values are big-endian and the archive uses a directory-oriented layout followed by file data.</p>
+
+<h3>DAT1 Header</h3>
+
+<table>
+<tr><th>Field</th><th>Size</th><th>Description</th></tr>
+<tr><td><tt>directory_count</tt></td><td>4</td><td>Number of directory records.</td></tr>
+<tr><td><tt>folder_allocation_hint</tt></td><td>4</td><td>Allocation hint used by the engine. It must be at least <tt>directory_count</tt> or classic code can overrun its allocation.</td></tr>
+<tr><td><tt>reserved</tt></td><td>4</td><td>Usually <tt>0</tt>.</td></tr>
+<tr><td><tt>timestamp</tt></td><td>4</td><td>Unix-style creation timestamp in known archives. Read by tools, not normally validated by the game.</td></tr>
+</table>
+
+<h3>DAT1 Directory Name Block</h3>
+
+<p>The header is followed by <tt>directory_count</tt> directory names:</p>
+
+<pre>
+uint8  name_length
+char   name[name_length]
+</pre>
+
+<p>Fallout 1 <tt>master.dat</tt> includes a root directory named <tt>.</tt>. Do not discard it as padding; it contains files such as <tt>color.pal</tt> and fonts.</p>
+
+<h3>DAT1 Directory Content Block</h3>
+
+<p>After the directory names, each directory has a content block:</p>
+
+<table>
+<tr><th>Field</th><th>Size</th><th>Description</th></tr>
+<tr><td><tt>file_count</tt></td><td>4</td><td>Number of files in the directory.</td></tr>
+<tr><td><tt>file_allocation_hint</tt></td><td>4</td><td>Allocation hint; should be at least <tt>file_count</tt>.</td></tr>
+<tr><td><tt>fixed_metadata_size</tt></td><td>4</td><td>Usually <tt>16</tt>, matching the four 32-bit metadata fields in each file entry.</td></tr>
+<tr><td><tt>timestamp</tt></td><td>4</td><td>Directory timestamp.</td></tr>
+</table>
+
+<p>Each file entry then contains:</p>
+
+<table>
+<tr><th>Field</th><th>Size</th><th>Description</th></tr>
+<tr><td><tt>name_length</tt></td><td>1</td><td>Filename length.</td></tr>
+<tr><td><tt>name</tt></td><td>Variable</td><td>Filename within the current directory.</td></tr>
+<tr><td><tt>attributes</tt></td><td>4</td><td><tt>0x20</tt> for plain data, <tt>0x40</tt> for LZSS-compressed data in common docs/tools.</td></tr>
+<tr><td><tt>offset</tt></td><td>4</td><td>Physical offset of file data from the beginning of the DAT.</td></tr>
+<tr><td><tt>size</tt></td><td>4</td><td>Uncompressed size.</td></tr>
+<tr><td><tt>packed_size</tt></td><td>4</td><td>Compressed size. Usually <tt>0</tt> for plain entries.</td></tr>
+</table>
+
+<h2>DAT1 LZSS Blocks</h2>
+
+<p>DAT1 compressed entries use a Fallout LZSS block stream. This is the file-entry decompression layer, not the archive directory parser.</p>
+
+<ul>
+<li>The dictionary size is <tt>4096</tt> bytes.</li>
+<li>The initial dictionary is filled with spaces (<tt>0x20</tt>).</li>
+<li>The initial dictionary write index is <tt>4096 - 18</tt>.</li>
+<li>Minimum match length is <tt>3</tt>; maximum encoded match length is <tt>18</tt>.</li>
+<li>The stream is divided into signed 16-bit block lengths. A zero block ends the stream.</li>
+<li>Negative block lengths copy literal bytes directly without feeding them into the dictionary.</li>
+<li>Positive block lengths contain flag-controlled LZSS tokens.</li>
+</ul>
+
+<p>The token flags are consumed least-significant bit first. If the current flag bit is set, the next input byte is literal data and is also written into the dictionary. If the bit is clear, the next two bytes encode a dictionary offset and a length nibble; <tt>length + 3</tt> bytes are copied from the dictionary to output and back into the dictionary. The implementation used by community tools allows copied bytes to overwrite dictionary positions that may still be read later in the same match, which is normal for LZSS-style overlap.</p>
+
+<h2>Practical Modding Notes</h2>
+
+<ul>
+<li>For editing, it is usually simpler to unpack resources into the configured patch/data directory than to rebuild <tt>master.dat</tt> or <tt>critter.dat</tt>.</li>
+<li>Do not confuse DAT2 zlib entry compression with gzipped loose files or gzipped save-game MAP/PRO files.</li>
+<li>When making a compatibility patch DAT, include only changed files and preserve their game-relative paths.</li>
+<li>When debugging "wrong file loaded" problems, check all open roots: loose <tt>data\</tt>, patch DATs, <tt>f2_res.dat</tt>, <tt>master.dat</tt>, and <tt>critter.dat</tt>.</li>
+<li>Many old tools extract everything using uppercase names. The game lookup is case-insensitive, but version control and cross-platform tooling are easier when paths are normalized consistently.</li>
+</ul>
+
+<h2>Related Formats</h2>
+
+<ul>
+<li><a href="frm.html">FRM File Format</a> - game art stored inside DAT archives.</li>
+<li><a href="pal.html">PAL File Format</a> - palettes stored as loose resources or inside DAT archives.</li>
+<li><a href="rix.html">RIX File Format</a> - splash images stored in <tt>art\splash</tt>.</li>
+<li><a href="acm.html">ACM File Format</a> - compressed audio stored in DAT archives or loose sound folders.</li>
+<li><a href="msg.html">MSG File Format</a> - text message files commonly loaded from DAT or loose <tt>data\</tt>.</li>
+<li><a href="map.html">MAP File Format</a> - map resources stored as DAT entries or loose files.</li>
+<li><a href="pro.html">PRO File Format</a> - prototype resources stored in <tt>proto\</tt> paths.</li>
+</ul>
+
+<h2>Source References</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.cc">Fallout 2 CE <tt>dfile.cc</tt></a> - DAT2 footer parsing, entry loading, zlib inflate, text-mode reads, seeks, and case-insensitive entry lookup.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.h">Fallout 2 CE <tt>dfile.h</tt></a> - in-memory DAT2 structures.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/xfile.cc">Fallout 2 CE <tt>xfile.cc</tt></a> - resource root search order, DAT/directory opening, loose gzip detection, and file listing behavior.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/db.cc">Fallout 2 CE <tt>db.cc</tt></a> - higher-level database/file API and big-endian game-data read helpers.</li>
+<li><a href="https://falloutmods.fandom.com/wiki/DAT_file_format">Vault-Tec Labs DAT file format</a> - classic community DAT1/DAT2 documentation and credits.</li>
+<li><a href="https://fallout.fandom.com/wiki/DAT_file">Fallout Wiki DAT file</a> - DAT archive overview and DAT2 community notes.</li>
+<li><a href="https://formats.kaitai.io/fallout2_dat/">Kaitai Struct Fallout 2 DAT specification</a> - formal DAT2 parser specification useful for cross-checking field order.</li>
+<li><a href="https://www.nma-fallout.com/threads/fallout-dat-files.160366/">NMA Fallout DAT files thread</a> - Shadowbird's DAT1/LZSS discussion referenced by older tools.</li>
+</ul>
+
+<h2>Tools</h2>
+
+<ul>
+<li><a href="https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar">Dat Explorer 1.43</a></li>
+<li><a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat">TeamX DAT utilities</a></li>
+<li><a href="https://github.com/rotators/Fo1in2/blob/master/Tools/UndatUI/src/dat.cs">Fallout 1 DAT unpacking - C#</a></li>
+<li><a href="https://github.com/rotators/tools/tree/master/DATLib">Fallout 2 DAT reading - C#</a></li>
+<li><a href="https://github.com/rotators/Fo1in2/blob/master/Tools/Packrat/src/dat.cs">Fallout 2 DAT creation - C#</a></li>
+<li><a href="https://github.com/berenm/game-data-reverse-engineering/tree/master/python">DAT unpacking for Fallout 1 and Fallout 2 - Python</a></li>
+<li><a href="https://github.com/falltergeist/dat-unpacker">Falltergeist DAT unpacker - C++</a></li>
+</ul>
+
+<h2>Credits</h2>
+
+<p>Original DAT1 format notes are credited by older community documents to Shadowbird. Original DAT2 format notes are credited to MatuX. This page also incorporates behavior verified against Fallout 2 Community Edition source.</p>
 
 <h2>History</h2>
-<p>
-2019-12-15 - Ported from <a href="https://falloutmods.fandom.com/wiki/DAT_file_format">https://falloutmods.fandom.com/wiki/DAT_file_format</a> by <a href="https://github.com/ghost2238">ghost</a><br/>
-</p>
+
+<p>2019-12-15 - Ported from <a href="https://falloutmods.fandom.com/wiki/DAT_file_format">Vault-Tec Labs DAT file format</a> by <a href="https://github.com/ghost2238">ghost</a>.</p>
 
 </div>
 </body>
