@@ -426,6 +426,12 @@ internal static partial class MarkdownRenderer
                     continue;
                 }
 
+                if (string.Equals(language, "toc", StringComparison.OrdinalIgnoreCase))
+                {
+                    html.AppendLine(RenderFloatingToc(code.ToString()));
+                    continue;
+                }
+
                 if (string.Equals(language, "fallout-palette", StringComparison.OrdinalIgnoreCase))
                 {
                     html.AppendLine(RenderFalloutPalette(code.ToString()));
@@ -607,6 +613,83 @@ internal static partial class MarkdownRenderer
         html.AppendLine(ordered ? "</ol>" : "</ul>");
         return index - 1;
     }
+
+    private static string RenderFloatingToc(string source)
+    {
+        var lines = ParseTocLines(source);
+        if (lines.Count == 0)
+        {
+            return "";
+        }
+
+        var index = 0;
+        return new StringBuilder()
+            .AppendLine("<nav class=\"floating-toc\" aria-label=\"Table of contents\">")
+            .Append(RenderTocList(lines, ref index, lines[0].Indent))
+            .AppendLine("</nav>")
+            .ToString();
+    }
+
+    private static IReadOnlyList<TocLine> ParseTocLines(string source)
+    {
+        var lines = new List<TocLine>();
+        foreach (var rawLine in source.ReplaceLineEndings("\n").Split('\n'))
+        {
+            if (string.IsNullOrWhiteSpace(rawLine))
+            {
+                continue;
+            }
+
+            var expanded = rawLine.Replace("\t", "    ", StringComparison.Ordinal);
+            var match = TocLineRegex().Match(expanded);
+            if (!match.Success)
+            {
+                throw new InvalidOperationException($"Invalid toc row: {rawLine.Trim()}");
+            }
+
+            lines.Add(new TocLine(
+                match.Groups["indent"].Value.Length,
+                match.Groups["number"].Success,
+                match.Groups["text"].Value.Trim()));
+        }
+
+        return lines;
+    }
+
+    private static string RenderTocList(IReadOnlyList<TocLine> lines, ref int index, int indent)
+    {
+        var ordered = lines[index].Ordered;
+        var html = new StringBuilder();
+        html.AppendLine(ordered ? "<ol>" : "<ul>");
+
+        while (index < lines.Count)
+        {
+            var line = lines[index];
+            if (line.Indent < indent)
+            {
+                break;
+            }
+
+            if (line.Indent > indent)
+            {
+                break;
+            }
+
+            index++;
+            html.Append("<li>").Append(RenderInline(line.Text));
+            if (index < lines.Count && lines[index].Indent > indent)
+            {
+                html.AppendLine();
+                html.Append(RenderTocList(lines, ref index, lines[index].Indent));
+            }
+            html.AppendLine("</li>");
+        }
+
+        html.AppendLine(ordered ? "</ol>" : "</ul>");
+        return html.ToString();
+    }
+
+    private sealed record TocLine(int Indent, bool Ordered, string Text);
 
     private static string RenderFalloutPalette(string source)
     {
@@ -954,6 +1037,9 @@ internal static partial class MarkdownRenderer
 
     [GeneratedRegex("^\\d+\\.\\s+(?<text>.+)$")]
     private static partial Regex OrderedListRegex();
+
+    [GeneratedRegex("^(?<indent>\\s*)((?<number>\\d+)\\.|[-*])\\s+(?<text>.+)$")]
+    private static partial Regex TocLineRegex();
 
     [GeneratedRegex("^\\|?\\s*:?-{3,}:?\\s*(\\|\\s*:?-{3,}:?\\s*)+\\|?$")]
     private static partial Regex TableSeparatorRegex();

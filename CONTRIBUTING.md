@@ -109,6 +109,8 @@ Migration guidelines:
 - Keep internal links relative, such as `[MSG](msg.html)`.
 - Use fenced code blocks with a language hint when obvious, such as `text`,
   `c`, or `powershell`.
+- Use a fenced `toc` block for curated floating page navigation. The block
+  accepts normal Markdown list links and renders as the shared floating menu.
 - Percent-encode literal parentheses in Markdown link URLs, for example
   `%28en%29`, because plain `)` terminates links in the current lightweight
   renderer.

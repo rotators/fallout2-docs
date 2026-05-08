@@ -4,6 +4,7 @@ output: index.html
 description: Main index for Fallout 1 and Fallout 2 reversing, modding, file format, tooling, project, and purchase resources.
 ---
 
+```toc
 1. [Fallout2.exe](#fo2exe)
 2. [File formats](#formats)
 3. [Artwork](#artwork)
@@ -22,6 +23,7 @@ description: Main index for Fallout 1 and Fallout 2 reversing, modding, file for
 12. [Projects](#fo_projects)
 13. [Misc](#misc)
 14. [Buy](#buy)
+```
 
 # Fallout 1 & 2 reversing and modding resource
 
