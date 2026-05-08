@@ -1,0 +1,1619 @@
+Function	Code	File
+void abil_init()	if (illegalArg || (checkValidMemAddr && (args[0] < 0x410010 || args[0] > 0x4FCE34))) {	Modules\Scripting\Handlers\Memory.cpp
+DWORD pick_death(GameObject* attacker, GameObject* target, GameObject* weapon, DWORD amount, DWORD anim, DWORD hitFromBack)	DWORD animDeath = fo::func::pick_death(attacker, target, weapon, damage, animation, hitBack); // vanilla pick death	Modules\HookScripts\DeathHs.cpp
+void check_death()	call fo::funcoffs::check_death_; // call original function	Modules\HookScripts\DeathHs.cpp
+void action_use_skill_on()	jmp  fo::funcoffs::action_use_skill_on_;	Modules\HookScripts\MiscHs.cpp
+void action_talk_to()	jmp  fo::funcoffs::action_talk_to_;	Modules\PartyControl.cpp
+DWORD register_begin(DWORD regType)	jmp  fo::funcoffs::register_begin_;	Modules\Animations.cpp
+	jmp  fo::funcoffs::register_begin_;  // vanilla behavior	Modules\Animations.cpp
+	jmp  fo::funcoffs::register_begin_;	Modules\BugFixes.cpp
+	call fo::funcoffs::register_begin_;	Modules\MiscPatches.cpp
+void register_clear()	call fo::funcoffs::register_clear_;	Modules\MiscPatches.cpp
+DWORD register_end()	call fo::funcoffs::register_end_;	Modules\MiscPatches.cpp
+DWORD register_object_animate(GameObject* object, DWORD anim, DWORD delay)	call fo::funcoffs::register_object_animate_;	Modules\Explosions.cpp
+	call fo::funcoffs::register_object_animate_;	Modules\Explosions.cpp
+	call fo::funcoffs::register_object_animate_; // overwritten call	Modules\Explosions.cpp
+	call fo::funcoffs::register_object_animate_;	Modules\MiscPatches.cpp
+	jmp  fo::funcoffs::register_object_animate_;	Modules\HookScripts\ObjectHs.cpp
+	fo::func::register_object_animate_and_hide(obj, animId, delay);	Modules\Scripting\Handlers\Anims.cpp
+DWORD register_object_animate_and_hide(GameObject* object, DWORD anim, DWORD delay)	call fo::funcoffs::register_object_animate_and_hide_;	Modules\Explosions.cpp
+	fo::func::register_object_animate_and_hide(obj, animId, delay);	Modules\Scripting\Handlers\Anims.cpp
+DWORD register_object_turn_towards(GameObject* object, DWORD tileNum, DWORD nothing)	fo::func::register_object_turn_towards(obj, tile, nothing);	Modules\Scripting\Handlers\Anims.cpp
+DWORD register_object_must_erase(GameObject* object)	fo::func::register_object_must_erase(obj);	Modules\Scripting\Handlers\Anims.cpp
+void register_object_call(DWORD* target, DWORD* source, void* func, DWORD delay)	fo::func::register_object_call(	Modules\Scripting\Handlers\Anims.cpp
+DWORD register_object_funset(GameObject* object, DWORD action, DWORD delay)	call fo::funcoffs::register_object_funset_;	Modules\Explosions.cpp
+DWORD register_object_change_fid(GameObject* object, DWORD artFid, DWORD delay)	call fo::funcoffs::register_object_change_fid_;	Modules\MiscPatches.cpp
+	fo::func::register_object_change_fid(obj, fid, delay);	Modules\Scripting\Handlers\Anims.cpp
+DWORD register_object_take_out(GameObject* object, DWORD holdFrameId, DWORD nothing)	MakeJump(0x415238, register_object_take_out_hack);	Modules\MiscPatches.cpp
+	fo::func::register_object_take_out(obj, holdFrame, nothing);	Modules\Scripting\Handlers\Anims.cpp
+DWORD register_object_light(GameObject* object, DWORD lightRadius, DWORD delay)	call fo::funcoffs::register_object_light_;	Modules\Explosions.cpp
+	call fo::funcoffs::register_object_light_;	Modules\Explosions.cpp
+	call fo::funcoffs::register_object_light_;	Modules\Explosions.cpp
+	call fo::funcoffs::register_object_light_;	Modules\Explosions.cpp
+	fo::func::register_object_light(obj, radius, delay);	Modules\Scripting\Handlers\Anims.cpp
+void anim_set_end()	jmp  fo::funcoffs::anim_set_end_;	Modules\Animations.cpp
+DWORD anim_can_use_door(GameObject* source, GameObject* object)	if (!fo::func::anim_can_use_door(srcObject, objBlock)) continue; // block - next rotation	Game\tilemap.cpp
+	jmp  fo::funcoffs::anim_can_use_door_;	Modules\BugFixes.cpp
+void make_path()	fo::func::make_path_func(partyMember, partyMember->tile, underObject->tile, 0, 0, game::Tilemap::obj_path_blocking_at_) > 0)	Modules\PartyControl.cpp
+	long pathLength = fo::func::make_path_func(objFrom, objFrom->tile, tileTo, pathData, checkFlag, (void*)func);	Modules\Scripting\Handlers\Objects.cpp
+DWORD make_path_func(GameObject* objectFrom, DWORD tileFrom, DWORD tileTo, char* pathDataBuffer, DWORD checkTileTo, void* blockingFunc)	sf::MakeJump(fo::funcoffs::make_path_func_, make_path_func_hack_replacement); // 0x415EFC	Game\tilemap.cpp
+	fo::func::make_path_func(partyMember, partyMember->tile, underObject->tile, 0, 0, game::Tilemap::obj_path_blocking_at_) > 0)	Modules\PartyControl.cpp
+	long pathLength = fo::func::make_path_func(objFrom, objFrom->tile, tileTo, pathData, checkFlag, (void*)func);	Modules\Scripting\Handlers\Objects.cpp
+DWORD tile_idistance(DWORD sourceTile, DWORD targetTile)	it->distance = fo::func::tile_idistance(sourceTile, targetTile); // maximum distance	Game\tilemap.cpp
+void make_straight_path()	fo::func::make_straight_path_func(object, objTile, targetTile, 0, (DWORD*)&obj, 0x20, (void*)fo::funcoffs::obj_shoot_blocking_at_);	Game\AI\AIHelpers.cpp
+	fo::func::make_straight_path_func(attacker, attacker->tile, target->tile, 0, (DWORD*)&object, 0x20, (void*)fo::funcoffs::obj_shoot_blocking_at_);	Game\AI\AIHelpers.cpp
+	call fo::funcoffs::make_straight_path_;	Modules\MiscPatches.cpp
+	fo::func::make_straight_path_func(objFrom, objFrom->tile, tileTo, 0, (DWORD*)&resultObj, flag, (void*)getBlockingFunc(type));	Modules\Scripting\Handlers\Objects.cpp
+DWORD make_straight_path_func(GameObject* objFrom, DWORD tileFrom, DWORD tileTo, void* arrayPtr, DWORD* outObject, DWORD flags, void* blockingFunc)	fo::func::make_straight_path_func(object, objTile, targetTile, 0, (DWORD*)&obj, 0x20, (void*)fo::funcoffs::obj_shoot_blocking_at_);	Game\AI\AIHelpers.cpp
+	fo::func::make_straight_path_func(attacker, attacker->tile, target->tile, 0, (DWORD*)&object, 0x20, (void*)fo::funcoffs::obj_shoot_blocking_at_);	Game\AI\AIHelpers.cpp
+	call fo::funcoffs::make_straight_path_func_; // overlapping if len(eax) == 0	Modules\MiscPatches.cpp
+	fo::func::make_straight_path_func(objFrom, objFrom->tile, tileTo, 0, (DWORD*)&resultObj, flag, (void*)getBlockingFunc(type));	Modules\Scripting\Handlers\Objects.cpp
+void dude_stand()	jmp  fo::funcoffs::dude_stand_;	Modules\BugFixes.cpp
+void dude_standup()	jmp  fo::funcoffs::dude_standup_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::dude_standup_;	Modules\BugFixes.cpp
+void art_init()	static const functype art_init = (functype)fo::funcoffs::art_init_;	Modules\Tiles.cpp
+FrmHeaderData* art_ptr_lock(DWORD frmId, DWORD* lockPtr)	fo::FrmHeaderData* frm = fo::func::art_ptr_lock(object->artFid, &lock);	FalloutEngine\EngineUtils.cpp
+	auto frm = fo::func::art_ptr_lock(dialog_target->artFid, &lockPtr);	HRP\Dialog.cpp
+	*(BYTE**)FO_VAR_dialog_red_button_up_buf = fo::func::art_ptr_lock_data(artID | 96, 0 ,0, (DWORD*)FO_VAR_dialog_red_button_up_key);	Modules\BugFixes.cpp
+	*(BYTE**)FO_VAR_dialog_red_button_down_buf = fo::func::art_ptr_lock_data(artID | 95, 0 ,0, (DWORD*)FO_VAR_dialog_red_button_down_key);	Modules\BugFixes.cpp
+	fo::FrmHeaderData *critFrm = fo::func::art_ptr_lock(BuildFrmId(1, critNum), &critFrmLock);	Modules\HeroAppearance.cpp
+	BYTE *MenuUSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 299), 0, 0, &MenuUObj); // MENUUP Frm	Modules\HeroAppearance.cpp
+	BYTE *MenuDSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 300), 0, 0, &MenuDObj); // MENUDOWN Frm	Modules\HeroAppearance.cpp
+	BYTE *DidownUSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 93), 0, 0, &DidownUObj); // MENUUP Frm	Modules\HeroAppearance.cpp
+	BYTE *DidownDSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 94), 0, 0, &DidownDObj); // MENUDOWN Frm	Modules\HeroAppearance.cpp
+	BYTE *DiupUSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 100), 0, 0, &DiupUObj); // MENUUP Frm	Modules\HeroAppearance.cpp
+	BYTE *DiupDSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 101), 0, 0, &DiupDObj); // MENUDOWN Frm	Modules\HeroAppearance.cpp
+	frmSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 122), 0, 0, &frmLock); // SLUFrm	Modules\HeroAppearance.cpp
+	frmSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 123), 0, 0, &frmLock); // SLDFrm	Modules\HeroAppearance.cpp
+	frmSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 124), 0, 0, &frmLock); // SRUFrm	Modules\HeroAppearance.cpp
+	frmSurface = fo::func::art_ptr_lock_data(BuildFrmId(6, 125), 0, 0, &frmLock); // SRDFrm	Modules\HeroAppearance.cpp
+	FrmSurface = fo::func::art_ptr_lock_data(BuildFrmId(fo::OBJ_TYPE_INTRFACE, 113), 0, 0, &FrmObj); // "Use Item On" window	Modules\HeroAppearance.cpp
+	FrmSurface = fo::func::art_ptr_lock_data(BuildFrmId(fo::OBJ_TYPE_INTRFACE, 188), 0, 0, &FrmObj);	Modules\HeroAppearance.cpp
+	FrmMaskSurface = fo::func::art_ptr_lock_data(BuildFrmId(fo::OBJ_TYPE_INTRFACE, 187), 0, 0, &FrmMaskObj);	Modules\HeroAppearance.cpp
+	FrmSurface = fo::func::art_ptr_lock_data(BuildFrmId(fo::OBJ_TYPE_INTRFACE, 174), 0, 0, &FrmObj); // Pickchar frm	Modules\HeroAppearance.cpp
+	*(BYTE**)buttonMem = fo::func::art_ptr_lock_data(artId, 0, 0, (DWORD*)buttonKey); // first texture memory address	Modules\QuestList.cpp
+DWORD art_ptr_unlock(DWORD lockId)	fo::func::art_ptr_unlock(lock);	FalloutEngine\EngineUtils.cpp
+	fo::func::art_ptr_unlock(lockPtr);	HRP\Dialog.cpp
+	if (frm) fo::func::art_ptr_unlock(frm);	Modules\Animations.cpp
+	call fo::funcoffs::art_ptr_unlock_;	Modules\BugFixes.cpp
+	fo::func::art_ptr_unlock(critFrmLock);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(MenuUObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(MenuDObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(DidownUObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(DidownDObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(DiupUObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(DiupDObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(frmLock);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(frmLock);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(frmLock);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(frmLock);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(FrmObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(FrmObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(FrmMaskObj);	Modules\HeroAppearance.cpp
+	fo::func::art_ptr_unlock(FrmObj);	Modules\HeroAppearance.cpp
+void art_flush()	if (flush) fo::func::art_flush();	Modules\HeroAppearance.cpp
+	__asm call fo::funcoffs::art_flush_;	Modules\Scripting\Handlers\Anims.cpp
+void art_get_code()	jmp fo::funcoffs::art_get_code_;	Modules\MiscPatches.cpp
+	jmp fo::funcoffs::art_get_code_;	Modules\MiscPatches.cpp
+	jmp fo::funcoffs::art_get_code_;	Modules\MiscPatches.cpp
+char* art_get_name(DWORD artFID)	const char* artPathName = fo::func::art_get_name(_fid); // <cd>\art\type\file.frm	Modules\Scripting\Handlers\Interface.cpp
+	artPathName = fo::func::art_get_name(fid); // .fr#	Modules\Scripting\Handlers\Interface.cpp
+DWORD art_frame_width(FrmHeaderData* frm, DWORD frameNum, DWORD rotation)	DWORD critWidth = fo::func::art_frame_width(critFrm, 0, charRotOri);	Modules\HeroAppearance.cpp
+DWORD art_frame_length(FrmHeaderData* frm, DWORD frameNum, DWORD rotation)	long yOffset = fo::func::art_frame_length(frm, dialog_target->frm, dialog_target->rotation) / 2;	HRP\Dialog.cpp
+	DWORD critHeight = fo::func::art_frame_length(critFrm, 0, charRotOri);	Modules\HeroAppearance.cpp
+FrmFrameData* frame_ptr(FrmHeaderData* frm, DWORD frame, DWORD direction)	fo::FrmFrameData* frame = fo::func::frame_ptr((fo::FrmHeaderData*)frm, i, 0);	Modules\TalkingHeads.cpp
+	fo::FrmFrameData* frame = fo::func::frame_ptr((fo::FrmHeaderData*)frm, frameno, 0);	Modules\TalkingHeads.cpp
+bool art_exists(DWORD artFid)	if (!fo::func::art_exists(fId)) {	Modules\PartyControl.cpp
+	call fo::funcoffs::art_exists_;	Modules\PartyControl.cpp
+	ctx.setReturn(fo::func::art_exists(ctx.arg(0).rawValue()));	Modules\Scripting\Handlers\Anims.cpp
+void art_alias_num()	jmp fo::funcoffs::art_alias_num_;	Modules\HeroAppearance.cpp
+void art_alias_fid()	call fo::funcoffs::art_alias_fid_;	Modules\LoadOrder.cpp
+DWORD art_id(DWORD artType, DWORD lstIndex, DWORD animCode, DWORD weaponCode, DWORD directionCode)	fid = fo::func::art_id(fo::OBJ_TYPE_CRITTER, indexNum, 0, weaponAnimCode, 0);	Game\inventory.cpp
+	jmp  fo::funcoffs::art_id_;	HRP\ViewMap\ViewMap.cpp
+	jmp  fo::funcoffs::art_id_;	HRP\ViewMap\ViewMap.cpp
+	jmp  fo::funcoffs::art_id_;	HRP\ViewMap\ViewMap.cpp
+	critter->artFid = fo::func::art_id(fo::ObjType::OBJ_TYPE_CRITTER, critter->artFid & 0xFFF, 0, (critter->artFid & 0xF000) >> 12, critter->rotation + 1);	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::art_id_;	Modules\HeroAppearance.cpp
+	jmp  fo::funcoffs::art_id_;	Modules\Interface.cpp
+	jmp  fo::funcoffs::art_id_;	Modules\Interface.cpp
+	call fo::funcoffs::art_id_;	Modules\MiscPatches.cpp
+	long artId = fo::func::art_id(fo::ArtType::OBJ_TYPE_INTRFACE, indexArt, 0, 0, 0);	Modules\QuestList.cpp
+	jmp fo::funcoffs::art_id_;	Modules\TalkingHeads.cpp
+DWORD load_frame(char* filename, FrmFile** frmPtr)	if (fo::func::load_frame(file, &frmPtr)) {	Modules\Scripting\Handlers\Interface.cpp
+void audioOpen()	mov  edx, fo::funcoffs::audioOpen_;	Modules\Sound.cpp
+void audioCloseFile()	mov  ebx, fo::funcoffs::audioCloseFile_;	Modules\Sound.cpp
+void audioRead()	mov  ecx, fo::funcoffs::audioRead_;	Modules\Sound.cpp
+void audioSeek()	push fo::funcoffs::audioSeek_;	Modules\Sound.cpp
+void audioFileSize()	push fo::funcoffs::audioFileSize_;	Modules\Sound.cpp
+void dialog_out()	call fo::funcoffs::dialog_out_;	FalloutEngine\Functions.cpp
+	call fo::funcoffs::dialog_out_; // edx - DisplayText (seconds lines)	FalloutEngine\Functions.cpp
+void combat_safety_invalidate_weapon()	return !fo::func::combat_safety_invalidate_weapon_func(attacker, weapon, fo::AttackType::ATKTYPE_RWEAPON_SECONDARY, target, 0, 0);	Modules\AI.cpp
+DWORD combat_safety_invalidate_weapon_func(GameObject* source, GameObject* weapon, DWORD hitMode, GameObject* targetA, DWORD* outSafeRange, GameObject* targetB)	return !fo::func::combat_safety_invalidate_weapon_func(attacker, weapon, fo::AttackType::ATKTYPE_RWEAPON_SECONDARY, target, 0, 0);	Modules\AI.cpp
+void combat_over()	__asm jmp  fo::funcoffs::combat_over_;	Modules\HookScripts\CombatHs.cpp
+void combat_sequence()	call fo::funcoffs::combat_sequence_;	Modules\HookScripts\CombatHs.cpp
+void combat_turn_run()	call fo::funcoffs::combat_turn_run_;	Modules\BugFixes.cpp
+	call fo::funcoffs::combat_turn_run_;	Modules\BugFixes.cpp
+void combat_input()	call fo::funcoffs::combat_input_;	Modules\LoadGameHook.cpp
+DWORD combat_turn(GameObject* critter, DWORD isDudeTurn)	combatTurnResult = fo::func::combat_turn(critter, dudeBegin);	Modules\HookScripts\CombatHs.cpp
+void combat_should_end()	call fo::funcoffs::combat_should_end_;	Modules\BugFixes.cpp
+void combat()	return !fo::func::combat_safety_invalidate_weapon_func(attacker, weapon, fo::AttackType::ATKTYPE_RWEAPON_SECONDARY, target, 0, 0);	Modules\AI.cpp
+	__asm call fo::funcoffs::combat_;	Modules\LoadGameHook.cpp
+	combatTurnResult = fo::func::combat_turn(critter, dudeBegin);	Modules\HookScripts\CombatHs.cpp
+void combat_ctd_init()	jmp  fo::funcoffs::combat_ctd_init_;	Modules\AI.cpp
+void combat_attack()	jmp  fo::funcoffs::combat_attack_;	Modules\AI.cpp
+void attack_crit_success()	call fo::funcoffs::attack_crit_success_;	Modules\BugFixes.cpp
+DWORD determine_to_hit(GameObject* source, GameObject* target, DWORD bodyPart, DWORD hitMode)	jmp  fo::funcoffs::determine_to_hit_;	Modules\Combat.cpp
+void determine_to_hit_func()	call fo::funcoffs::determine_to_hit_func_;	Modules\HookScripts\CombatHs.cpp
+void compute_damage()	call fo::funcoffs::compute_damage_;	Modules\HookScripts\CombatHs.cpp
+void check_for_death(GameObject* critter, DWORD amountDamage, DWORD* flags)	fo::func::check_for_death(fo::var::main_ctd.target, fo::var::main_ctd.targetDamage, &fo::var::main_ctd.targetFlags);	Modules\BugFixes.cpp
+void combat_anim_finished()	call fo::funcoffs::combat_anim_finished_;	Modules\Animations.cpp
+void combat_check_bad_shot()	call fo::funcoffs::combat_check_bad_shot_;	Modules\AI.cpp
+AIcap* ai_cap(GameObject* critter)	fo::AIcap* cap = fo::func::ai_cap(source);	Game\combatAI.cpp
+	jmp  fo::funcoffs::ai_cap_;	Modules\AI.cpp
+	fo::AIcap* cap = fo::func::ai_cap(partyMember);	Modules\PartyControl.cpp
+	fo::AIcap* cap = fo::func::ai_cap(ctx.arg(0).object());	Modules\Scripting\Handlers\Objects.cpp
+DWORD ai_magic_hands(GameObject* source, GameObject* object, DWORD msgNumber)	fo::func::ai_magic_hands(source, item, 5000);	Game\items.cpp
+void ai_check_drugs()	sf::MakeJump(fo::funcoffs::ai_check_drugs_, ai_check_drugs_replacement); // 0x428480	Game\combatAI.cpp
+	call game::CombatAI::ai_check_drugs; // call fo::funcoffs::ai_check_drugs_;	Modules\AI.cpp
+void ai_run_away()	jmp  fo::funcoffs::ai_run_away_;	Modules\AI.cpp
+	call fo::funcoffs::ai_run_away_;	Modules\AI.cpp
+void ai_danger_source()	jmp  fo::funcoffs::ai_danger_source_;	Modules\PartyControl.cpp
+DWORD ai_have_ammo(GameObject* critter, GameObject* item, GameObject** outAmmo)	return fo::func::ai_have_ammo(source, weapon, outAmmo); // 0 - no ammo	Modules\AI.cpp
+void caiHasWeapPrefType()	call fo::funcoffs::caiHasWeapPrefType_;	Modules\AI.cpp
+GameObject* ai_best_weapon(GameObject* source, GameObject* prevItem, GameObject* checkItem, GameObject* target)	call fo::funcoffs::ai_best_weapon_;	Modules\HookScripts\CombatHs.cpp
+bool ai_can_use_weapon(GameObject* critter, GameObject* item, DWORD hitMode)	bool result = fo::func::ai_can_use_weapon(source, weapon, hitMode);	Game\combatAI.cpp
+	call fo::funcoffs::ai_can_use_weapon_;	Modules\HookScripts\CombatHs.cpp
+GameObject* ai_search_inven_weap(GameObject* source, DWORD apCheck, GameObject* target)	fo::GameObject* item = fo::func::ai_search_inven_weap(source, 1, target); // search based on AP	Modules\AI.cpp
+GameObject* ai_search_environ(GameObject* critter, DWORD itemType)	if (!lastItem) lastItem = fo::func::ai_search_environ(source, fo::ItemType::item_type_drug);	Game\combatAI.cpp
+	if (!lastItem) lastItem = fo::func::ai_search_environ(source, fo::ItemType::item_type_misc_item);	Game\combatAI.cpp
+GameObject* ai_retrieve_object(GameObject* critter, GameObject* item)	if (lastItem) lastItem = fo::func::ai_retrieve_object(source, lastItem);	Game\combatAI.cpp
+	call fo::funcoffs::ai_retrieve_object_;	Modules\AI.cpp
+DWORD ai_pick_hit_mode(GameObject* source, GameObject* item, GameObject* target)	long _hitMode = fo::func::ai_pick_hit_mode(source, weapon, target);	Modules\AI.cpp
+void ai_switch_weapons()	jmp  fo::funcoffs::ai_switch_weapons_;	Modules\AI.cpp
+void cai_attempt_w_reload()	jmp  fo::funcoffs::cai_attempt_w_reload_;	Modules\BugFixes.cpp
+void combat_ai()	call fo::funcoffs::combat_ai_;	Modules\AI.cpp
+void combatai_rating()	call fo::funcoffs::combatai_rating_;	Modules\AI.cpp
+	call fo::funcoffs::combatai_rating_;	Modules\AI.cpp
+void combatai_check_retaliation()	jmp  fo::funcoffs::combatai_check_retaliation_;	Modules\Combat.cpp
+DWORD is_within_perception(GameObject* source, GameObject* target)	return sf::PerceptionRangeHook_Invoke(watcher, target, hookType, fo::func::is_within_perception(watcher, target));	Game\objects.cpp
+	return PerceptionRangeHook_Script(watcher, target, type, fo::func::is_within_perception(watcher, target));	Modules\HookScripts\MiscHs.cpp
+void config_get_string()	call fo::funcoffs::config_get_string_; // section<edx>, outValue<ecx>	FalloutEngine\Functions.cpp
+	call fo::funcoffs::config_get_string_;	Modules\Worldmap.cpp
+void config_get_value()	jmp  fo::funcoffs::config_get_value_;	Modules\MiscPatches.cpp
+void credits()	__asm call fo::funcoffs::credits_;	Modules\Credits.cpp
+void credits_get_next_line()	jmp  fo::funcoffs::credits_get_next_line_;	Modules\Credits.cpp
+	call fo::funcoffs::credits_get_next_line_;  // call default function	Modules\Credits.cpp
+char* critter_name(GameObject* critter)	jmp  fo::funcoffs::critter_name_;	Modules\AI.cpp
+	set->animations[i].source, fo::func::critter_name(set->animations[i].source),	Modules\Animations.cpp
+	call fo::funcoffs::critter_name_;	Modules\BugFixes.cpp
+	fo::func::critter_pc_set_name(fo::func::critter_name(npc));	Modules\PartyControl.cpp
+	devlog_f("%s restore sneak: time %d[%d], state %d\n", DL_MAIN, fo::func::critter_name(npc), member.sneak_queue_time, fo::var::fallout_game_time, member.sneak_working);	Modules\PartyControl.cpp
+	devlog_f("%s recheck sneak: time %d<=[%d], state %d\n", DL_MAIN, fo::func::critter_name(npc), member.sneak_queue_time, fo::var::fallout_game_time, member.sneak_working);	Modules\PartyControl.cpp
+	jmp  fo::funcoffs::critter_name_;	Modules\PartyControl.cpp
+	devlog_f("[Switch] %s update sneak: time %d, state %d\n", DL_MAIN, fo::func::critter_name(fo::var::obj_dude), member.sneak_queue_time, member.sneak_working);	Modules\PartyControl.cpp
+	devlog_f("[Switch] %s save sneak: time %d, state %d\n", DL_MAIN, fo::func::critter_name(fo::var::obj_dude), member.sneak_queue_time, member.sneak_working);	Modules\PartyControl.cpp
+	call fo::funcoffs::critter_name_;	Modules\Scripting\Handlers\Objects.cpp
+void critter_pc_set_name(char* newName)	fo::func::critter_pc_set_name(fo::func::critter_name(npc));	Modules\PartyControl.cpp
+void critter_adjust_hits()	call fo::funcoffs::critter_adjust_hits_;	Modules\Scripting\Handlers\Interface.cpp
+void critter_get_rads()	jmp  fo::funcoffs::critter_get_rads_;	Modules\MiscPatches.cpp
+void critter_kill_count()	critterType = static_cast<int8_t>(fo::func::critter_kill_count_type(srcObject));	Game\tilemap.cpp
+DWORD critter_kill_count_type(GameObject* critter)	critterType = static_cast<int8_t>(fo::func::critter_kill_count_type(srcObject));	Game\tilemap.cpp
+	jmp fo::funcoffs::critter_kill_count_type_;	Modules\MiscPatches.cpp
+void critter_kill()	critterType = static_cast<int8_t>(fo::func::critter_kill_count_type(srcObject));	Game\tilemap.cpp
+DWORD critter_is_dead(GameObject* critter)	call fo::funcoffs::critter_is_dead_; // found some object, check if it's a dead critter	Modules\BugFixes.cpp
+	call fo::funcoffs::critter_is_dead_;	Modules\BugFixes.cpp
+	if (includeHidden || (obj->IsCritter() && !fo::func::critter_is_dead(obj) && !(obj->flags & fo::ObjectFlag::Mouse_3d))) {	Modules\Scripting\Handlers\Objects.cpp
+DWORD critter_body_type(GameObject* critter)	if (fo::func::critter_body_type(source)) return; // Robotic/Quadruped cannot use drugs	Game\combatAI.cpp
+	call fo::funcoffs::critter_body_type_;	Modules\BugFixes.cpp
+	switch (fo::func::critter_body_type(partyMember)) {	Modules\PartyControl.cpp
+void pc_flag_off()	__asm call fo::funcoffs::pc_flag_off_;	Modules\Scripting\Handlers\Interface.cpp
+void pc_flag_on(DWORD flag)	__asm call fo::funcoffs::pc_flag_on_;	Modules\Scripting\Handlers\Interface.cpp
+void pc_flag_toggle()	// jmp  fo::funcoffs::pc_flag_toggle_;	Modules\PartyControl.cpp
+DWORD is_pc_flag(DWORD flag)	if (fo::func::is_pc_flag(0)) { // sneak flag	Modules\PartyControl.cpp
+	if (realDude.sneak_queue_time && fo::func::is_pc_flag(0)) {	Modules\PartyControl.cpp
+void critter_sneak_check()	if (!exist) __asm call fo::funcoffs::critter_sneak_check_;	Modules\PartyControl.cpp
+DWORD is_pc_sneak_working()	ctx.setReturn(fo::func::is_pc_sneak_working());	Modules\Scripting\Handlers\Misc.cpp
+void critter_wake_up()	call fo::funcoffs::critter_wake_up_; // (stand up anim)	Modules\BugFixes.cpp
+void critter_compute_ap_from_distance()	call fo::funcoffs::critter_compute_ap_from_distance_;	Modules\HookScripts\InventoryHs.cpp
+void datafileConvertData()	call fo::funcoffs::datafileConvertData_;	FalloutEngine\Functions.cpp
+void display_print(char* msg)	push fo::funcoffs::display_print_; // func replaced by Mash's HRP	Game\GUI\Text.cpp
+	sf::MakeJump(fo::funcoffs::display_print_, display_print_hack_replacemet); // 0x43186C	Game\GUI\Text.cpp
+	jmp  fo::funcoffs::display_print_;	Modules\BugFixes.cpp
+	call fo::funcoffs::display_print_;	Modules\BugFixes.cpp
+	call fo::funcoffs::display_print_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::display_print_;	Modules\BugFixes.cpp
+	call fo::funcoffs::display_print_;	Modules\BugFixes.cpp
+	if (!HRP::Setting::IsEnabled()) MakeJump(0x43186C, display_print_hack);	Modules\Console.cpp
+	jmp  fo::funcoffs::display_print_;	Modules\DebugEditor.cpp
+	fo::func::display_print(superStimMsg.c_str());	Modules\Inventory.cpp
+	fo::func::display_print(buf);	Modules\Karma.cpp
+	fo::func::display_print(fo::util::GetMessageStr(&fo::var::proto_main_msg_file, 675)); // I Can't do that	Modules\PartyControl.cpp
+	fo::func::display_print(Translate::CombatBlockMessage().c_str());	Modules\SubModules\CombatBlock.cpp
+void display_redraw()	__asm call fo::funcoffs::display_redraw_;	Game\GUI\Text.cpp
+	jmp  fo::funcoffs::display_redraw_;	HRP\InterfaceBar.cpp
+void display_scroll_up()	call fo::funcoffs::display_scroll_up_;	InputFuncs.cpp
+void display_scroll_down()	call fo::funcoffs::display_scroll_down_;	InputFuncs.cpp
+void editor_design()	call fo::funcoffs::editor_design_;	Modules\LoadGameHook.cpp
+void DrawFolder()	call fo::funcoffs::DrawFolder_;	Modules\HeroAppearance.cpp
+void PrintLevelWin()	call fo::funcoffs::PrintLevelWin_;	Modules\HeroAppearance.cpp
+	call fo::funcoffs::PrintLevelWin_;	Modules\Scripting\Handlers\Interface.cpp
+void PrintBasicStat()	call fo::funcoffs::PrintBasicStat_;	Modules\HeroAppearance.cpp
+	call fo::funcoffs::PrintBasicStat_;	Modules\Scripting\Handlers\Interface.cpp
+void ListDrvdStats()	call fo::funcoffs::ListDrvdStats_;	Modules\HeroAppearance.cpp
+	call fo::funcoffs::ListDrvdStats_;	Modules\Scripting\Handlers\Interface.cpp
+void ListSkills()	call fo::funcoffs::ListSkills_;	Modules\HeroAppearance.cpp
+	call fo::funcoffs::ListSkills_;	Modules\Scripting\Handlers\Interface.cpp
+void DrawInfoWin()	//call fo::funcoffs::DrawInfoWin_;	Modules\HeroAppearance.cpp
+void SexWindow()	call fo::funcoffs::SexWindow_;  // call gender selection window	Modules\HeroAppearance.cpp
+bool db_access(char* fileName)	call fo::funcoffs::db_access_;    // check art file exists	Modules\HeroAppearance.cpp
+	bool hookHasScript = fo::func::db_access(filePath);	Modules\HookScripts.cpp
+	if (!fo::func::db_access("art\\intrface\\worldmap.frm")) return;	Modules\Interface.cpp
+	call fo::funcoffs::db_access_;	Modules\LoadOrder.cpp
+	return (path && fo::func::db_access(path)) ? path : premadePath;	Modules\Premade.cpp
+	if (direction > 0 && !fo::func::db_access(artPathName)) {	Modules\Scripting\Handlers\Interface.cpp
+	if (fo::func::db_access(outFilePath)) return direction;	Modules\Scripting\Handlers\Interface.cpp
+void DrawCard()	jmp  fo::funcoffs::DrawCard_;	Modules\Karma.cpp
+void ListTraits()	call fo::funcoffs::ListTraits_;	Modules\HeroAppearance.cpp
+void ListDPerks()	call fo::funcoffs::ListDPerks_;	Modules\Perks.cpp
+DWORD folder_print_seperator(char* text)	if (fo::func::folder_print_seperator(message)) {	Modules\Drugs.cpp
+DWORD folder_print_line(char* text)	if (fo::func::folder_print_line(message)) {	Modules\Drugs.cpp
+	if (fo::func::folder_print_line(fakeTraits[i].Name) && !isSelect) {	Modules\Perks.cpp
+void elevator_start()	jmp  fo::funcoffs::elevator_start_;	Modules\Elevators.cpp
+void elevator_end()	jmp  fo::funcoffs::elevator_end_;	Modules\Elevators.cpp
+void Check4Keys()	call fo::funcoffs::Check4Keys_;	Modules\Elevators.cpp
+void endgame_slideshow()	call fo::funcoffs::endgame_slideshow_;	Modules\SpeedPatch.cpp
+void endgame_load_palette(DWORD artType, DWORD fid)	fo::func::endgame_load_palette(fo::ArtType::OBJ_TYPE_INTRFACE, artID & 0xFFF);	HRP\SlidesScreen.cpp
+	fo::func::endgame_load_palette(fo::ArtType::OBJ_TYPE_INTRFACE, 327); // panning desert image (DP.FRM)	HRP\SlidesScreen.cpp
+void findVar()	jmp  fo::funcoffs::findVar_;	Modules\ScriptExtender.cpp
+	jmp  fo::funcoffs::findVar_;       // else - proceed normal	Modules\ScriptExtender.cpp
+DWORD FMtext_width(char* text)	return fo::func::FMtext_width(TextMsg); //get text width	FalloutEngine\EngineUtils.cpp
+void FMtext_char_width()	call fo::funcoffs::FMtext_char_width_;	FalloutEngine\EngineUtils.cpp
+void FMtext_to_buf()	call fo::funcoffs::FMtext_to_buf_;	FalloutEngine\EngineUtils.cpp
+void game_reset()	jmp  fo::funcoffs::game_reset_;	Modules\LoadGameHook.cpp
+	jmp  fo::funcoffs::game_reset_;	Modules\LoadGameHook.cpp
+void game_exit()	jmp  fo::funcoffs::game_exit_;	Modules\LoadGameHook.cpp
+DWORD game_get_global_var(DWORD globalVar)	if (fo::func::game_get_global_var(fo::GVAR_CAR_BLOWER)) {	Modules\HookScripts\MiscHs.cpp
+	if (fo::func::game_get_global_var(fo::GVAR_NEW_RENO_CAR_UPGRADE)) {	Modules\HookScripts\MiscHs.cpp
+	if (fo::func::game_get_global_var(fo::GVAR_NEW_RENO_SUPER_CAR)) {	Modules\HookScripts\MiscHs.cpp
+void game_set_global_var()	jmp  fo::funcoffs::game_set_global_var_;	Modules\HookScripts\MiscHs.cpp
+void game_screendump()	call fo::funcoffs::game_screendump_; // call ds:[FO_VAR_screendump_func];	Modules\Graphics.cpp
+void game_help()	call fo::funcoffs::game_help_;	Modules\LoadGameHook.cpp
+void game_quit_with_confirm()	call fo::funcoffs::game_quit_with_confirm_;	WinProc.cpp
+void gdialogActive()	jmp  fo::funcoffs::gdialogActive_;	Modules\BugFixes.cpp
+	call fo::funcoffs::gdialogActive_;	Modules\BugFixes.cpp
+void gdialogDisplayMsg(char* message)	cmp  dword ptr [esp + 0x1AC - 0x14 + 4], 0x445448; // gdialogDisplayMsg_	Modules\BugFixes.cpp
+	cmp  dword ptr [esp + 0x1AC - 0x14 + 4], 0x445448; // gdialogDisplayMsg_	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::gdialogDisplayMsg_;	Modules\BugFixes.cpp
+	cmp  dword ptr [esp + 0x1AC - 0x14], 0x445448; // gdialogDisplayMsg_	Modules\BugFixes.cpp
+	fo::func::gdialogDisplayMsg(message);	Modules\Scripting\Handlers\Interface.cpp
+void gdReviewInit()	call fo::funcoffs::gdReviewInit_;	Modules\LoadGameHook.cpp
+void gdReviewExit()	jmp fo::funcoffs::gdReviewExit_;	Modules\LoadGameHook.cpp
+void gdDestroyHeadWindow()	call fo::funcoffs::gdDestroyHeadWindow_;	Modules\LoadGameHook.cpp
+void talk_to_critter_reacts()	jmp  fo::funcoffs::talk_to_critter_reacts_; // -1 - good, 0 - neutral, 1 - bad	Modules\BugFixes.cpp
+void gdialog_window_create()	call fo::funcoffs::gdialog_window_create_;	Modules\LoadGameHook.cpp
+void gdialog_window_destroy()	jmp fo::funcoffs::gdialog_window_destroy_;	Modules\LoadGameHook.cpp
+	jmp  fo::funcoffs::gdialog_window_destroy_;	Modules\LoadGameHook.cpp
+void talk_to_translucent_trans_buf_to_buf()	jmp  fo::funcoffs::talk_to_translucent_trans_buf_to_buf_;	Modules\TalkingHeads.cpp
+void gmouse_bk_process()	jmp  fo::funcoffs::gmouse_bk_process_;	HRP\Init.cpp
+DWORD gmouse_set_cursor(DWORD picNum)	call fo::funcoffs::gmouse_set_cursor_;	Modules\BugFixes.cpp
+	fo::func::gmouse_set_cursor(1);	Modules\HeroAppearance.cpp
+	fo::func::gmouse_set_cursor(oldMouse);	Modules\HeroAppearance.cpp
+	call fo::funcoffs::gmouse_set_cursor_;	Modules\LoadGameHook.cpp
+	fo::func::gmouse_set_cursor(20);	Modules\PartyControl.cpp
+	fo::func::gmouse_set_cursor(0);	Modules\PartyControl.cpp
+void gmouse_3d_set_mode(DWORD mode)	fo::func::gmouse_3d_set_mode(2);	Modules\PartyControl.cpp
+	fo::func::gmouse_3d_set_mode(1);	Modules\PartyControl.cpp
+	fo::func::gmouse_3d_set_mode(ctx.arg(0).rawValue());	Modules\Scripting\Handlers\Interface.cpp
+GameObject* object_under_mouse(DWORD crSwitch, DWORD inclDude, DWORD elevation)	fo::GameObject* underObject = fo::func::object_under_mouse(1, 0, fo::var::map_elevation);	Modules\PartyControl.cpp
+	fo::func::object_under_mouse(ctx.arg(0).asBool() ? 1 : -1, ctx.arg(1).rawValue(), fo::var::map_elevation)	Modules\Scripting\Handlers\Objects.cpp
+void gmovie_play()	jmp  fo::funcoffs::gmovie_play_;	Modules\MiscPatches.cpp
+	MakeJump(0x44E690, gmovie_play_hack);	Modules\Movies.cpp
+void gmovieIsPlaying()	jmp  fo::funcoffs::gmovieIsPlaying_;	Modules\BugFixes.cpp
+void gsound_background_volume_get()	backgroundVolume = fo::func::gsound_background_volume_get_set(0);	Modules\Movies.cpp
+	if (backgroundVolume) backgroundVolume = fo::func::gsound_background_volume_get_set(backgroundVolume); // restore volume	Modules\Movies.cpp
+DWORD gsound_background_volume_get_set(DWORD setVolume)	backgroundVolume = fo::func::gsound_background_volume_get_set(0);	Modules\Movies.cpp
+	if (backgroundVolume) backgroundVolume = fo::func::gsound_background_volume_get_set(backgroundVolume); // restore volume	Modules\Movies.cpp
+void gsound_background_play()	jmp  fo::funcoffs::gsound_background_play_;	Modules\MiscPatches.cpp
+void gsound_background_play_level_music()	jmp  fo::funcoffs::gsound_background_play_level_music_;	Modules\MiscPatches.cpp
+void gsound_background_stop()	__asm call fo::funcoffs::gsound_background_stop_;	Modules\Sound.cpp
+	jmp  fo::funcoffs::gsound_background_stop_;	Modules\Sound.cpp
+void gsound_background_restart_last()	__asm call fo::funcoffs::gsound_background_restart_last_;	Modules\Sound.cpp
+void gsound_background_pause()	jmp  fo::funcoffs::gsound_background_pause_;	Modules\Sound.cpp
+void gsound_background_unpause()	jmp  fo::funcoffs::gsound_background_unpause_;	Modules\Sound.cpp
+void gsound_speech_length_get()	jmp  fo::funcoffs::gsound_speech_length_get_;	Modules\Sound.cpp
+void gsound_speech_play()	call fo::funcoffs::gsound_speech_play_;	Modules\Sound.cpp
+void gsound_delete_sfx()	call fo::funcoffs::gsound_delete_sfx_;	Modules\Animations.cpp
+void gsound_red_butt_press()	__asm call fo::funcoffs::gsound_red_butt_press_;	Modules\ExtraSaveSlots.cpp
+	__asm call fo::funcoffs::gsound_red_butt_press_;	Modules\ExtraSaveSlots.cpp
+	__asm call fo::funcoffs::gsound_red_butt_press_;	Modules\ExtraSaveSlots.cpp
+	__asm call fo::funcoffs::gsound_red_butt_press_;	Modules\ExtraSaveSlots.cpp
+	mov  edx, fo::funcoffs::gsound_red_butt_press_;	Modules\Interface.cpp
+	mov  edx, fo::funcoffs::gsound_red_butt_press_;	Modules\QuestList.cpp
+void gsound_red_butt_release()	mov  ebx, fo::funcoffs::gsound_red_butt_release_;	Modules\Interface.cpp
+	mov  ebx, fo::funcoffs::gsound_red_butt_release_;	Modules\QuestList.cpp
+void gsound_med_butt_press()	mov  edx, fo::funcoffs::gsound_med_butt_press_;	Modules\Interface.cpp
+	mov edx, 0x451988 // gsound_med_butt_press_	Modules\MiscPatches.cpp
+void gsound_med_butt_release()	mov ebx, 0x451990 // gsound_med_butt_release_	Modules\MiscPatches.cpp
+void gsound_play_sfx_file(char* name)	fo::func::gsound_play_sfx_file((const char*)0x50163C); // "monitor"	Game\GUI\Text.cpp
+	jmp  fo::funcoffs::gsound_play_sfx_file_;	Modules\DebugEditor.cpp
+	fo::func::gsound_play_sfx_file("ib1p1xx1");	Modules\HeroAppearance.cpp
+	fo::func::gsound_play_sfx_file("ib1p1xx1");	Modules\HeroAppearance.cpp
+	fo::func::gsound_play_sfx_file("ib1p1xx1");	Modules\HeroAppearance.cpp
+	fo::func::gsound_play_sfx_file("ib3p1xx1");	Modules\HeroAppearance.cpp
+	fo::func::gsound_play_sfx_file("ISDXXXX1");	Modules\HeroAppearance.cpp
+	fo::func::gsound_play_sfx_file("IB3LU1X1");	Modules\HeroAppearance.cpp
+	call fo::funcoffs::gsound_play_sfx_file_;	Modules\Interface.cpp
+	call fo::funcoffs::gsound_play_sfx_file_;	Modules\Interface.cpp
+	fo::func::gsound_play_sfx_file("IISXXXX1");	Modules\LoadGameHook.cpp
+	jmp  fo::funcoffs::gsound_play_sfx_file_;	Modules\MiscPatches.cpp
+	call fo::funcoffs::gsound_play_sfx_file_;	Modules\Sound.cpp
+void correctFidForRemovedItem(GameObject* critter, GameObject* item, DWORD slotFlag)	if (result) fo::func::correctFidForRemovedItem(critter, item, flags);	Game\inventory.cpp
+	jmp  fo::funcoffs::correctFidForRemovedItem_;	Modules\HookScripts\InventoryHs.cpp
+void intface_hide()	__asm call fo::funcoffs::intface_hide_;	Modules\Scripting\Handlers\Interface.cpp
+void intface_show()	__asm call fo::funcoffs::intface_show_;	Modules\Scripting\Handlers\Interface.cpp
+DWORD intface_is_hidden()	ctx.setReturn(fo::func::intface_is_hidden());	Modules\Scripting\Handlers\Interface.cpp
+void intface_redraw()	fo::func::intface_redraw();	Modules\PartyControl.cpp
+	fo::func::intface_redraw();	Modules\PartyControl.cpp
+	fo::func::intface_redraw();	Modules\Scripting\Handlers\Interface.cpp
+void intface_update_hit_points()	call fo::funcoffs::intface_update_hit_points_;	Modules\Unarmed.cpp
+void intface_update_ac(DWORD animate)	jmp  fo::funcoffs::intface_update_ac_;	Modules\BugFixes.cpp
+	if (isDude) fo::func::intface_update_ac(0);	Modules\Scripting\Handlers\Inventory.cpp
+void intface_update_move_points(DWORD ap, DWORD freeAP)	if (obj == fo::var::obj_dude) fo::func::intface_update_move_points(ap, fo::var::combat_free_move);	Modules\Scripting\Handlers\Stats.cpp
+DWORD intface_get_attack(DWORD* hitMode, DWORD* isSecondary)	ctx.setReturn(!fo::func::intface_get_attack(&unused, &isAimed) ? isAimed : 0);	Modules\Scripting\Handlers\Combat.cpp
+void intface_update_items(DWORD animate, DWORD modeLeft, DWORD modeRight)	jmp  fo::funcoffs::intface_update_items_;	Modules\Inventory.cpp
+	jmp  fo::funcoffs::intface_update_items_;	Modules\Unarmed.cpp
+	if (update) fo::func::intface_update_items(0, -1, -1);	Modules\Scripting\Handlers\Inventory.cpp
+void intface_toggle_items()	jmp fo::funcoffs::intface_toggle_items_;	Modules\Scripting\Handlers\Inventory.cpp
+void intface_get_item_states()	call fo::funcoffs::intface_get_item_states_;	Modules\Unarmed.cpp
+void intface_toggle_item_state()	fo::func::intface_toggle_item_state();	Modules\Inventory.cpp
+void intface_use_item()	fo::func::intface_use_item();	Modules\Inventory.cpp
+	fo::func::intface_use_item();	Modules\Inventory.cpp
+DWORD intface_is_item_right_hand()	auto itemInHand = fo::func::intface_is_item_right_hand()	Game\inventory.cpp
+void construct_box_bar_win()	call fo::funcoffs::construct_box_bar_win_;	Modules\BarBoxes.cpp
+void reset_box_bar_win()	call fo::funcoffs::reset_box_bar_win_;	Modules\BarBoxes.cpp
+void refresh_box_bar_win()	__asm call fo::funcoffs::refresh_box_bar_win_;	Modules\BarBoxes.cpp
+	__asm call fo::funcoffs::refresh_box_bar_win_;	Modules\BarBoxes.cpp
+void add_bar_box()	call fo::funcoffs::add_bar_box_;	Modules\BarBoxes.cpp
+char* findCurrentProc(Program* program)	metafunc, fo::var::currentProgram->fileName, fo::func::findCurrentProc(fo::var::currentProgram));	Modules\MetaruleExtender.cpp
+	const char* procName = fo::func::findCurrentProc(_program);	Modules\Scripting\OpcodeContext.cpp
+void interpretError()	__asm jmp fo::funcoffs::interpretError_;	FalloutEngine\Functions.cpp
+	fo::func::interpretError("Unknown opcode: %d", opcode);	Modules\Scripting\Opcodes.cpp
+void fetchLong()	SafeWrite32(0x4672A4, 0x0F02048B);	Modules\MiscPatches.cpp
+void pushLongStack()	call fo::funcoffs::pushLongStack_;	Modules\BugFixes.cpp
+void interpretPushShort()	call fo::funcoffs::interpretPushShort_; // pushes value type to Data stack (must be preceded by InterpretPushLong)	FalloutEngine\Functions.cpp
+	call fo::funcoffs::interpretPushShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPushShort_;	Modules\Scripting\Handlers\Graphics.cpp
+void interpretPushLong()	call fo::funcoffs::interpretPushLong_;  // pushes value to Data stack (must be followed by InterpretPushShort)	FalloutEngine\Functions.cpp
+	call fo::funcoffs::interpretPushLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPushLong_;	Modules\Scripting\Handlers\Graphics.cpp
+DWORD interpretPopShort(Program* scriptPtr)	call fo::funcoffs::interpretPopShort_; // pops value type from Data stack (must be followed by InterpretPopLong)	FalloutEngine\Functions.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopShort_;	Modules\Scripting\Handlers\Graphics.cpp
+	if ((short)fo::func::interpretPopShort(script) != (short)VAR_TYPE_INT) illegalArg++;	Modules\Scripting\Handlers\Memory.cpp
+DWORD interpretPopLong(Program* scriptPtr)	call fo::funcoffs::interpretPopLong_; // pops value from Data stack (must be preceded by InterpretPopShort)	FalloutEngine\Functions.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretPopLong_;	Modules\Scripting\Handlers\Graphics.cpp
+	args[i] = fo::func::interpretPopLong(script);	Modules\Scripting\Handlers\Memory.cpp
+void interpretFreeProgram()	call fo::funcoffs::interpretFreeProgram_;	Modules\ScriptExtender.cpp
+Program* allocateProgram(char* filePath)	? fo::func::allocateProgram(fileName)	Modules\ScriptExtender.cpp
+char* interpretGetString(Program* scriptPtr, DWORD dataType, DWORD strId)	call fo::funcoffs::interpretGetString_; // retrieve string argument	FalloutEngine\Functions.cpp
+	call fo::funcoffs::interpretGetString_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretGetString_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretGetString_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretGetString_;	Modules\Scripting\Handlers\Graphics.cpp
+	call fo::funcoffs::interpretGetString_;	Modules\Scripting\Handlers\Graphics.cpp
+	const char* str = fo::func::interpretGetString(script, type, strID);	Modules\Scripting\Handlers\Memory.cpp
+	call fo::funcoffs::interpretGetString_;	Modules\Scripting\Handlers\Perks.cpp
+void interpretAddString()	call fo::funcoffs::interpretAddString_;	FalloutEngine\Functions.cpp
+DWORD interpret(Program* program, DWORD arg2)	prog.procLookup[i] = fo::func::interpretFindProcedure(prog.ptr, procTable[i]);	Modules\ScriptExtender.cpp
+	fo::func::interpret(prog.ptr, -1);	Modules\ScriptExtender.cpp
+	int procPosition = fo::func::interpretFindProcedure(sptr, procName);	Modules\ScriptExtender.cpp
+	DWORD rawValue = fo::func::interpretGetValue(_program, rawValueType);	Modules\Scripting\OpcodeContext.cpp
+	fo::func::interpretReturnValue(_program, _ret.rawValue(), getScriptTypeBySfallType(_ret.type()));	Modules\Scripting\OpcodeContext.cpp
+	fo::func::interpretError("Unknown opcode: %d", opcode);	Modules\Scripting\Opcodes.cpp
+	const char* str = fo::func::interpretGetString(script, type, strID);	Modules\Scripting\Handlers\Memory.cpp
+	if ((short)fo::func::interpretPopShort(script) != (short)VAR_TYPE_INT) illegalArg++;	Modules\Scripting\Handlers\Memory.cpp
+	args[i] = fo::func::interpretPopLong(script);	Modules\Scripting\Handlers\Memory.cpp
+void executeProc()	fo::func::executeProcedure(sptr, procPosition);	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(prog->ptr, procPosition);	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(prog->ptr, procPosition);	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(script->prog.ptr, script->startProc); // run "start"	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(hook->prog.ptr, hook->callback);	Modules\HookScripts\Common.cpp
+DWORD interpretFindProcedure(Program* scriptPtr, char* procName)	prog.procLookup[i] = fo::func::interpretFindProcedure(prog.ptr, procTable[i]);	Modules\ScriptExtender.cpp
+	int procPosition = fo::func::interpretFindProcedure(sptr, procName);	Modules\ScriptExtender.cpp
+void executeProcedure(Program* sptr, DWORD procNum)	fo::func::executeProcedure(sptr, procPosition);	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(prog->ptr, procPosition);	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(prog->ptr, procPosition);	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(script->prog.ptr, script->startProc); // run "start"	Modules\ScriptExtender.cpp
+	fo::func::executeProcedure(hook->prog.ptr, hook->callback);	Modules\HookScripts\Common.cpp
+	call fo::funcoffs::executeProcedure_;	Modules\HookScripts\ObjectHs.cpp
+	call fo::funcoffs::executeProcedure_;	Modules\Scripting\Handlers\Anims.cpp
+DWORD* runProgram(Program* progPtr)	fo::func::runProgram(prog.ptr);	Modules\ScriptExtender.cpp
+	fo::func::runProgram(scriptPtr->program);	Modules\ScriptExtender.cpp
+	fo::func::runProgram(it->prog.ptr);	Modules\ScriptExtender.cpp
+void exit_inventory()	jmp fo::funcoffs::exit_inventory_;	Modules\LoadGameHook.cpp
+	jmp fo::funcoffs::exit_inventory_;	Modules\LoadGameHook.cpp
+void display_inventory(DWORD inventoryOffset, DWORD visibleOffset, DWORD mode)	fo::func::display_inventory(0, -1, mode);	Modules\Scripting\Handlers\Interface.cpp
+void display_target_inventory(DWORD inventoryOffset, DWORD visibleOffset, DWORD* targetInventory, DWORD mode)	fo::func::display_target_inventory(0, -1, fo::var::target_pud, mode);	Modules\Scripting\Handlers\Interface.cpp
+void inven_set_mouse()	jmp fo::funcoffs::inven_set_mouse_;	Modules\LoadGameHook.cpp
+	jmp fo::funcoffs::inven_set_mouse_;	Modules\LoadGameHook.cpp
+	jmp fo::funcoffs::inven_set_mouse_;	Modules\LoadGameHook.cpp
+void switch_hand()	jmp  fo::funcoffs::switch_hand_;	Modules\PartyControl.cpp
+	jmp  fo::funcoffs::switch_hand_;	Modules\HookScripts\InventoryHs.cpp
+void adjust_ac()	call fo::funcoffs::adjust_ac_;	Modules\BugFixes.cpp
+	call fo::funcoffs::adjust_ac_;	Modules\BugFixes.cpp
+	call fo::funcoffs::adjust_ac_; // eax - source, edx - removed armor	Modules\BugFixes.cpp
+	call fo::funcoffs::adjust_ac_;	Modules\BugFixes.cpp
+void adjust_fid()	sf::MakeJump(fo::funcoffs::adjust_fid_, adjust_fid_replacement); // 0x4716E8	Game\inventory.cpp
+GameObject* inven_right_hand(GameObject* critter)	itemPtr = fo::func::inven_right_hand(critter);	FalloutEngine\EngineUtils.cpp
+	fo::GameObject* item = fo::func::inven_right_hand(critter);	Game\inventory.cpp
+	handItem = fo::func::inven_right_hand(source);	Game\items.cpp
+	call fo::funcoffs::inven_right_hand_;	Modules\BugFixes.cpp
+	if (!fo::var::itemButtonItems[fo::HandSlot::Right].item && !fo::func::inven_right_hand(fo::var::obj_dude)) {	Modules\MiscPatches.cpp
+	auto item = fo::func::inven_right_hand(npc);	Modules\PartyControl.cpp
+	fo::GameObject* rItem = fo::func::inven_right_hand(fo::var::obj_dude);	Modules\PartyControl.cpp
+	call fo::funcoffs::inven_right_hand_;	Modules\HookScripts\InventoryHs.cpp
+	ctx.setReturn(fo::func::inven_right_hand(critter));	Modules\Scripting\Handlers\Inventory.cpp
+GameObject* inven_left_hand(GameObject* critter)	itemPtr = fo::func::inven_left_hand(critter);	FalloutEngine\EngineUtils.cpp
+	fo::GameObject* itemL = fo::func::inven_left_hand(critter);	Game\inventory.cpp
+	handItem = fo::func::inven_left_hand(source);	Game\items.cpp
+	call fo::funcoffs::inven_left_hand_;	Modules\BugFixes.cpp
+	if (!fo::var::itemButtonItems[fo::HandSlot::Left].item && !fo::func::inven_left_hand(fo::var::obj_dude)) {	Modules\MiscPatches.cpp
+	if (fo::util::AnimCodeByWeapon(fo::func::inven_left_hand(npc)) == critterAnim) { // definitely left hand	Modules\PartyControl.cpp
+	auto item = fo::func::inven_left_hand(npc);	Modules\PartyControl.cpp
+	fo::GameObject* lItem = fo::func::inven_left_hand(fo::var::obj_dude);	Modules\PartyControl.cpp
+	call fo::funcoffs::inven_left_hand_;	Modules\HookScripts\InventoryHs.cpp
+	ctx.setReturn(fo::func::inven_left_hand(critter));	Modules\Scripting\Handlers\Inventory.cpp
+GameObject* inven_worn(GameObject* critter)	itemPtr = fo::func::inven_worn(critter);	FalloutEngine\EngineUtils.cpp
+	item = fo::func::inven_worn(critter);	Game\inventory.cpp
+	call fo::funcoffs::inven_worn_;	Modules\BugFixes.cpp
+	call fo::funcoffs::inven_worn_;	Modules\BugFixes.cpp
+	call fo::funcoffs::inven_worn_;	Modules\BugFixes.cpp
+	ctx.setReturn(fo::func::inven_worn(critter));	Modules\Scripting\Handlers\Inventory.cpp
+	item = fo::func::inven_worn(critter);	Modules\Scripting\Handlers\Inventory.cpp
+GameObject* inven_pid_is_carried_ptr(GameObject* invenObj, DWORD pid)	call fo::funcoffs::inven_pid_is_carried_ptr_;	Modules\MiscPatches.cpp
+void display_stats()	jmp  fo::funcoffs::display_stats_;	Modules\Unarmed.cpp
+	fo::func::display_stats(); // calling the function outside of inventory screen will crash the game	Modules\Scripting\Handlers\Interface.cpp
+GameObject* inven_find_type(GameObject* critter, DWORD itemType, DWORD* slot)	fo::GameObject* itemFind = fo::func::inven_find_type(source, fo::ItemType::item_type_drug, &slot);	Game\combatAI.cpp
+	fo::GameObject* item = fo::func::inven_find_type(source, fo::ItemType::item_type_drug, &slot);	Game\combatAI.cpp
+	item = fo::func::inven_find_type(source, fo::ItemType::item_type_drug, &slot);	Game\combatAI.cpp
+	while (fo::GameObject* ammoFind = fo::func::inven_find_type(critter, fo::item_type_ammo, &currentSlot)) {	Modules\AI.cpp
+void inven_find_id()	call fo::funcoffs::inven_find_id_;      // check prt (fix behavior)	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::inven_find_id_;      // vanilla behavior	Modules\BugFixes.cpp
+DWORD inven_wield(GameObject* critter, GameObject* item, DWORD slot)	jmp  fo::funcoffs::inven_wield_;	Modules\Inventory.cpp
+void invenWieldFunc()	jmp  fo::funcoffs::invenWieldFunc_;	Modules\HookScripts\InventoryHs.cpp
+DWORD inven_unwield(GameObject* critter, DWORD slot)	call fo::funcoffs::inven_unwield_;	Modules\Inventory.cpp
+	if (fo::func::inven_unwield(critter, (slot == fo::INVEN_TYPE_LEFT_HAND) ? fo::Left : fo::Right) == 0) {	Modules\Scripting\Handlers\Inventory.cpp
+void invenUnwieldFunc()	jmp  fo::funcoffs::invenUnwieldFunc_;	Modules\HookScripts\InventoryHs.cpp
+void inven_display_msg()	push fo::funcoffs::inven_display_msg_;	Game\GUI\Text.cpp
+	call fo::funcoffs::inven_display_msg_;	Modules\Inventory.cpp
+	jmp  fo::funcoffs::inven_display_msg_;	Modules\Inventory.cpp
+DWORD barter_compute_value(GameObject* source, GameObject* target)	long computeCost = fo::func::barter_compute_value(source, target);	Modules\HookScripts\MiscHs.cpp
+void barter_inventory()	call fo::funcoffs::barter_inventory_;	Modules\LoadGameHook.cpp
+void drop_into_container()	call fo::funcoffs::drop_into_container_;	Modules\HookScripts\InventoryHs.cpp
+void setup_move_timer_win()	jmp  fo::funcoffs::setup_move_timer_win_;	Modules\Inventory.cpp
+void item_add_mult()	jmp  fo::funcoffs::item_add_mult_;	Modules\BugFixes.cpp
+DWORD item_add_force(GameObject* critter, GameObject* item, DWORD count)	fo::func::item_add_force(source, item, 1);	Game\items.cpp
+	call fo::funcoffs::item_add_force_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::item_add_force_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::item_add_force_;	Modules\Inventory.cpp
+	jmp  fo::funcoffs::item_add_force_;	Modules\HookScripts\InventoryHs.cpp
+	if (forceAdd) fo::func::item_add_force(critter, item, 1);	Modules\Scripting\Handlers\Inventory.cpp
+DWORD item_remove_mult(GameObject* critter, GameObject* item, DWORD count)	return fo::func::item_remove_mult(source, item, count);	Game\items.cpp
+	call fo::funcoffs::item_remove_mult_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_remove_mult_;	Modules\BugFixes.cpp
+	__asm call fo::funcoffs::item_remove_mult_;	Modules\HookScripts\InventoryHs.cpp
+	MakeJump(0x477492, RemoveObjHook); // old 0x477490	Modules\HookScripts\InventoryHs.cpp
+void item_move_all()	jmp  fo::funcoffs::item_move_all_;	Modules\HookScripts\InventoryHs.cpp
+	jmp  fo::funcoffs::item_move_all_;	Modules\HookScripts\InventoryHs.cpp
+void item_move_all_hidden()	call fo::funcoffs::item_move_all_hidden_;	Modules\BugFixes.cpp
+DWORD item_get_type(GameObject* item)	} else if (fo::func::item_get_type(tableItem->object) == fo::item_type_container) {	Game\items.cpp
+	jmp  fo::funcoffs::item_get_type_;	Modules\BugFixes.cpp
+	if (fo::func::item_get_type(item) == fo::ItemType::item_type_weapon) {	Modules\Inventory.cpp
+	call fo::funcoffs::item_get_type_;	Modules\Inventory.cpp
+	if (/*isControllingNPC &&*/ fo::func::item_get_type(item) == fo::ItemType::item_type_weapon) {	Modules\PartyControl.cpp
+	if (itemReplaced && fo::func::item_get_type(itemReplaced) == fo::item_type_weapon && fo::func::item_get_type(item) == fo::item_type_ammo) {	Modules\HookScripts\InventoryHs.cpp
+	if (args[2] != fo::INVEN_TYPE_RIGHT_HAND && fo::func::item_get_type((fo::GameObject*)args[1]) != fo::item_type_armor) {	Modules\HookScripts\InventoryHs.cpp
+	call fo::funcoffs::item_get_type_;	Modules\SubModules\CombatBlock.cpp
+DWORD item_size(GameObject* item)	totalSize += fo::func::item_size(item);	Game\inventory.cpp
+	totalSize += fo::func::item_size(itemL);	Game\inventory.cpp
+	totalSize += fo::func::item_size(item);	Game\inventory.cpp
+	call fo::funcoffs::item_size_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_size_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_size_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_size_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_size_;	Modules\BugFixes.cpp
+	int totalSize = game::Inventory::item_total_size(critter) + (fo::func::item_size(item) * count);	Modules\Inventory.cpp
+	int size = fo::func::item_size(item);	Modules\Inventory.cpp
+DWORD item_weight(GameObject* item)	call fo::funcoffs::item_weight_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_weight_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_weight_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_weight_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_weight_;	Modules\BugFixes.cpp
+	ctx.setReturn(fo::func::item_weight(ctx.arg(0).object()));	Modules\Scripting\Handlers\Inventory.cpp
+DWORD item_total_cost(GameObject* object)	args[5] = fo::func::item_total_cost(bTable);	Modules\HookScripts\MiscHs.cpp
+	args[7] = pcCost = fo::func::item_total_cost(pTable);	Modules\HookScripts\MiscHs.cpp
+DWORD item_total_weight(GameObject* object)	call fo::funcoffs::item_total_weight_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_total_weight_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_total_weight_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::item_total_weight_;	Modules\Inventory.cpp
+	pcCost = fo::func::item_total_weight(pTable);	Modules\HookScripts\MiscHs.cpp
+void can_use_weapon()	call fo::funcoffs::can_use_weapon_; // 1 - can't use	Modules\HookScripts\CombatHs.cpp
+GameObject* item_hit_with(GameObject* critter, DWORD hitMode)	// return item_weapon_range(source, fo::func::item_hit_with(source, hitMode), hitMode);	Game\items.cpp
+	call fo::funcoffs::item_hit_with_;  // get pointer to weapon	Modules\Perks.cpp
+	call fo::funcoffs::item_hit_with_; // get pointer to weapon	Modules\Perks.cpp
+void item_mp_cost()	call fo::funcoffs::item_mp_cost_;	Modules\AI.cpp
+DWORD item_w_subtype(GameObject* item, DWORD hitMode)	long type = fo::func::item_w_subtype(item, hitMode);	Game\items.cpp
+	long wType = fo::func::item_w_subtype(item, fo::AttackType::ATKTYPE_RWEAPON_PRIMARY);	Modules\AI.cpp
+	call fo::funcoffs::item_w_subtype_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::item_w_subtype_; // eax - item	Modules\Perks.cpp
+	call fo::funcoffs::item_w_subtype_;	Modules\Perks.cpp
+DWORD item_w_damage(GameObject* critter, DWORD hitMode)	long rawDamage = fo::func::item_w_damage(ctd.attacker, ctd.hitMode); // get the raw damage value	Modules\DamageMod.cpp
+	long rawDamage = fo::func::item_w_damage(ctd.attacker, ctd.hitMode); // Retrieve Raw Damage	Modules\DamageMod.cpp
+void item_w_damage_type()	jmp  fo::funcoffs::item_w_damage_type_;	Modules\Combat.cpp
+	jmp  fo::funcoffs::item_w_damage_type_;	Modules\Skills.cpp
+void item_w_anim()	if (fo::func::item_w_anim_weap(weapon, fo::AttackType::ATKTYPE_RWEAPON_SECONDARY) == fo::Animation::ANIM_fire_burst) {	Modules\AI.cpp
+	long anim = fo::func::item_w_anim_weap(weapon, hitMode);	Modules\Combat.cpp
+	long anim = fo::func::item_w_anim_weap(weapon, fo::AttackType::ATKTYPE_RWEAPON_SECONDARY);	Modules\Combat.cpp
+DWORD item_w_anim_weap(GameObject* item, DWORD hitMode)	if (fo::func::item_w_anim_weap(weapon, fo::AttackType::ATKTYPE_RWEAPON_SECONDARY) == fo::Animation::ANIM_fire_burst) {	Modules\AI.cpp
+	long anim = fo::func::item_w_anim_weap(weapon, hitMode);	Modules\Combat.cpp
+	long anim = fo::func::item_w_anim_weap(weapon, fo::AttackType::ATKTYPE_RWEAPON_SECONDARY);	Modules\Combat.cpp
+DWORD item_w_max_ammo(GameObject* item)	long maxAmmo = fo::func::item_w_max_ammo(item);	Modules\Inventory.cpp
+DWORD item_w_curr_ammo(GameObject* item)	long currAmmo = fo::func::item_w_curr_ammo(weapon);	Modules\Combat.cpp
+	long curAmmo = fo::func::item_w_curr_ammo(item);	Modules\Inventory.cpp
+void item_w_can_reload()	jmp  fo::funcoffs::item_w_can_reload_;	Modules\HookScripts\InventoryHs.cpp
+DWORD item_w_reload(GameObject* weapon, GameObject* ammo)	result = fo::func::item_w_reload(weapon, ammo);	Modules\AI.cpp
+	jmp fo::funcoffs::item_w_reload_;	Modules\AI.cpp
+DWORD item_w_range(GameObject* critter, DWORD hitMode)	} else if (fastShotTweak < 2 && type > fo::AttackSubType::MELEE && fo::func::item_w_range(source, hitMode) >= 2) { // Fallout 2 behavior (with Haenlomal's fix)	Game\items.cpp
+	if (fo::func::item_w_range(source, fo::AttackType::ATKTYPE_PUNCH) >= fo::func::obj_dist(source, target)) {	Modules\AI.cpp
+	long weaponRange = fo::func::item_w_range(source, fo::ATKTYPE_RWEAPON_SECONDARY);	Modules\AI.cpp
+	jmp  fo::funcoffs::item_w_range_;	Modules\MiscPatches.cpp
+	call fo::funcoffs::item_w_range_;	Modules\Perks.cpp
+	call fo::funcoffs::item_w_range_;  // get weapon's range	Modules\Perks.cpp
+DWORD item_w_mp_cost(GameObject* source, DWORD hitMode, DWORD isCalled)	sf::MakeJump(fo::funcoffs::item_w_mp_cost_ + 1, item_w_mp_cost_hack); // 0x478B25	Game\items.cpp
+	call fo::funcoffs::item_w_mp_cost_;	Modules\HookScripts\CombatHs.cpp
+void item_w_perk()	jmp  fo::funcoffs::item_w_perk_;	Modules\BugFixes.cpp
+DWORD item_w_rounds(GameObject* item)	rounds = fo::func::item_w_rounds(weapon); // ammo in burst	Modules\Combat.cpp
+DWORD item_w_primary_mp_cost(GameObject* item)	cost = fo::func::item_w_primary_mp_cost(weapon);	Game\items.cpp
+DWORD item_w_secondary_mp_cost(GameObject* item)	cost = fo::func::item_w_secondary_mp_cost(weapon);	Game\items.cpp
+DWORD item_w_compute_ammo_cost(GameObject* item, DWORD* rounds)	fo::func::item_w_compute_ammo_cost(weapon, &newRounds);	Modules\Combat.cpp
+	result = fo::func::item_w_compute_ammo_cost(weapon, &rounds);	Modules\HookScripts\CombatHs.cpp
+DWORD item_w_dr_adjust(GameObject* item)	long ammoDRM = fo::func::item_w_dr_adjust(ctd.weapon);  // ammoDRM value	Modules\DamageMod.cpp
+	long ammoDT = fo::func::item_w_dr_adjust(ctd.weapon);   // Retrieve ammo DT (well, it's really Retrieve ammo DR, but since we're treating ammo DR as ammo DT...)	Modules\DamageMod.cpp
+DWORD item_w_dam_mult(GameObject* item)	long ammoX = fo::func::item_w_dam_mult(ctd.weapon);     // ammoX value	Modules\DamageMod.cpp
+	long ammoMult = fo::func::item_w_dam_mult(ctd.weapon);  // Retrieve Ammo Dividend	Modules\DamageMod.cpp
+DWORD item_w_dam_div(GameObject* item)	long ammoY = fo::func::item_w_dam_div(ctd.weapon);      // ammoY value (divisor)	Modules\DamageMod.cpp
+	long ammoDiv = fo::func::item_w_dam_div(ctd.weapon);    // Retrieve Ammo Divisor	Modules\DamageMod.cpp
+void item_m_turn_off()	jmp  fo::funcoffs::item_m_turn_off_;	Modules\BugFixes.cpp
+DWORD item_c_curr_size(GameObject* critter)	int totalSize = fo::func::item_c_curr_size(critter);	Game\inventory.cpp
+	call fo::funcoffs::item_c_curr_size_;	Modules\BugFixes.cpp
+	call fo::funcoffs::item_c_curr_size_;	Modules\BugFixes.cpp
+DWORD item_d_take_drug(GameObject* source, GameObject* item)	return fo::func::item_d_take_drug(source, item);	Game\items.cpp
+	jmp fo::funcoffs::item_d_take_drug_;	Modules\HookScripts\ObjectHs.cpp
+void insert_withdrawal()	call fo::funcoffs::insert_withdrawal_;	Modules\BugFixes.cpp
+void perform_withdrawal_end()	call fo::funcoffs::perform_withdrawal_end_;	Modules\BugFixes.cpp
+DWORD item_caps_total(GameObject* object)	call fo::funcoffs::item_caps_total_;	Modules\BugFixes.cpp
+	args[4] = fo::func::item_caps_total(bTable);	Modules\HookScripts\MiscHs.cpp
+DWORD light_get_tile(DWORD elevation, DWORD tileNum)	int lightLevel = fo::func::light_get_tile(ctx.arg(0).rawValue(), ctx.arg(1).rawValue());	Modules\Scripting\Handlers\Misc.cpp
+void SaveGame()	call fo::funcoffs::SaveGame_;	Modules\LoadGameHook.cpp
+void LoadGame()	call fo::funcoffs::LoadGame_;	Modules\LoadGameHook.cpp
+void GetSlotList()	jmp  fo::funcoffs::GetSlotList_;    // reset page save list func	Modules\ExtraSaveSlots.cpp
+void EndLoad(DbFile* file)	call fo::funcoffs::EndLoad_;	Modules\LoadGameHook.cpp
+void MapDirErase(char* folder, char* ext)	fo::func::MapDirErase(_F_PROTO_CRITTERS, _F_SAV);	Modules\LoadOrder.cpp
+void RestoreLoad()	//0x480708, // RestoreLoad_ (never called)	Modules\LoadGameHook.cpp
+void main_init_system()	call fo::funcoffs::main_init_system_;	Modules\LoadGameHook.cpp
+void main_reset_system()	//0x480D0C, // main_reset_system_ (never called)	Modules\LoadGameHook.cpp
+void main_load_new()	call fo::funcoffs::main_load_new_;	Modules\LoadGameHook.cpp
+void main_menu_create()	jmp  fo::funcoffs::main_menu_create_;	Modules\LoadGameHook.cpp
+void main_menu_is_shown()	call fo::funcoffs::main_menu_is_shown_;	WinProc.cpp
+void map_exit()	jmp  fo::funcoffs::map_exit_;	Modules\LoadGameHook.cpp
+void map_enable_bk_processes()	jmp fo::funcoffs::map_enable_bk_processes_;	Modules\PartyControl.cpp
+	jmp fo::funcoffs::map_enable_bk_processes_;	Modules\Scripting\Handlers\Misc.cpp
+void map_disable_bk_processes()	jmp fo::funcoffs::map_disable_bk_processes_;	Modules\Scripting\Handlers\Misc.cpp
+void map_set_elevation()	jmp  fo::funcoffs::map_set_elevation_;	Modules\MiscPatches.cpp
+void map_load()	call fo::funcoffs::map_load_;	Modules\Worldmap.cpp
+void map_load_idx()	jmp  fo::funcoffs::map_load_idx_;	Modules\MiscPatches.cpp
+	jmp  fo::funcoffs::map_load_idx_;	Modules\Worldmap.cpp
+	jmp  fo::funcoffs::map_load_idx_; // eax - map id	Modules\HookScripts\MiscHs.cpp
+	call fo::funcoffs::map_load_idx_;	Modules\HookScripts\MiscHs.cpp
+	jmp  fo::funcoffs::map_load_idx_; // eax - mapID	Modules\Scripting\Handlers\Worldmap.cpp
+void map_load_file()	call fo::funcoffs::map_load_file_;	Modules\LoadGameHook.cpp
+void map_target_load_area()	call fo::funcoffs::map_target_load_area_; // returns the area ID of the loaded map	Modules\MiscPatches.cpp
+void map_fix_critter_combat_data()	jmp  fo::funcoffs::map_fix_critter_combat_data_;	Modules\Objects.cpp
+void map_scroll_refresh_mapper()	// //fo::var::setInt(FO_VAR_map_scroll_refresh) = fo::funcoffs::map_scroll_refresh_mapper_;	Modules\DebugEditor.cpp
+DWORD message_exit(MessageList* msgList)	fo::func::message_exit(&MsgList);	Modules\HeroAppearance.cpp
+	fo::func::message_exit(it->second.get());	Modules\Message.cpp
+	fo::func::message_exit(it->second.get());	Modules\Message.cpp
+DWORD message_load(MessageList* msgList, char* msgFilePath)	if (fo::func::message_load(&MsgList, MsgFileName) == 1) {	Modules\HeroAppearance.cpp
+	if (fo::func::message_load(&MsgList, "game\\AppIface.msg") == 1) {	Modules\HeroAppearance.cpp
+	if (fo::func::message_load(&MsgList, "game\\AppIface.msg") == 1) {	Modules\HeroAppearance.cpp
+	if (fo::func::message_load(list, path.c_str()) == 1) {	Modules\Message.cpp
+	if (!fo::func::message_load(list, path.c_str())) {	Modules\Message.cpp
+	//if (!fo::func::message_load(list, path.c_str())) {	Modules\Message.cpp
+DWORD message_search(MessageList* file, MessageNode* msg)	if (fo::func::message_search(file, &messageBuf) == 1) {	FalloutEngine\EngineUtils.cpp
+	jmp  fo::funcoffs::message_search_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::message_search_;	Modules\BugFixes.cpp
+	call fo::funcoffs::message_search_;	Modules\Message.cpp
+DWORD message_find(DWORD* msgFile, DWORD msgNumber, DWORD* outBuf)	fo::func::message_find(msgFile, msgData->number, &outValue);	Modules\Message.cpp
+char* getmsg(MessageList* fileAddr, MessageNode* result, DWORD messageId)	return fo::func::getmsg(file, &messageBuf, messageId);	FalloutEngine\EngineUtils.cpp
+	jmp  fo::funcoffs::getmsg_;	Modules\BarBoxes.cpp
+	call fo::funcoffs::getmsg_;	Modules\QuestList.cpp
+	call fo::funcoffs::getmsg_;	Modules\QuestList.cpp
+void movieStop()	jmp  fo::funcoffs::movieStop_;	Modules\Movies.cpp
+void movieRun()	call fo::funcoffs::movieRun_;	Modules\Movies.cpp
+void movieUpdate()	__asm call fo::funcoffs::movieUpdate_; // for reading subtitles when playing mve	Modules\Movies.cpp
+void obj_new()	jmp  fo::funcoffs::obj_new_;	Modules\BugFixes.cpp
+	fo::func::obj_new_sid_inst(object, scriptType, scriptIndex);	Modules\Scripting\Handlers\Objects.cpp
+DWORD obj_pid_new(GameObject* object, DWORD pid)	if (fo::func::obj_pid_new((fo::GameObject*)&object, pid) != -1) { // create new object	Modules\HookScripts\DeathHs.cpp
+DWORD obj_connect(GameObject* object, DWORD tile, DWORD elevation, RECT* rect)	fo::func::obj_connect(item, source->tile, source->elevation, 0);	Game\items.cpp
+DWORD obj_move_to_tile(GameObject* object, DWORD tile, DWORD elevation, RECT* rect)	jmp  fo::funcoffs::obj_move_to_tile_;	Modules\BugFixes.cpp
+	call fo::funcoffs::obj_move_to_tile_;	Modules\BugFixes.cpp
+void obj_change_fid()	//fo::func::obj_change_fid(critter, artID, 0);	Modules\BugFixes.cpp
+void obj_set_light()	call fo::funcoffs::obj_set_light_;	Modules\Explosions.cpp
+void obj_turn_off_light()	jmp  fo::funcoffs::obj_turn_off_light_;	Modules\HookScripts\ObjectHs.cpp
+void obj_turn_on()	call fo::funcoffs::obj_turn_on_;	Modules\BugFixes.cpp
+DWORD obj_erase_object(GameObject* object, RECT* boundRect)	if (createNewObj) fo::func::obj_erase_object(weapon, 0); // delete created object	Modules\HookScripts\DeathHs.cpp
+GameObject* obj_find_first()	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elev, tile);	FalloutEngine\EngineUtils.cpp
+	fo::GameObject* obj = fo::func::obj_find_first();	Game\objects.cpp
+	fo::GameObject* object = fo::func::obj_find_first_at_tile(srcObject->elevation, tile);	Game\tilemap.cpp
+	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elv, tile);	Modules\DebugEditor.cpp
+	fo::GameObject* obj = fo::func::obj_find_first();	Modules\Objects.cpp
+	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elv, tile);	Modules\Scripting\Handlers\Arrays.cpp
+	auto obj = fo::func::obj_find_first_at_tile(elevation, tile);	Modules\Scripting\Handlers\Objects.cpp
+GameObject* obj_find_next()	obj = fo::func::obj_find_next_at_tile();	FalloutEngine\EngineUtils.cpp
+	obj = fo::func::obj_find_next();	Game\objects.cpp
+	object = fo::func::obj_find_next_at_tile();	Game\tilemap.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\DebugEditor.cpp
+	obj = fo::func::obj_find_next();	Modules\Objects.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\Scripting\Handlers\Arrays.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\Scripting\Handlers\Objects.cpp
+void obj_find_first_at()	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elev, tile);	FalloutEngine\EngineUtils.cpp
+	fo::GameObject* object = fo::func::obj_find_first_at_tile(srcObject->elevation, tile);	Game\tilemap.cpp
+	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elv, tile);	Modules\DebugEditor.cpp
+	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elv, tile);	Modules\Scripting\Handlers\Arrays.cpp
+	auto obj = fo::func::obj_find_first_at_tile(elevation, tile);	Modules\Scripting\Handlers\Objects.cpp
+void obj_find_next_at()	obj = fo::func::obj_find_next_at_tile();	FalloutEngine\EngineUtils.cpp
+	object = fo::func::obj_find_next_at_tile();	Game\tilemap.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\DebugEditor.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\Scripting\Handlers\Arrays.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\Scripting\Handlers\Objects.cpp
+GameObject* obj_find_first_at_tile(DWORD elevation, DWORD tileNum)	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elev, tile);	FalloutEngine\EngineUtils.cpp
+	fo::GameObject* object = fo::func::obj_find_first_at_tile(srcObject->elevation, tile);	Game\tilemap.cpp
+	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elv, tile);	Modules\DebugEditor.cpp
+	fo::GameObject* obj = fo::func::obj_find_first_at_tile(elv, tile);	Modules\Scripting\Handlers\Arrays.cpp
+	auto obj = fo::func::obj_find_first_at_tile(elevation, tile);	Modules\Scripting\Handlers\Objects.cpp
+GameObject* obj_find_next_at_tile()	obj = fo::func::obj_find_next_at_tile();	FalloutEngine\EngineUtils.cpp
+	object = fo::func::obj_find_next_at_tile();	Game\tilemap.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\DebugEditor.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\Scripting\Handlers\Arrays.cpp
+	obj = fo::func::obj_find_next_at_tile();	Modules\Scripting\Handlers\Objects.cpp
+void obj_bound(GameObject* object, RECT* boundRect)	fo::func::obj_bound(obj, &rect);	FalloutEngine\EngineUtils.cpp
+	fo::func::obj_bound(targetObject, &rect);	Modules\PartyControl.cpp
+	fo::func::obj_bound(underObject, &rect);	Modules\PartyControl.cpp
+GameObject* obj_blocking_at(GameObject* object, DWORD tile, DWORD elevation)	fo::GameObject* obj = fo::func::obj_blocking_at(source, chkTile, source->elevation);	FalloutEngine\EngineUtils.cpp
+	fo::GameObject* obj = fo::func::obj_blocking_at(source, chkTile, source->elevation);	FalloutEngine\EngineUtils.cpp
+	obj = fo::func::obj_blocking_at(source, chkTile, source->elevation);	FalloutEngine\EngineUtils.cpp
+	obj = fo::func::obj_blocking_at(source, chkTile, source->elevation);	FalloutEngine\EngineUtils.cpp
+	if (checkTargetTile && fo::func::obj_blocking_at_wrapper(srcObject, targetTile, srcObject->elevation, blockFunc)) return 0;	Game\tilemap.cpp
+	call fo::funcoffs::obj_blocking_at_;	Modules\BugFixes.cpp
+	call fo::funcoffs::obj_blocking_at_;	Modules\BugFixes.cpp
+	while (fo::func::obj_blocking_at(0, checkTile, elev)) {	Modules\BugFixes.cpp
+	if (fo::func::obj_blocking_at(source, fo::func::tile_num_in_direction(tilePlace, dir, 1), elevation)) {	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::obj_blocking_at_;	Modules\HookScripts\CombatHs.cpp
+	call fo::funcoffs::obj_blocking_at_;	Modules\HookScripts\CombatHs.cpp
+	MakeJump(0x48B848, HexMoveBlockingHook);	Modules\HookScripts\HexBlockingHs.cpp
+	return fo::funcoffs::obj_blocking_at_;       // with calling hook	Modules\Scripting\Handlers\Objects.cpp
+	fo::GameObject* resultObj = fo::func::obj_blocking_at_wrapper(0, tile, elevation, (void*)getBlockingFunc(type));	Modules\Scripting\Handlers\Objects.cpp
+void obj_shoot_blocking_at()	push fo::funcoffs::obj_shoot_blocking_at_; // check hex objects func pointer	Modules\MiscPatches.cpp
+	call fo::funcoffs::obj_shoot_blocking_at_;	Modules\HookScripts\HexBlockingHs.cpp
+	return fo::funcoffs::obj_shoot_blocking_at_; // w/o calling hook	Modules\Scripting\Handlers\Objects.cpp
+void obj_ai_blocking_at()	call fo::funcoffs::obj_ai_blocking_at_;	Modules\HookScripts\HexBlockingHs.cpp
+	return fo::funcoffs::obj_ai_blocking_at_;    // w/o calling hook	Modules\Scripting\Handlers\Objects.cpp
+void obj_scroll_blocking_at()	// return fo::funcoffs::obj_scroll_blocking_at_;	Modules\Scripting\Handlers\Objects.cpp
+void obj_sight_blocking_at()	call fo::funcoffs::obj_sight_blocking_at_;	Modules\HookScripts\HexBlockingHs.cpp
+	return fo::funcoffs::obj_sight_blocking_at_; // w/o calling hook	Modules\Scripting\Handlers\Objects.cpp
+DWORD obj_dist(GameObject* obj_src, GameObject* obj_trg)	return AIHelpers::AttackInRange(source, weapon, fo::func::obj_dist(source, target));	Game\AI\AIHelpers.cpp
+	if (fo::func::item_w_range(source, fo::AttackType::ATKTYPE_PUNCH) >= fo::func::obj_dist(source, target)) {	Modules\AI.cpp
+	long targetDist  = fo::func::obj_dist(source, target);	Modules\AI.cpp
+	return (fo::func::obj_dist(source, target) <= (fo::func::stat_level(source, fo::STAT_pe) * 3));	Modules\MiscPatches.cpp
+	call fo::funcoffs::obj_dist_; // check distance between dude_obj and party_member	Modules\MiscPatches.cpp
+	jmp  fo::funcoffs::obj_dist_;	Modules\MiscPatches.cpp
+	long distance = fo::func::obj_dist(fo::var::obj_dude, relativeObject);	Modules\Sound.cpp
+DWORD obj_dist_with_tile(GameObject* source, DWORD sourceTile, GameObject* target, DWORD targetTile)	jmp  fo::funcoffs::obj_dist_with_tile_;	Modules\BugFixes.cpp
+void object_description()	jmp  fo::funcoffs::object_description_;	Modules\HookScripts\ObjectHs.cpp
+void obj_save_dude()	call fo::funcoffs::obj_save_dude_; // save current hero state structure fuction	Modules\HeroAppearance.cpp
+void do_options()	call fo::funcoffs::do_options_;	Modules\LoadGameHook.cpp
+void do_optionsFunc()	call fo::funcoffs::do_optionsFunc_;	Modules\LoadGameHook.cpp
+void do_prefscreen()	call fo::funcoffs::do_prefscreen_;	Modules\LoadGameHook.cpp
+void palette_init()	jmp  fo::funcoffs::palette_init_;	Modules\Graphics.cpp
+	call fo::funcoffs::palette_init_;	Modules\SubModules\DirectDraw.cpp
+void palette_fade_to()	__asm call fo::funcoffs::palette_fade_to_;	Modules\Scripting\Handlers\Worldmap.cpp
+void palette_set_to()	call fo::funcoffs::palette_set_to_;	Modules\Scripting\Handlers\Misc.cpp
+void partyMemberRemove()	call fo::funcoffs::partyMemberRemove_;	Modules\HookScripts\DeathHs.cpp
+void partyMemberRecoverLoad()	jmp  fo::funcoffs::partyMemberRecoverLoad_;	Modules\BugFixes.cpp
+DWORD isPartyMember(GameObject* obj)	call fo::funcoffs::isPartyMember_;	Modules\BugFixes.cpp
+	call fo::funcoffs::isPartyMember_; // and dude	Modules\BugFixes.cpp
+	if (!(sizeLimitMode & 2) || !(fo::func::isPartyMember(critter))) return 0; // if mode 2 is selected, check this party member, otherwise 0	Modules\Inventory.cpp
+	int level = (isPartyMember) // fo::func::isPartyMember(npc)	Modules\PartyControl.cpp
+	call fo::funcoffs::isPartyMember_;	Modules\PartyControl.cpp
+	if (obj->IsCritter() && fo::func::isPartyMember(obj)) {	Modules\Scripting\Handlers\Perks.cpp
+	if (obj->IsCritter() && fo::func::isPartyMember(obj)) {	Modules\Scripting\Handlers\Perks.cpp
+	if (obj->IsCritter() && fo::func::isPartyMember(obj)) {	Modules\Scripting\Handlers\Perks.cpp
+	if (obj->IsCritter() && fo::func::isPartyMember(obj)) {	Modules\Scripting\Handlers\Perks.cpp
+	if (obj->IsCritter() && fo::func::isPartyMember(obj)) {	Modules\Scripting\Handlers\Perks.cpp
+void partyMemberSaveProtos()	jmp  fo::funcoffs::partyMemberSaveProtos_;	Modules\ScriptExtender.cpp
+void partyMemberIncLevels()	__asm call fo::funcoffs::partyMemberIncLevels_;	Modules\Scripting\Handlers\Objects.cpp
+void partyMemberCopyLevelInfo()	call fo::funcoffs::partyMemberCopyLevelInfo_;	Modules\BugFixes.cpp
+DWORD partyMemberGetCurLevel(GameObject* obj)	? fo::func::partyMemberGetCurLevel(npc)	Modules\PartyControl.cpp
+	int level = fo::func::partyMemberGetCurLevel(partyMember);	Modules\PartyControl.cpp
+void loadPCX()	call fo::funcoffs::loadPCX_;	FalloutEngine\Functions.cpp
+	BYTE* data = fo::func::loadPCX(file, &w, &h);	Modules\Scripting\Handlers\Interface.cpp
+DWORD perk_can_add(GameObject* critter, DWORD perkId)	if (fo::func::perk_can_add(fo::var::obj_dude, extPerks[i].id)) data[available++] = extPerks[i].id;	Modules\Perks.cpp
+	result = fo::func::perk_can_add(fo::var::obj_dude, perkId);	Modules\Scripting\Handlers\Perks.cpp
+void perk_add()	fo::func::perk_add_effect(critter, queue->perkId);	Modules\BugFixes.cpp
+	fo::func::perk_add_effect(fo::var::obj_dude, perkID);	Modules\Perks.cpp
+	call fo::funcoffs::perk_add_;	Modules\Perks.cpp
+void perk_add_force()	call fo::funcoffs::perk_add_force_;	Modules\BugFixes.cpp
+void perk_make_list()	call fo::funcoffs::perk_make_list_; // return available count	Modules\Perks.cpp
+DWORD perk_level(GameObject* critter, DWORD perkId)	return fo::func::perk_level(source, perkID);	Game\stats.cpp
+	call fo::funcoffs::perk_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::perk_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::perk_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::perk_level_;                // Get rank of Bonus HtH Damage	Modules\DamageMod.cpp
+	call fo::funcoffs::perk_level_;                // Get rank of Bonus HtH Damage	Modules\DamageMod.cpp
+	call fo::funcoffs::perk_level_;                // Return Rank_of_Bonus_HtH_Damage_perk	Modules\DamageMod.cpp
+	call fo::funcoffs::perk_level_;                // Return Rank_of_Bonus_HtH_Damage_perk	Modules\DamageMod.cpp
+	call fo::funcoffs::perk_level_;	Modules\DamageMod.cpp
+	call fo::funcoffs::perk_level_;	Modules\DamageMod.cpp
+	long perkLevel = fo::func::perk_level(fo::var::obj_dude, fo::PERK_quick_pockets);	Modules\Inventory.cpp
+	int bonusmove = fo::func::perk_level(fo::var::obj_dude, fo::PERK_bonus_move);	Modules\LoadGameHook.cpp
+	return fo::func::perk_level(source, perk);	Modules\PartyControl.cpp
+	if (fo::func::perk_level(fo::var::obj_dude, i)) return 0x43438A; // print perks	Modules\Perks.cpp
+	jmp  fo::funcoffs::perk_level_;	Modules\Perks.cpp
+	jmp  fo::funcoffs::perk_level_;	Modules\Perks.cpp
+	call fo::funcoffs::perk_level_;	Modules\Perks.cpp
+	call fo::funcoffs::perk_level_;	Modules\Stats.cpp
+	call fo::funcoffs::perk_level_;	Modules\Worldmap.cpp
+void perk_name()	jmp  fo::funcoffs::perk_name_;	Modules\Perks.cpp
+	jmp  fo::funcoffs::perk_name_;	Modules\Perks.cpp
+void perk_description()	jmp  fo::funcoffs::perk_description_;	Modules\Perks.cpp
+	jmp  fo::funcoffs::perk_description_;	Modules\Perks.cpp
+void perk_skilldex_fid()	jmp  fo::funcoffs::perk_skilldex_fid_;	Modules\Perks.cpp
+	jmp  fo::funcoffs::perk_skilldex_fid_;	Modules\Perks.cpp
+void perk_add_effect(GameObject* critter, DWORD perkId)	fo::func::perk_add_effect(critter, queue->perkId);	Modules\BugFixes.cpp
+	fo::func::perk_add_effect(fo::var::obj_dude, perkID);	Modules\Perks.cpp
+void EndPipboy()	call fo::funcoffs::EndPipboy_;	Modules\QuestList.cpp
+void pip_print()	jmp  fo::funcoffs::pip_print_;	Modules\QuestList.cpp
+void pip_back()	call fo::funcoffs::pip_back_;	Modules\QuestList.cpp
+void PipStatus()	call fo::funcoffs::PipStatus_;	Modules\BugFixes.cpp
+void ListHoloDiskTitles()	call fo::funcoffs::ListHoloDiskTitles_;	Modules\BugFixes.cpp
+void PipAlarm()	SafeWrite8(0x499518, CodeType::Ret);	Modules\MiscPatches.cpp
+void AddHotLines()	call fo::funcoffs::AddHotLines_;	Modules\BugFixes.cpp
+void obj_new_sid()	fo::func::obj_new_sid_inst(object, scriptType, scriptIndex);	Modules\Scripting\Handlers\Objects.cpp
+DWORD obj_new_sid_inst(GameObject* object, DWORD sType, DWORD scriptIndex)	fo::func::obj_new_sid_inst(object, scriptType, scriptIndex);	Modules\Scripting\Handlers\Objects.cpp
+void obj_examine()	call fo::funcoffs::obj_examine_;	Modules\BugFixes.cpp
+void obj_remove_from_inven()	jmp  fo::funcoffs::obj_remove_from_inven_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::obj_remove_from_inven_;	Modules\BugFixes.cpp
+void obj_drop(GameObject* source, GameObject* objectToDrop)	__asm call fo::funcoffs::obj_drop_;	Modules\HookScripts\InventoryHs.cpp
+DWORD obj_destroy(GameObject* object)	fo::func::obj_destroy(item);	Game\items.cpp
+	fo::func::obj_destroy(ammo);	Modules\AI.cpp
+	fo::func::obj_destroy(ammo);	Modules\AI.cpp
+void obj_use_power_on_car()	call fo::funcoffs::obj_use_power_on_car_;	Modules\BugFixes.cpp
+void protinst_use_item()	jmp fo::funcoffs::protinst_use_item_;	Modules\HookScripts\ObjectHs.cpp
+void protinst_use_item_on()	jmp fo::funcoffs::protinst_use_item_on_;	Modules\HookScripts\ObjectHs.cpp
+void obj_is_a_portal()	call fo::funcoffs::obj_is_a_portal_;	Modules\BugFixes.cpp
+	call fo::funcoffs::obj_is_a_portal_;	Modules\BugFixes.cpp
+void obj_lock()	ctx.setReturn(fo::func::obj_lock_is_jammed(ctx.arg(0).object()));	Modules\Scripting\Handlers\Objects.cpp
+bool obj_is_openable(GameObject* object)	if (fo::func::obj_is_openable(object)) {	FalloutEngine\EngineUtils.cpp
+void obj_is_open()	if (fo::func::obj_is_openable(object)) {	FalloutEngine\EngineUtils.cpp
+DWORD obj_lock_is_jammed(GameObject* object)	ctx.setReturn(fo::func::obj_lock_is_jammed(ctx.arg(0).object()));	Modules\Scripting\Handlers\Objects.cpp
+void obj_unjam_lock(GameObject* object)	fo::func::obj_unjam_lock(ctx.arg(0).object());	Modules\Scripting\Handlers\Objects.cpp
+void proto_list_str()	call fo::funcoffs::proto_list_str_;	Modules\LoadOrder.cpp
+	call fo::funcoffs::proto_list_str_;	Modules\LoadOrder.cpp
+char* proto_get_msg_info(DWORD pid, DWORD msgType)	: fo::func::proto_get_msg_info(object->protoId, 0);	Modules\SubModules\ObjectName.cpp
+void proto_name()	jmp  fo::funcoffs::proto_name_;	Modules\SubModules\ObjectName.cpp
+void proto_dude_update_gender()	fo::func::proto_dude_update_gender(); // refresh PC base model art	Modules\HeroAppearance.cpp
+	call fo::funcoffs::proto_dude_update_gender_;	Modules\HeroAppearance.cpp
+	fo::func::proto_dude_update_gender();	Modules\HeroAppearance.cpp
+	fo::func::proto_dude_update_gender();	Modules\HeroAppearance.cpp
+void proto_dude_init()	jmp  fo::funcoffs::proto_dude_init_;	Modules\Premade.cpp
+void proto_remove_all()	jmp  fo::funcoffs::proto_remove_all_;	Modules\CritterStats.cpp
+DWORD proto_ptr(DWORD pid, Proto** ptrPtr)	return (fo::func::proto_ptr(pid, outProto) != -1);	FalloutEngine\EngineUtils.cpp
+	call fo::funcoffs::proto_ptr_;	Modules\BugFixes.cpp
+	call fo::funcoffs::proto_ptr_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::proto_ptr_;	Modules\CritterStats.cpp
+	long result = fo::func::proto_ptr(pid, (fo::Proto**)&proto);	Modules\CritterStats.cpp
+	if (proto == nullptr) fo::func::proto_ptr(critter->protoId, (fo::Proto**)&proto); // regular prototype	Modules\CritterStats.cpp
+	if (fo::func::proto_ptr(critter->protoId, (fo::Proto**)&proto) != -1) {	Modules\CritterStats.cpp
+	call fo::funcoffs::proto_ptr_;	Modules\Inventory.cpp
+	if (!proto && fo::func::proto_ptr(critter->protoId, (fo::Proto**)&proto) == -1) return;	Modules\Stats.cpp
+	if (fo::func::proto_ptr(critter->protoId, &proto) == -1) return;	Modules\Stats.cpp
+	if (fo::util::CheckProtoID(pid) && fo::func::proto_ptr(pid, &protoPtr) != result) {	Modules\Scripting\Handlers\Objects.cpp
+DWORD queue_add(DWORD time, GameObject* object, void* data, DWORD qType)	jmp  fo::funcoffs::queue_add_; // critter_wake_up_ will be called (stand up anim)	Modules\BugFixes.cpp
+	//fo::func::queue_add(10 * (505 - 5 * critter->critter.poison), critter, nullptr, fo::QueueType::poison_event);	Modules\CritterPoison.cpp
+	fo::func::queue_add(10, dude, nullptr, fo::QueueType::poison_event);	Modules\CritterPoison.cpp
+	fo::func::queue_add(member.sneak_queue_time - fo::var::fallout_game_time, npc, 0, fo::QueueType::sneak_event);	Modules\PartyControl.cpp
+	fo::func::queue_add(realDude.sneak_queue_time - fo::var::fallout_game_time, realDude.obj_dude, 0, fo::QueueType::sneak_event);	Modules\PartyControl.cpp
+	jmp  fo::funcoffs::queue_add_;	Modules\HookScripts\MiscHs.cpp
+	jmp  fo::funcoffs::queue_add_;	Modules\HookScripts\MiscHs.cpp
+void queue_remove()	fo::func::queue_remove_this(critter, fo::QueueType::drug_effect_event);	Modules\BugFixes.cpp
+	fo::func::queue_remove_this(realDude.obj_dude, fo::QueueType::sneak_event);	Modules\PartyControl.cpp
+	fo::func::queue_remove_this(fo::var::obj_dude, fo::QueueType::sneak_event); // remove the event	Modules\PartyControl.cpp
+void queue_remove_this(GameObject* object, DWORD qType)	fo::func::queue_remove_this(critter, fo::QueueType::drug_effect_event);	Modules\BugFixes.cpp
+	call fo::funcoffs::queue_remove_this_;    // Remove knockout from queue (if there is one)	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::queue_remove_this_;	Modules\BugFixes.cpp
+	fo::func::queue_remove_this(realDude.obj_dude, fo::QueueType::sneak_event);	Modules\PartyControl.cpp
+	call fo::funcoffs::queue_remove_this_;	Modules\PartyControl.cpp
+	fo::func::queue_remove_this(fo::var::obj_dude, fo::QueueType::sneak_event); // remove the event	Modules\PartyControl.cpp
+void queue_find()	return (fo::QueueAddictData*)fo::func::queue_find_first(fo::var::obj_dude, fo::QueueType::addict_event);	FalloutEngine\EngineUtils.cpp
+	fo::QueueAddictData* queue = (fo::QueueAddictData*)fo::func::queue_find_first(critter, fo::QueueType::addict_event);	FalloutEngine\EngineUtils.cpp
+	queue = (fo::QueueAddictData*)fo::func::queue_find_next(critter, fo::QueueType::addict_event);	FalloutEngine\EngineUtils.cpp
+	fo::QueueRadiationData* queue = (fo::QueueRadiationData*)fo::func::queue_find_first(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	queue = (fo::QueueRadiationData*)fo::func::queue_find_next(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	fo::QueueRadiationData* queue = (fo::QueueRadiationData*)fo::func::queue_find_first(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	queue = (fo::QueueRadiationData*)fo::func::queue_find_next(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	auto queue = (fo::QueueDrugData*)fo::func::queue_find_first(critter, 0);	Modules\Drugs.cpp
+	queue = (fo::QueueDrugData*)fo::func::queue_find_next(critter, 0);	Modules\Drugs.cpp
+	if (fo::func::queue_find_first(partyMember, 2)) {	Modules\PartyControl.cpp
+void queue_clear()	fo::func::queue_clear_type(fo::QueueType::poison_event, nullptr);	Modules\CritterPoison.cpp
+void queue_clear_type(DWORD qType, void* func)	jmp  fo::funcoffs::queue_clear_type_;	Modules\BugFixes.cpp
+	fo::func::queue_clear_type(fo::QueueType::poison_event, nullptr);	Modules\CritterPoison.cpp
+	call fo::funcoffs::queue_clear_type_;	Modules\ScriptExtender.cpp
+	call fo::funcoffs::queue_clear_type_;	Modules\ScriptExtender.cpp
+void queue_next_time()	call fo::funcoffs::queue_next_time_;	Modules\ScriptExtender.cpp
+void queue_explode_exit()	mov  edx, fo::funcoffs::queue_explode_exit_; // func	Modules\ScriptExtender.cpp
+	mov  edx, fo::funcoffs::queue_explode_exit_;	Modules\ScriptExtender.cpp
+void* queue_find_first(GameObject* object, DWORD qType)	return (fo::QueueAddictData*)fo::func::queue_find_first(fo::var::obj_dude, fo::QueueType::addict_event);	FalloutEngine\EngineUtils.cpp
+	fo::QueueAddictData* queue = (fo::QueueAddictData*)fo::func::queue_find_first(critter, fo::QueueType::addict_event);	FalloutEngine\EngineUtils.cpp
+	fo::QueueRadiationData* queue = (fo::QueueRadiationData*)fo::func::queue_find_first(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	fo::QueueRadiationData* queue = (fo::QueueRadiationData*)fo::func::queue_find_first(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	auto queue = (fo::QueueDrugData*)fo::func::queue_find_first(critter, 0);	Modules\Drugs.cpp
+	if (fo::func::queue_find_first(partyMember, 2)) {	Modules\PartyControl.cpp
+void* queue_find_next(GameObject* object, DWORD qType)	queue = (fo::QueueAddictData*)fo::func::queue_find_next(critter, fo::QueueType::addict_event);	FalloutEngine\EngineUtils.cpp
+	queue = (fo::QueueRadiationData*)fo::func::queue_find_next(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	queue = (fo::QueueRadiationData*)fo::func::queue_find_next(fo::var::obj_dude, fo::radiation_event);	FalloutEngine\EngineUtils.cpp
+	queue = (fo::QueueDrugData*)fo::func::queue_find_next(critter, 0);	Modules\Drugs.cpp
+void roll_check_critical()	call fo::funcoffs::roll_check_critical_;	Modules\HookScripts\MiscHs.cpp
+DWORD roll_random(DWORD minValue, DWORD maxValue)	if (!drugWasUsed && chance > 0 && fo::func::roll_random(0, 100) < chance) {	Game\combatAI.cpp
+	long dice = fo::func::roll_random(1, 10);	Modules\AI.cpp
+	call fo::funcoffs::roll_random_;	Modules\BugFixes.cpp
+	__asm jmp fo::funcoffs::roll_random_;	Modules\HookScripts\CombatHs.cpp
+void game_time_date()	call fo::funcoffs::game_time_date_;	Modules\Scripting\Handlers\Misc.cpp
+void set_game_time()	jmp  fo::funcoffs::set_game_time_;	Modules\HookScripts\MiscHs.cpp
+void inc_game_time()	jmp  fo::funcoffs::inc_game_time_;	Modules\Worldmap.cpp
+DWORD new_obj_id()	obj->id = fo::func::new_obj_id();	Modules\Objects.cpp
+	jmp  fo::funcoffs::new_obj_id_;	Modules\Objects.cpp
+	id = fo::func::new_obj_id();	Modules\Scripting\Handlers\Objects.cpp
+void scr_find_obj()	self_obj = fo::func::scr_find_obj_from_program(scriptPtr->program);	Modules\Scripting\Handlers\Arrays.cpp
+	ctx.setReturn(fo::func::scr_find_obj_from_program(scriptPtr->program));	Modules\Scripting\Handlers\Objects.cpp
+DWORD scr_find_sid_from_program(Program* program)	static const DWORD scr_find_sid_from_program_back = fo::funcoffs::scr_find_sid_from_program_ + 5;	Modules\ScriptExtender.cpp
+	MakeJump(0x4A390C, scr_find_sid_from_program_hack);	Modules\ScriptExtender.cpp
+	long sid = fo::func::scr_find_sid_from_program(ctx.program());	Modules\Scripting\Handlers\Misc.cpp
+GameObject* scr_find_obj_from_program(Program* program)	self_obj = fo::func::scr_find_obj_from_program(scriptPtr->program);	Modules\Scripting\Handlers\Arrays.cpp
+	ctx.setReturn(fo::func::scr_find_obj_from_program(scriptPtr->program));	Modules\Scripting\Handlers\Objects.cpp
+void scr_set_ext_param()	call fo::funcoffs::scr_set_ext_param_;	Modules\ScriptExtender.cpp
+	call fo::funcoffs::scr_set_ext_param_;	Modules\ScriptExtender.cpp
+Program* loadProgram(char* fileName)	: fo::func::loadProgram(fileName);	Modules\ScriptExtender.cpp
+	scriptPtr->program = fo::func::loadProgram(fo::var::scriptListInfo[scriptPtr->scriptIdx & 0xFFFFFF].fileName);	Modules\ScriptExtender.cpp
+void exec_script_proc()	call fo::funcoffs::exec_script_proc_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::exec_script_proc_;	Modules\ScriptExtender.cpp
+	jmp  fo::funcoffs::exec_script_proc_;	Modules\ScriptExtender.cpp
+	__asm call fo::funcoffs::exec_script_proc_  \	Modules\Scripting\Handlers\Objects.cpp
+void scr_build_lookup_table(ScriptInstance* script)	fo::func::scr_build_lookup_table(scriptPtr);	Modules\ScriptExtender.cpp
+void scr_clear_dude_script()	call fo::funcoffs::scr_clear_dude_script_;	Modules\BugFixes.cpp
+void scr_write_ScriptNode()	call fo::funcoffs::scr_write_ScriptNode_;	Modules\BugFixes.cpp
+DWORD scr_ptr(DWORD scriptId, ScriptInstance** scriptPtr)	fo::func::scr_ptr(sid, &script);	FalloutEngine\EngineUtils.cpp
+	if (fo::func::scr_ptr(obj->scriptId, &script) != -1) {	Modules\Objects.cpp
+	static const DWORD scr_ptr_back = fo::funcoffs::scr_ptr_ + 5;	Modules\ScriptExtender.cpp
+	if (fo::func::scr_ptr(sid, &scriptPtr) == -1) return -1;	Modules\ScriptExtender.cpp
+	MakeJump(0x4A5E34, scr_ptr_hack);	Modules\ScriptExtender.cpp
+	if (fo::func::scr_new(&scriptId, fo::Scripts::ScriptTypes::SCRIPT_SPATIAL) == -1 || fo::func::scr_ptr(scriptId, &scriptPtr) == -1) return;	Modules\Scripting\Handlers\Objects.cpp
+	if (fo::func::scr_ptr(spatialObj->scriptId, &script) != -1) {	Modules\Scripting\Handlers\Objects.cpp
+DWORD scr_new(DWORD* scriptID, DWORD sType)	if (fo::func::scr_new(&scriptId, fo::Scripts::ScriptTypes::SCRIPT_SPATIAL) == -1 || fo::func::scr_ptr(scriptId, &scriptPtr) == -1) return;	Modules\Scripting\Handlers\Objects.cpp
+DWORD scr_remove(DWORD scriptID)	call fo::funcoffs::scr_remove_;	Modules\BugFixes.cpp
+	fo::func::scr_remove(object->scriptId);	Modules\Scripting\Handlers\Objects.cpp
+	fo::func::scr_remove(object->scriptId);	Modules\Scripting\Handlers\Objects.cpp
+ScriptInstance* scr_find_first_at(DWORD elevation)	fo::ScriptInstance* scriptPtr = fo::func::scr_find_first_at(elev);	Modules\Scripting\Handlers\Arrays.cpp
+ScriptInstance* scr_find_next_at()	scriptPtr = fo::func::scr_find_next_at();	Modules\Scripting\Handlers\Arrays.cpp
+void scr_exec_map_exit_scripts()	call fo::funcoffs::scr_exec_map_exit_scripts_;	Modules\ScriptExtender.cpp
+DWORD scr_get_local_var(DWORD sid, DWORD varId, DWORD* value)	fo::func::scr_get_local_var(id, i, &varVal);	Modules\DebugEditor.cpp
+DWORD scr_set_local_var(DWORD sid, DWORD varId, DWORD value)	fo::func::scr_set_local_var(id, i, values[i]);	Modules\DebugEditor.cpp
+void skill_set_tags(DWORD* tags, DWORD num)	fo::func::skill_set_tags(tags, num);	FalloutEngine\EngineUtils.cpp
+	call fo::funcoffs::skill_set_tags_;	Modules\BugFixes.cpp
+void skill_get_tags(DWORD* tags, DWORD num)	fo::func::skill_get_tags(result, num);	FalloutEngine\EngineUtils.cpp
+DWORD skill_is_tagged(DWORD skill)	if (fo::func::skill_is_tagged(skill)) mod /= 2;	Modules\Perks.cpp
+	if (fo::func::skill_is_tagged(skill)) rawPoints *= 2;	Modules\Skills.cpp
+DWORD skill_level(GameObject* critter, DWORD statID)	call fo::funcoffs::skill_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::skill_level_;	Modules\BugFixes.cpp
+	unarmed.GetDudeStats(fo::func::skill_level(fo::var::obj_dude, fo::Skill::SKILL_UNARMED_COMBAT));	Modules\Unarmed.cpp
+	//unarmed.GetDudeStats(fo::func::skill_level(fo::var::obj_dude, fo::Skill::SKILL_UNARMED_COMBAT));	Modules\Unarmed.cpp
+void skill_points()	call fo::funcoffs::skill_points_;	Modules\Skills.cpp
+	call fo::funcoffs::skill_points_;	Modules\Skills.cpp
+	call fo::funcoffs::skill_points_;	Modules\Skills.cpp
+void skill_inc_point()	fo::func::skill_inc_point_force(critter, skill);	Modules\Perks.cpp
+DWORD skill_inc_point_force(GameObject* critter, DWORD skill)	fo::func::skill_inc_point_force(critter, skill);	Modules\Perks.cpp
+void skill_dec_point()	fo::func::skill_dec_point_force(critter, skill);	Modules\Perks.cpp
+DWORD skill_dec_point_force(GameObject* critter, DWORD skill)	fo::func::skill_dec_point_force(critter, skill);	Modules\Perks.cpp
+void skill_use()	jmp fo::funcoffs::skill_use_;	Modules\HookScripts\MiscHs.cpp
+void skill_check_stealing()	jmp fo::funcoffs::skill_check_stealing_;	Modules\HookScripts\MiscHs.cpp
+void skilldex_select()	call fo::funcoffs::skilldex_select_;	Modules\LoadGameHook.cpp
+void soundPlay()	jmp  fo::funcoffs::soundPlay_;	Modules\Sound.cpp
+void soundDelete()	jmp  fo::funcoffs::soundDelete_;	Modules\Sound.cpp
+void soundPlaying()	jmp  fo::funcoffs::soundPlaying_;	Modules\Sound.cpp
+void soundVolume()	jmp  fo::funcoffs::soundVolume_; // set sfx volume	Modules\Sound.cpp
+void soundSetCallback()	call fo::funcoffs::soundSetCallback_;	Modules\Sound.cpp
+void soundSetFileIO()	call fo::funcoffs::soundSetFileIO_;	Modules\Sound.cpp
+void soundGetPosition()	jmp  fo::funcoffs::soundGetPosition_;	Modules\Sound.cpp
+DWORD stat_level(GameObject* critter, DWORD statId)	return (fo::func::stat_level(fo::var::obj_dude, fo::Stat::STAT_gender) == fo::Gender::GENDER_FEMALE);	FalloutEngine\EngineUtils.cpp
+	long minHP = (hpPercent * fo::func::stat_level(source, fo::Stat::STAT_max_hit_points)) / 100;	Game\combatAI.cpp
+	while (fo::func::stat_level(source, fo::Stat::STAT_current_hp) < minHP && source->critter.movePoints >= aiUseItemAPCost) {	Game\combatAI.cpp
+	long maxHP = fo::func::stat_level(source, fo::Stat::STAT_max_hit_points);	Game\combatAI.cpp
+	DWORD armorFid = fo::func::stat_level(fo::var::inven_dude, fo::STAT_gender) == fo::GENDER_FEMALE	Game\inventory.cpp
+	long stRange = fo::func::stat_level(source, fo::Stat::STAT_st);	Game\items.cpp
+	st = fo::func::stat_level(fo::var::obj_dude, fo::STAT_st);	Game\stats.cpp
+	call fo::funcoffs::stat_level_;              // current hp	Modules\AI.cpp
+	call fo::funcoffs::stat_level_;	Modules\AI.cpp
+	return (fo::func::stat_level(attacker, fo::STAT_iq) >= dice); // true - is friendly	Modules\AI.cpp
+	call fo::funcoffs::stat_level_;           // Perception	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::stat_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::stat_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::stat_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::stat_level_;	Modules\BugFixes.cpp
+	call fo::funcoffs::stat_level_;  // get ST	Modules\BugFixes.cpp
+	amount -= fo::func::stat_level(critter, fo::STAT_poison_resist) * amount / 100;	Modules\CritterPoison.cpp
+	call fo::funcoffs::stat_level_;                // Get Melee Damage	Modules\DamageMod.cpp
+	call fo::funcoffs::stat_level_;                // Get Melee Damage	Modules\DamageMod.cpp
+	call fo::funcoffs::stat_level_;                // Get Total_Melee_Damage	Modules\DamageMod.cpp
+	call fo::funcoffs::stat_level_; // get STAT_melee_dmg	Modules\DamageMod.cpp
+	long newGender = fo::func::stat_level(fo::var::obj_dude, fo::STAT_gender);	Modules\HeroAppearance.cpp
+	call fo::funcoffs::stat_level_; // get PC stat current gender	Modules\HeroAppearance.cpp
+	long max_hp = fo::func::stat_level(target, fo::STAT_max_hit_points);	Modules\Inventory.cpp
+	int ap = fo::func::stat_level(fo::var::obj_dude, fo::STAT_max_move_points);	Modules\LoadGameHook.cpp
+	return (fo::func::obj_dist(source, target) <= (fo::func::stat_level(source, fo::STAT_pe) * 3));	Modules\MiscPatches.cpp
+	call fo::funcoffs::stat_level_;	Modules\MiscPatches.cpp
+	int ac = fo::func::stat_level(partyMember, fo::STAT_ac);	Modules\PartyControl.cpp
+	call fo::funcoffs::stat_level_;	Modules\Perks.cpp
+	result += fo::func::stat_level(critter, i) * multipliers[skill * 7 + i];	Modules\Skills.cpp
+	levelStats[stat] = fo::func::stat_level(critter, stat);	Modules\Stats.cpp
+	auto getStatFunc = (derivedHPwBonus) ? fo::func::stat_level : fo::func::stat_get_base;	Modules\Stats.cpp
+	psStat[stat] = fo::func::stat_level(fo::var::obj_dude, stat);	Modules\Unarmed.cpp
+	maxOut = unarmed.Hit(hit).maxDamage + fo::func::stat_level(source, fo::Stat::STAT_melee_dmg);	Modules\Unarmed.cpp
+DWORD stat_get_base(GameObject* critter, DWORD statID)	return fo::func::stat_get_base_direct(fo::var::obj_dude, statID);	Game\stats.cpp
+	call fo::funcoffs::stat_get_base_;             // Get Melee Damage w/o bonuses	Modules\DamageMod.cpp
+	call fo::funcoffs::stat_get_base_;             // Get Melee Damage w/o bonuses	Modules\DamageMod.cpp
+	if (!derivedHPwBonus) baseStats[stat] = fo::func::stat_get_base(critter, stat);	Modules\Stats.cpp
+	auto getStatFunc = (derivedHPwBonus) ? fo::func::stat_level : fo::func::stat_get_base;	Modules\Stats.cpp
+DWORD stat_get_base_direct(GameObject* critter, DWORD statID)	return fo::func::stat_get_base_direct(fo::var::obj_dude, statID);	Game\stats.cpp
+DWORD stat_get_bonus(GameObject* critter, DWORD statID)	int value = fo::func::stat_get_bonus(critter, stat);	Modules\Perks.cpp
+void inc_stat()	call fo::funcoffs::inc_stat_;	Modules\BugFixes.cpp
+DWORD stat_set_bonus(GameObject* critter, DWORD statID, DWORD amount)	fo::func::stat_set_bonus(critter, stat, value + mod);	Modules\Perks.cpp
+void stat_set_defaults()	call fo::funcoffs::stat_set_defaults_;	Modules\BugFixes.cpp
+void stat_recalc_derived()	{0x4AF6FC, 5},	CheckAddress.cpp
+	MakeJump(0x4AF6FC, stat_recalc_derived_hack); // overrides function	Modules\Stats.cpp
+	call fo::funcoffs::stat_recalc_derived_;	Modules\Scripting\Handlers\Interface.cpp
+void stat_pc_get()	call fo::funcoffs::stat_pc_get_;	Modules\Scripting\Handlers\Perks.cpp
+void stat_pc_set()	call fo::funcoffs::stat_pc_set_;	Modules\Scripting\Handlers\Stats.cpp
+void stat_pc_add_experience(DWORD amount)	call fo::funcoffs::stat_pc_add_experience_;	Modules\BugFixes.cpp
+	call fo::funcoffs::stat_pc_add_experience_;	Modules\BugFixes.cpp
+	call fo::funcoffs::stat_pc_add_experience_;	Modules\BugFixes.cpp
+	fo::func::stat_pc_add_experience(delayedExperience);	Modules\PartyControl.cpp
+	jmp  fo::funcoffs::stat_pc_add_experience_;	Modules\PartyControl.cpp
+void strParseStrFromList()	call fo::funcoffs::strParseStrFromList_;	Modules\Worldmap.cpp
+DWORD text_object_create(GameObject* object, char* text, DWORD font, DWORD colorText, DWORD colorOutline, RECT* rect)	if (!fo::func::text_object_create(object, text, font, colorText, colorOutline, &rect)) {	FalloutEngine\EngineUtils.cpp
+	jmp  fo::funcoffs::text_object_create_;	Modules\Sound.cpp
+void tile_refresh_rect(RECT* boundRect, DWORD elevation)	fo::func::tile_refresh_rect(&rect, object->elevation);	FalloutEngine\EngineUtils.cpp
+	fo::func::tile_refresh_rect(&rect, obj->elevation);	FalloutEngine\EngineUtils.cpp
+	fo::func::tile_refresh_rect(&rect, fo::var::map_elevation);	Modules\MiscPatches.cpp
+	fo::func::tile_refresh_rect(&rect, fo::var::map_elevation);	Modules\PartyControl.cpp
+	fo::func::tile_refresh_rect(&rect, fo::var::map_elevation);	Modules\PartyControl.cpp
+void tile_refresh_display()	fo::func::tile_refresh_display();	HRP\ViewMap\ViewMap.cpp
+	// fo::func::tile_refresh_display();	Modules\DebugEditor.cpp
+	fo::func::tile_refresh_display();	Modules\Scripting\Handlers\Interface.cpp
+void tile_set_center()	sf::MakeJump(fo::funcoffs::tile_set_center_, tile_set_center_hack_replacement); // 0x4B12F8	HRP\ViewMap\ViewMap.cpp
+	call fo::funcoffs::tile_set_center_;	HRP\ViewMap\ViewMap.cpp
+	jmp  fo::funcoffs::tile_set_center_;	HRP\ViewMap\ViewMap.cpp
+void refresh_mapper()	// fo::var::setInt(FO_VAR_tile_refresh) = fo::funcoffs::refresh_mapper_;	Modules\DebugEditor.cpp
+DWORD tile_coord(DWORD tile, DWORD* outX, DWORD* outY)	fo::func::tile_coord(sourceTile, &source_X, &source_Y);	Game\tilemap.cpp
+	fo::func::tile_coord(targetTile, &target_X, &target_Y);	Game\tilemap.cpp
+	fo::func::tile_coord(targetTile, &targetX, &targetY);	Game\tilemap.cpp
+	fo::func::tile_coord(tile, &x, &y);	Game\tilemap.cpp
+	fo::func::tile_coord(tObj->tile_num, &tObj->rect.x, &tObj->rect.y);	Modules\MiscPatches.cpp
+	call fo::funcoffs::tile_coord_;	Modules\Scripting\Handlers\Misc.cpp
+void tile_num()	long chkTile = fo::func::tile_num_in_direction(dstTile, rotation, 1);	FalloutEngine\EngineUtils.cpp
+	long chkTile = fo::func::tile_num_in_direction(dstTile, dir, 1);	FalloutEngine\EngineUtils.cpp
+	chkTile = fo::func::tile_num_in_direction(dstTile, rotation, 1);	FalloutEngine\EngineUtils.cpp
+	chkTile = fo::func::tile_num_in_direction(dstTile, rotation, 1);	FalloutEngine\EngineUtils.cpp
+	long _tile = fo::func::tile_num_in_direction(tile, direction, 1);	Game\tilemap.cpp
+	long tile = fo::func::tile_num(target_X, target_Y);	Game\tilemap.cpp
+	long tile = fo::func::tile_num(target_X, target_Y);	Game\tilemap.cpp
+	long tile = fo::func::tile_num_in_direction(childData.tile, rotation, 1);	Game\tilemap.cpp
+	objTile = fo::func::tile_num_in_direction(objTile, dir, 1);	Game\AI\AIHelpers.cpp
+	checkTile = fo::func::tile_num_in_direction(checkTile, rotation, dist);	Modules\BugFixes.cpp
+	long tilePlace = fo::func::tile_num_in_direction(dudeTile, dudeRot, distance);	Modules\BugFixes.cpp
+	if (fo::func::obj_blocking_at(source, fo::func::tile_num_in_direction(tilePlace, dir, 1), elevation)) {	Modules\BugFixes.cpp
+	call fo::funcoffs::tile_num_; // ebx - unused	Modules\Scripting\Handlers\Misc.cpp
+	ctx.setReturn(fo::func::tile_num(ctx.arg(0).rawValue(), ctx.arg(1).rawValue()));	Modules\Scripting\Handlers\Worldmap.cpp
+DWORD tile_dist(DWORD scrTile, DWORD dstTile)	if (fo::func::tile_dist(sourceTile, obj->tile) <= (radius + multiHex)) {	FalloutEngine\EngineUtils.cpp
+	if (fo::func::tile_dist(source->tile, dstTile) > 1) {	FalloutEngine\EngineUtils.cpp
+	long currentRange = fo::func::tile_dist(sourceTile, targetTile);	Game\tilemap.cpp
+	long dist = fo::func::tile_dist(targetTile, tile);	Game\tilemap.cpp
+	long dist = fo::func::tile_dist(targetTile, tile);	Game\tilemap.cpp
+DWORD tile_num_in_direction(DWORD tile, DWORD rotation, DWORD distance)	long chkTile = fo::func::tile_num_in_direction(dstTile, rotation, 1);	FalloutEngine\EngineUtils.cpp
+	long chkTile = fo::func::tile_num_in_direction(dstTile, dir, 1);	FalloutEngine\EngineUtils.cpp
+	chkTile = fo::func::tile_num_in_direction(dstTile, rotation, 1);	FalloutEngine\EngineUtils.cpp
+	chkTile = fo::func::tile_num_in_direction(dstTile, rotation, 1);	FalloutEngine\EngineUtils.cpp
+	long _tile = fo::func::tile_num_in_direction(tile, direction, 1);	Game\tilemap.cpp
+	long tile = fo::func::tile_num_in_direction(childData.tile, rotation, 1);	Game\tilemap.cpp
+	objTile = fo::func::tile_num_in_direction(objTile, dir, 1);	Game\AI\AIHelpers.cpp
+	jmp  fo::funcoffs::tile_num_in_direction_;	Modules\BugFixes.cpp
+	checkTile = fo::func::tile_num_in_direction(checkTile, rotation, dist);	Modules\BugFixes.cpp
+	long tilePlace = fo::func::tile_num_in_direction(dudeTile, dudeRot, distance);	Modules\BugFixes.cpp
+	if (fo::func::obj_blocking_at(source, fo::func::tile_num_in_direction(tilePlace, dir, 1), elevation)) {	Modules\BugFixes.cpp
+DWORD tile_dir(DWORD scrTile, DWORD dstTile)	long dir = fo::func::tile_dir(source->tile, dstTile);	FalloutEngine\EngineUtils.cpp
+	long dir = fo::func::tile_dir(objTile, targetTile);	Game\AI\AIHelpers.cpp
+	long dir = source->rotation - fo::func::tile_dir(source->tile, target->tile);	Modules\MiscPatches.cpp
+	long direction = fo::func::tile_dir(fo::var::obj_dude->tile, relativeObject->tile);	Modules\Sound.cpp
+void tile_num_beyond()	sf::MakeJump(fo::funcoffs::tile_num_beyond_ + 1, tile_num_beyond_replacement); // 0x4B1B84	Game\tilemap.cpp
+DWORD tile_on_edge(DWORD tile)	if ((dist + currentRange) >= maxRange || fo::func::tile_on_edge(tile)) return tile;	Game\tilemap.cpp
+	if ((dist + currentRange) >= maxRange || fo::func::tile_on_edge(tile)) return tile;	Game\tilemap.cpp
+DWORD square_coord(DWORD square, DWORD* outX, DWORD* outY)	fo::func::square_coord(X + sY, &s_x, &s_y);	HRP\ViewMap\ViewMap.cpp
+void square_num()	call fo::funcoffs::square_num_;	Modules\Scripting\Handlers\Misc.cpp
+void square_xy()	call fo::funcoffs::square_xy_;	FalloutEngine\Functions.cpp
+	fo::func::square_xy(rect->x, rect->offy,    &x0, &y0);	HRP\ViewMap\ViewMap.cpp
+	fo::func::square_xy(rect->x, rect->y,       &x1, &y1);	HRP\ViewMap\ViewMap.cpp
+	fo::func::square_xy(rect->offx, rect->y,    &x2, &y2);	HRP\ViewMap\ViewMap.cpp
+	fo::func::square_xy(rect->offx, rect->offy, &x3, &y3);	HRP\ViewMap\ViewMap.cpp
+void grid_toggle()	// __asm call fo::funcoffs::grid_toggle_;	Modules\DebugEditor.cpp
+void floor_draw()	call fo::funcoffs::floor_draw_;	HRP\ViewMap\ViewMap.cpp
+void tile_scroll_to()	sf::MakeJump(fo::funcoffs::tile_scroll_to_, tile_scroll_to_hack_replacement);   // 0x4B3924	HRP\ViewMap\ViewMap.cpp
+	jmp fo::funcoffs::tile_scroll_to_;	Modules\TalkingHeads.cpp
+void trait_init()	call fo::funcoffs::trait_init_;	Modules\Perks.cpp
+DWORD trait_level(DWORD traitID)	return fo::func::trait_level(trait);	Modules\PartyControl.cpp
+void trait_adjust_stat()	sf::MakeJump(fo::funcoffs::trait_adjust_stat_, trait_adjust_stat_replacement); // 0x4B3C7C	Game\stats.cpp
+void trait_adjust_skill()	sf::MakeJump(fo::funcoffs::trait_adjust_skill_, trait_adjust_skill_replacement); // 0x4B40FC	Game\skills.cpp
+void windowGetTextColor()	__asm call fo::funcoffs::windowGetTextColor_; // set from SetTextColor	Modules\Scripting\Handlers\Interface.cpp
+void windowCheckRegion()	jmp  fo::funcoffs::windowCheckRegion_;	Modules\BugFixes.cpp
+void windowHide()	__asm call fo::funcoffs::windowHide_;	Modules\Scripting\Handlers\Interface.cpp
+void windowShow()	__asm call fo::funcoffs::windowShow_;	Modules\Scripting\Handlers\Interface.cpp
+DWORD windowWidth()	long w_width = fo::func::windowWidth();	Modules\Scripting\Handlers\Interface.cpp
+DWORD createWindow(char* winName, DWORD x, DWORD y, DWORD width, DWORD height, DWORD color, DWORD flags)	if (fo::func::createWindow(ctx.arg(0).strValue(),	Modules\Scripting\Handlers\Interface.cpp
+DWORD selectWindowID(DWORD sWinID)	if (!fo::func::selectWindowID(ctx.program()->currentScriptWin) || fo::var::getInt(FO_VAR_currentWindow) == -1) {	Modules\Scripting\Handlers\Interface.cpp
+	long result = fo::func::selectWindowID(ctx.program()->currentScriptWin); // TODO: examine the issue of restoring program->currentScriptWin of the current window in op_pop_flags_	Modules\Scripting\Handlers\Interface.cpp
+void selectWindow()	if (!fo::func::selectWindowID(ctx.program()->currentScriptWin) || fo::var::getInt(FO_VAR_currentWindow) == -1) {	Modules\Scripting\Handlers\Interface.cpp
+	long result = fo::func::selectWindowID(ctx.program()->currentScriptWin); // TODO: examine the issue of restoring program->currentScriptWin of the current window in op_pop_flags_	Modules\Scripting\Handlers\Interface.cpp
+void windowGetBuffer()	call fo::funcoffs::windowGetBuffer_;	FalloutEngine\Functions.cpp
+DWORD windowWrapLineWithSpacing(DWORD winID, char* text, DWORD width, DWORD height, DWORD x, DWORD y, DWORD color, DWORD alignment, DWORD lineSpacing)	fo::func::windowWrapLineWithSpacing(win->wID, text, width, maxHeight, x, y, 0x201000F, 0, 0);	Modules\Scripting\Handlers\Interface.cpp
+	ctx.setReturn(fo::func::windowWrapLineWithSpacing(win->wID, text, width, maxHeight, x, y, color, 0, 0)); // returns count of lines printed	Modules\Scripting\Handlers\Interface.cpp
+void windowWrapLine()	fo::func::windowWrapLineWithSpacing(win->wID, text, width, maxHeight, x, y, 0x201000F, 0, 0);	Modules\Scripting\Handlers\Interface.cpp
+	ctx.setReturn(fo::func::windowWrapLineWithSpacing(win->wID, text, width, maxHeight, x, y, color, 0, 0)); // returns count of lines printed	Modules\Scripting\Handlers\Interface.cpp
+void displayInWindow()	call fo::funcoffs::displayInWindow_; // *data<eax>, width<edx>, height<ebx>, where<ecx>	FalloutEngine\Functions.cpp
+	fo::func::displayInWindow(framePtr->width, framePtr->width, framePtr->height, pixelData); // scaled to window size (w/o transparent)	Modules\Scripting\Handlers\Interface.cpp
+void windowDisplay()	fo::func::windowDisplayBuf(x + frmPtr->xshift[direction], framePtr->width, y + frmPtr->yshift[direction], framePtr->height, pixelData, ctx.arg(4).rawValue());	Modules\Scripting\Handlers\Interface.cpp
+void windowDisplayBuf()	cmovnz ebx, fo::funcoffs::windowDisplayBuf_;	FalloutEngine\Functions.cpp
+	fo::func::windowDisplayBuf(x + frmPtr->xshift[direction], framePtr->width, y + frmPtr->yshift[direction], framePtr->height, pixelData, ctx.arg(4).rawValue());	Modules\Scripting\Handlers\Interface.cpp
+void windowDisplayTransBuf()	mov  ebx, fo::funcoffs::windowDisplayTransBuf_;	FalloutEngine\Functions.cpp
+DWORD _word_wrap(char* text, unsigned char maxWidth, DWORD* buf, unsigned char* count)	call fo::funcoffs::_word_wrap_;	Modules\QuestList.cpp
+	fo::func::_word_wrap(text, width, buf, count);	Modules\QuestList.cpp
+	if (fo::func::_word_wrap(text, width, buf, count) == -1) return ExitCode::Error; // error wrap	Modules\QuestList.cpp
+void wmWorldMapLoadTempData()	call fo::funcoffs::wmWorldMapLoadTempData_;	Modules\Worldmap.cpp
+void wmMapMatchNameToIdx()	call fo::funcoffs::wmMapMatchNameToIdx_;	Modules\MiscPatches.cpp
+void wmMapCanRestHere()	jmp  fo::funcoffs::wmMapCanRestHere_;	Modules\Worldmap.cpp
+void wmFindCurSubTileFromPos()	call fo::funcoffs::wmFindCurSubTileFromPos_;	FalloutEngine\EngineUtils.cpp
+	call fo::funcoffs::wmFindCurSubTileFromPos_;	Modules\BugFixes.cpp
+DWORD wmEvalTileNumForPlacement(DWORD tile)	if (fo::func::wmEvalTileNumForPlacement(tilePlace)) {	Modules\BugFixes.cpp
+void wmPartyInitWalking()	jmp  fo::funcoffs::wmPartyInitWalking_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::wmPartyInitWalking_;	Modules\Interface.cpp
+void wmPartyWalkingStep()	jmp  fo::funcoffs::wmPartyWalkingStep_;	Modules\Worldmap.cpp
+	fo::func::wmPartyWalkingStep();	Modules\HookScripts\MiscHs.cpp
+void wmInterfaceScrollTabsStart()	jmp  fo::funcoffs::wmInterfaceScrollTabsStart_;	Modules\Interface.cpp
+void wmInterfaceInit()	call fo::funcoffs::wmInterfaceInit_;	Modules\LoadGameHook.cpp
+void wmMouseBkProc()	mov  eax, fo::funcoffs::wmMouseBkProc_;	HRP\MoviesScreen.cpp
+	mov  eax, fo::funcoffs::wmMouseBkProc_;	HRP\MoviesScreen.cpp
+void wmMarkSubTileOffsetVisitedFunc()	call fo::funcoffs::wmMarkSubTileOffsetVisitedFunc_;	Modules\BugFixes.cpp
+void wmMarkSubTileRadiusVisited()	call fo::funcoffs::wmMarkSubTileRadiusVisited_;	Modules\BugFixes.cpp
+void wmSubTileMarkRadiusVisited()	call fo::funcoffs::wmSubTileMarkRadiusVisited_;	Modules\BugFixes.cpp
+void wmInterfaceRefresh()	call fo::funcoffs::wmInterfaceRefresh_;	Modules\Worldmap.cpp
+	jmp  fo::funcoffs::wmInterfaceRefresh_;	Modules\HookScripts\MiscHs.cpp
+	jmp  fo::funcoffs::wmInterfaceRefresh_;	Modules\HookScripts\MiscHs.cpp
+	jmp  fo::funcoffs::wmInterfaceRefresh_;	Modules\HookScripts\MiscHs.cpp
+	__asm call fo::funcoffs::wmInterfaceRefresh_;	Modules\Scripting\Handlers\Worldmap.cpp
+void wmInterfaceDrawSubTileRectFogged(unsigned char* surface, DWORD width, DWORD height, DWORD surfaceWidth)	fo::func::wmInterfaceDrawSubTileRectFogged(surf, width, height, surfWidth);	FalloutEngine\EngineUtils.cpp
+void wmDrawCursorStopped()	__asm jmp fo::funcoffs::wmDrawCursorStopped_;	Modules\Interface.cpp
+void wmCarUseGas(DWORD gasAmount)	fo::func::wmCarUseGas(100);	Modules\HookScripts\MiscHs.cpp
+void wmRefreshInterfaceOverlay(DWORD isRedraw)	if (backgroundCopy) fo::func::wmRefreshInterfaceOverlay(0); // prevent printing text over the interface	Modules\Interface.cpp
+void wmMapMusicStart()	jmp  fo::funcoffs::wmMapMusicStart_;	Modules\MiscPatches.cpp
+void wmMatchAreaContainingMapIdx()	call fo::funcoffs::wmMatchAreaContainingMapIdx_;	Modules\MiscPatches.cpp
+	call fo::funcoffs::wmMatchAreaContainingMapIdx_;	Modules\Worldmap.cpp
+	call fo::funcoffs::wmMatchAreaContainingMapIdx_;	Modules\HookScripts\MiscHs.cpp
+	call fo::funcoffs::wmMatchAreaContainingMapIdx_;	Modules\Scripting\Handlers\Worldmap.cpp
+void wmTeleportToArea()	call fo::funcoffs::wmTeleportToArea_;	Modules\Worldmap.cpp
+void mem_malloc()	jmp  fo::funcoffs::mem_malloc_;	HRP\InterfaceBar.cpp
+	call fo::funcoffs::mem_malloc_;	Modules\BarBoxes.cpp
+	call fo::funcoffs::mem_malloc_;     // malloc the necessary memory	Modules\BugFixes.cpp
+void* mem_realloc(void* lpmem, DWORD msize)	tiles->names = (char*)fo::func::mem_realloc(tiles->names, listpos * 13);	Modules\Tiles.cpp
+void mem_free(void* mem)	jmp  fo::funcoffs::mem_free_;	Modules\BugFixes.cpp
+	fo::func::mem_free(fo::var::text_object_list[i]->buffer);	Modules\MiscPatches.cpp
+	fo::func::mem_free(fo::var::text_object_list[i]);	Modules\MiscPatches.cpp
+	fo::func::mem_free(tObj->buffer);	Modules\MiscPatches.cpp
+	fo::func::mem_free(tObj);	Modules\MiscPatches.cpp
+void my_free()	__asm call fo::funcoffs::my_free_;	Modules\Scripting\Handlers\Interface.cpp
+void db_init()	if (!it->empty()) fo::func::db_init(it->c_str(), 0);	Modules\LoadOrder.cpp
+	if (!it->empty()) fo::func::db_init(it->c_str(), 0);	Modules\LoadOrder.cpp
+void db_read_to_buf()	call fo::funcoffs::db_read_to_buf_;	Modules\FileSystem.cpp
+DWORD db_fclose(DbFile* file)	fo::func::db_fclose(frmStream);	FalloutEngine\EngineUtils.cpp
+	fo::func::db_fclose(frmStream);	FalloutEngine\EngineUtils.cpp
+	fo::func::db_fclose(frmStream);	FalloutEngine\EngineUtils.cpp
+	jmp  fo::funcoffs::db_fclose_;	HRP\SplashScreen.cpp
+	fo::func::db_fclose(file);	HRP\ViewMap\EdgeBorder.cpp
+	fo::func::db_fclose(file);	HRP\ViewMap\EdgeBorder.cpp
+	if (file) fo::func::db_fclose(file);	Modules\ExtraSaveSlots.cpp
+	fo::func::db_fclose(file);	Modules\ExtraSaveSlots.cpp
+	HookCalls(asm_xfclose, {0x4C5DBD, 0x4C5EA5, 0x4C5EB4});	Modules\FileSystem.cpp
+	fo::func::db_fclose(fileStream);	Modules\HeroAppearance.cpp
+	fo::func::db_fclose(FileStream);	Modules\HeroAppearance.cpp
+	fo::func::db_fclose(file);	Modules\Tiles.cpp
+	fo::func::db_fclose(artFile);	Modules\Tiles.cpp
+	fo::func::db_fclose(file);	Modules\Tiles.cpp
+	fo::func::db_fclose(artFile);	Modules\Tiles.cpp
+	fo::func::db_fclose(file);	Modules\Tiles.cpp
+DbFile* db_fopen(char* path, char* mode)	auto frmStream = fo::func::db_fopen(frmPath, "rb");	FalloutEngine\EngineUtils.cpp
+	frmStream = fo::func::db_fopen(frmPath, "rb");	FalloutEngine\EngineUtils.cpp
+	fo::DbFile* file = fo::func::db_fopen(edgPath, "rb");	HRP\ViewMap\EdgeBorder.cpp
+	HookCalls(asm_xfopen, {0x4C5DA9, 0x4C5E16, 0x4C5EC8});	Modules\FileSystem.cpp
+	return fo::func::db_fopen(file, mode);	Modules\LoadOrder.cpp
+	jmp  fo::funcoffs::db_fopen_;	Modules\LoadOrder.cpp
+	call fo::funcoffs::db_fopen_;	Modules\Message.cpp
+	jmp  fo::funcoffs::db_fopen_;	Modules\Message.cpp
+	return (premadePath) ? fo::func::db_fopen(premadePath, mode) : nullptr;	Modules\Premade.cpp
+	jmp  fo::funcoffs::db_fopen_;	Modules\Premade.cpp
+	fo::DbFile* file = fo::func::db_fopen("art\\tiles\\gridmask.frm", "rb"); // same as grid000.frm from HRP	Modules\Tiles.cpp
+	fo::DbFile* artFile = fo::func::db_fopen(buf, "rb");	Modules\Tiles.cpp
+	fo::DbFile* file = fo::func::db_fopen(buf, "wb");	Modules\Tiles.cpp
+	fo::DbFile* file = fo::func::db_fopen("art\\tiles\\xltiles.lst", "rt");	Modules\Tiles.cpp
+char* db_fgets(char* buf, DWORD max_count, DbFile* file)	while (fo::func::db_fgets(buf, 31, file) > 0) {	Modules\Tiles.cpp
+void db_fputc()	HookCalls(asm_xfputc, {0x4C5FE4, 0x4C61B5, 0x4C61E2, 0x4C61FE, 0x4C6479, 0x4C64B3, 0x4C64D2});	Modules\FileSystem.cpp
+void db_fputs()	HookCall(0x4C5FEC, asm_xfputs);	Modules\FileSystem.cpp
+void db_ungetc()	HookCall(0x4C5FF4, asm_xfungetc);	Modules\FileSystem.cpp
+DWORD db_fread(void* buf, DWORD elsize, DWORD count, DbFile* file)	if (fo::func::db_freadInt(frmStream, &frmHeader->version) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frmHeader->FPS) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frmHeader->actionFrame) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frmHeader->numFrames) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShortCount(frmStream, frmHeader->xCentreShift, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShortCount(frmStream, frmHeader->yCentreShift, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadIntCount(frmStream, frmHeader->oriOffset, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadInt(frmStream, &frmHeader->frameAreaSize) == -1)	FalloutEngine\EngineUtils.cpp
+	if (fo::func::db_freadShort(frmStream, &frame->width) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frame->height) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadInt(frmStream, &frame->size) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frame->x) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frame->y) == -1)	FalloutEngine\EngineUtils.cpp
+	if (fo::func::db_fread(frame->indexBuff, 1, frame->size, frmStream) != frame->size)	FalloutEngine\EngineUtils.cpp
+	fo::func::db_freadShort(file, &rixWidth);	HRP\SplashScreen.cpp
+	fo::func::db_freadShort(file, &rixHeight);	HRP\SplashScreen.cpp
+	fo::func::db_fread(rixBuffer, 1, size, file);	HRP\SplashScreen.cpp
+	fo::func::db_freadInt(file, &getValue);	HRP\ViewMap\EdgeBorder.cpp
+	fo::func::db_freadInt(file, &getValue);	HRP\ViewMap\EdgeBorder.cpp
+	if (fo::func::db_freadInt(file, &getValue) || getValue) return file; // error, incorrect map level	HRP\ViewMap\EdgeBorder.cpp
+	if (fo::func::db_freadIntCount(file, (DWORD*)&edgeData->squareRect, 4) || fo::func::db_freadInt(file, (DWORD*)&edgeData->clipData)) {	HRP\ViewMap\EdgeBorder.cpp
+	long result = fo::func::db_freadIntCount(file, (DWORD*)&edgeData->tileRect, 4); // load rectangle data	HRP\ViewMap\EdgeBorder.cpp
+	if (fo::func::db_freadInt(file, &getValue)) { // are there more rectangles on the current map level?	HRP\ViewMap\EdgeBorder.cpp
+	if (fo::func::db_freadInt(fileStream, &temp) != -1 && temp < 100) {	Modules\HeroAppearance.cpp
+	if (fo::func::db_freadInt(fileStream, &temp) != -1 && temp < 100) {	Modules\HeroAppearance.cpp
+	fo::func::db_freadByteCount(file, mask, 80 * 36);	Modules\Tiles.cpp
+	fo::func::db_freadShort(artFile, &width);	Modules\Tiles.cpp
+	fo::func::db_freadShort(artFile, &height);	Modules\Tiles.cpp
+	fo::func::db_fread(pixelData, 1, bytes, artFile) != bytes)	Modules\Tiles.cpp
+	fo::func::db_freadByteCount(artFile, (BYTE*)&frame, 74);	Modules\Tiles.cpp
+void db_fwrite()	HookCall(0x4C60B8, asm_xfwrite);	Modules\FileSystem.cpp
+	if (fo::func::db_fwriteInt(FileStream, (DWORD)currentRaceVal) != -1) {	Modules\HeroAppearance.cpp
+	fo::func::db_fwriteInt(FileStream, (DWORD)currentStyleVal);	Modules\HeroAppearance.cpp
+	fo::func::db_fwriteByteCount(file, (BYTE*)&frame, sizeof(frame));	Modules\Tiles.cpp
+DWORD db_fseek(DbFile* file, DWORD pos, DWORD origin)	fo::func::db_fseek(file, 4, SEEK_SET);	HRP\SplashScreen.cpp
+	fo::func::db_fseek(file, 2 + 768, SEEK_CUR);	HRP\SplashScreen.cpp
+	HookCall(0x4C60C0, asm_xfseek);	Modules\FileSystem.cpp
+	jmp fo::funcoffs::db_fseek_;	Modules\HeroAppearance.cpp
+	fo::func::db_fseek(file, 0x4A, SEEK_SET);	Modules\Tiles.cpp
+	fo::func::db_fseek(artFile, 0x3E, SEEK_SET); // frameData	Modules\Tiles.cpp
+	if (fo::func::db_fseek(artFile, 0x4A, SEEK_SET) ||	Modules\Tiles.cpp
+	fo::func::db_fseek(artFile, 0, SEEK_SET);	Modules\Tiles.cpp
+void db_ftell()	HookCall(0x4C60C8, asm_xftell);	Modules\FileSystem.cpp
+void db_rewind()	HookCall(0x4C60D0, asm_xfrewind);	Modules\FileSystem.cpp
+void db_feof()	HookCall(0x4C60D8, asm_xfeof);	Modules\FileSystem.cpp
+DWORD db_freadByte(DbFile* file, unsigned char* _out)	fo::func::db_freadByteCount(file, mask, 80 * 36);	Modules\Tiles.cpp
+	fo::func::db_freadByteCount(artFile, (BYTE*)&frame, 74);	Modules\Tiles.cpp
+DWORD db_freadShort(DbFile* file, ushort* _out)	else if (fo::func::db_freadShort(frmStream, &frmHeader->FPS) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frmHeader->actionFrame) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frmHeader->numFrames) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShortCount(frmStream, frmHeader->xCentreShift, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShortCount(frmStream, frmHeader->yCentreShift, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	if (fo::func::db_freadShort(frmStream, &frame->width) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frame->height) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frame->x) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShort(frmStream, &frame->y) == -1)	FalloutEngine\EngineUtils.cpp
+	fo::func::db_freadShort(file, &rixWidth);	HRP\SplashScreen.cpp
+	fo::func::db_freadShort(file, &rixHeight);	HRP\SplashScreen.cpp
+	fo::func::db_freadShort(artFile, &width);	Modules\Tiles.cpp
+	fo::func::db_freadShort(artFile, &height);	Modules\Tiles.cpp
+DWORD db_freadInt(DbFile* file, DWORD* _out)	if (fo::func::db_freadInt(frmStream, &frmHeader->version) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadIntCount(frmStream, frmHeader->oriOffset, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadInt(frmStream, &frmHeader->frameAreaSize) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadInt(frmStream, &frame->size) == -1)	FalloutEngine\EngineUtils.cpp
+	fo::func::db_freadInt(file, &getValue);	HRP\ViewMap\EdgeBorder.cpp
+	fo::func::db_freadInt(file, &getValue);	HRP\ViewMap\EdgeBorder.cpp
+	if (fo::func::db_freadInt(file, &getValue) || getValue) return file; // error, incorrect map level	HRP\ViewMap\EdgeBorder.cpp
+	if (fo::func::db_freadIntCount(file, (DWORD*)&edgeData->squareRect, 4) || fo::func::db_freadInt(file, (DWORD*)&edgeData->clipData)) {	HRP\ViewMap\EdgeBorder.cpp
+	long result = fo::func::db_freadIntCount(file, (DWORD*)&edgeData->tileRect, 4); // load rectangle data	HRP\ViewMap\EdgeBorder.cpp
+	if (fo::func::db_freadInt(file, &getValue)) { // are there more rectangles on the current map level?	HRP\ViewMap\EdgeBorder.cpp
+	call fo::funcoffs::db_freadInt_;	Modules\BugFixes.cpp
+	if (fo::func::db_freadInt(fileStream, &temp) != -1 && temp < 100) {	Modules\HeroAppearance.cpp
+	if (fo::func::db_freadInt(fileStream, &temp) != -1 && temp < 100) {	Modules\HeroAppearance.cpp
+DWORD db_fwriteByte(DbFile* file, DWORD value)	fo::func::db_fwriteByteCount(file, (BYTE*)&frame, sizeof(frame));	Modules\Tiles.cpp
+DWORD db_fwriteInt(DbFile* file, DWORD value)	jmp  fo::funcoffs::db_fwriteInt_;	Modules\BugFixes.cpp
+	if (fo::func::db_fwriteInt(FileStream, (DWORD)currentRaceVal) != -1) {	Modules\HeroAppearance.cpp
+	fo::func::db_fwriteInt(FileStream, (DWORD)currentStyleVal);	Modules\HeroAppearance.cpp
+DWORD db_freadByteCount(DbFile* file, unsigned char* dest, DWORD count)	fo::func::db_freadByteCount(file, mask, 80 * 36);	Modules\Tiles.cpp
+	fo::func::db_freadByteCount(artFile, (BYTE*)&frame, 74);	Modules\Tiles.cpp
+DWORD db_freadShortCount(DbFile* file, ushort* dest, DWORD count)	else if (fo::func::db_freadShortCount(frmStream, frmHeader->xCentreShift, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	else if (fo::func::db_freadShortCount(frmStream, frmHeader->yCentreShift, 6) == -1)	FalloutEngine\EngineUtils.cpp
+DWORD db_freadIntCount(DbFile* file, DWORD* dest, DWORD count)	else if (fo::func::db_freadIntCount(frmStream, frmHeader->oriOffset, 6) == -1)	FalloutEngine\EngineUtils.cpp
+	if (fo::func::db_freadIntCount(file, (DWORD*)&edgeData->squareRect, 4) || fo::func::db_freadInt(file, (DWORD*)&edgeData->clipData)) {	HRP\ViewMap\EdgeBorder.cpp
+	long result = fo::func::db_freadIntCount(file, (DWORD*)&edgeData->tileRect, 4); // load rectangle data	HRP\ViewMap\EdgeBorder.cpp
+	call fo::funcoffs::db_freadIntCount_;	Modules\Tiles.cpp
+DWORD db_fwriteByteCount(DbFile* file, char* cptr, DWORD count)	fo::func::db_fwriteByteCount(file, (BYTE*)&frame, sizeof(frame));	Modules\Tiles.cpp
+DWORD db_get_file_list(char* searchMask, char*** fileList)	int count = fo::func::db_get_file_list(fileMask.c_str(), &filenames);	Modules\ScriptExtender.cpp
+void db_free_file_list(char*** fileList, DWORD arg2)	fo::func::db_free_file_list(&filenames, 0);	Modules\ScriptExtender.cpp
+void db_filelength()	HookCalls(asm_xfilelength, {0x4C5DB4, 0x4C5E2D, 0x4C68BC});	Modules\FileSystem.cpp
+void rect_clip()	call fo::funcoffs::rect_clip_;	Game\GUI\render.cpp
+void rect_malloc()	__asm call fo::funcoffs::rect_malloc_;	Game\GUI\render.cpp
+void debug_printf()	__asm jmp fo::funcoffs::debug_printf_;	FalloutEngine\Functions.cpp
+	__asm jmp fo::funcoffs::debug_printf_;	FalloutEngine\Functions.cpp
+	//fo::func::debug_printf("\ntile_dist: %d", currentRange);	Game\tilemap.cpp
+	//fo::func::debug_printf("\ntile_num: %d [x:%d y:%d]", tile, target_X, target_Y);	Game\tilemap.cpp
+	//fo::func::debug_printf("\ntile_num: %d [x:%d y:%d]", tile, target_X, target_Y);	Game\tilemap.cpp
+	fo::func::debug_printf("\nTilemap::make_path_func: failed to build a path, exceeded the 'pathCounter' limit.");	Game\tilemap.cpp
+	//fo::func::debug_printf("\nmake_path_func: tiles [to %d]", childData.tile);	Game\tilemap.cpp
+	//fo::func::debug_printf(" <- %d", childData.tile);	Game\tilemap.cpp
+	//fo::func::debug_printf(" <- %d [from] len:%d\n", dadData->tile, pathLen);	Game\tilemap.cpp
+	if (lockCount >= lockLimit) fo::func::debug_printf("\n[SFALL] Warning: The number of animated slots in the lock is too large, locked %d of %d", lockCount, animationLimit);	Modules\Animations.cpp
+	call fo::funcoffs::debug_printf_;	Modules\BugFixes.cpp
+	fo::func::debug_printf(errorTable, "set_critical_table()");	Modules\Criticals.cpp
+	fo::func::debug_printf(errorTable, "get_critical_table()");	Modules\Criticals.cpp
+	fo::func::debug_printf(errorTable, "reset_critical_table()");	Modules\Criticals.cpp
+	if (!itMem->second.proto) fo::func::debug_printf("[SFALL] Error get critter prototype pid: %d\n", itMem->second.pid);	Modules\CritterStats.cpp
+	fo::func::debug_printf("LOADSAVE: Total critter base stats saved: %d\n", count);	Modules\CritterStats.cpp
+	fo::func::debug_printf("LOADSAVE: Total critter bonus stats saved: %d\n", count);	Modules\CritterStats.cpp
+	fo::func::debug_printf("LOADSAVE: Critter PID/ID: %d/%d, saved base stat: %d, value: %d, def: %d\n", data.objPID, data.objID, data.stat, data.amount, data.defVal);	Modules\CritterStats.cpp
+	fo::func::debug_printf("LOADSAVE: Critter PID/ID: %d/%d, saved bonus stat: %d, value: %d, def: %d\n", data.objPID, data.objID, data.stat, data.amount, data.defVal);	Modules\CritterStats.cpp
+	call fo::funcoffs::debug_printf_;	Modules\DebugEditor.cpp
+	call fo::funcoffs::debug_printf_;	Modules\DebugEditor.cpp
+	call fo::funcoffs::debug_printf_;	Modules\DebugEditor.cpp
+	jmp  fo::funcoffs::debug_printf_; // ERROR: attempt to reference...	Modules\DebugEditor.cpp
+	call fo::funcoffs::debug_printf_;	Modules\DebugEditor.cpp
+	fo::func::debug_printf("System timer resolution: %d - %d ms.\n", min, max);	Modules\DebugEditor.cpp
+	fo::func::debug_printf("\nApperanceMod: art\\intrface\\AppHeroWin.frm file not found.");	Modules\HeroAppearance.cpp
+	call fo::funcoffs::debug_printf_;	Modules\Inventory.cpp
+	fo::func::debug_printf("\n[SFALL] ERROR reading data: %s", buf);	Modules\LoadGameHook.cpp
+	fo::func::debug_printf("\nSFALL: [State reset %s]\n", str);	Modules\LoadGameHook.cpp
+	fo::func::debug_printf("\nOPCODE ERROR: metarule3(%d, ...) - metarule function number does not exist.\n > Script: %s, procedure %s.",	Modules\MetaruleExtender.cpp
+	jmp  fo::funcoffs::debug_printf_;	Modules\MiscPatches.cpp
+	if (isDebug) fo::func::debug_printf("\n[SFALL] Save dude state.");	Modules\PartyControl.cpp
+	if (isDebug) fo::func::debug_printf("\n[SFALL] Take control of critter.");	Modules\PartyControl.cpp
+	if (isDebug) fo::func::debug_printf("\n[SFALL] Restore control to dude.\n");	Modules\PartyControl.cpp
+	fo::func::debug_printf("\n[SFALL] Script: %s will not be executed. A script with the same name already exists in another directory.", fullPath);	Modules\ScriptExtender.cpp
+	fo::func::debug_printf("\nWarning: critter PID: %d, ID: %d, has an incorrect base value of the max HP stat: %d (must be %d)",	Modules\Stats.cpp
+	if (isDebug) fo::func::debug_printf("\nWARNING: A recursive hook with ID %d was running.", hook);	Modules\HookScripts\Common.cpp
+	fo::func::debug_printf("\n[SFALL] The hook ID: %d cannot be executed.", hook);	Modules\HookScripts\Common.cpp
+	fo::func::debug_printf("\nOPCODE ERROR: %s\n > Script: %s, procedure %s.", msg, _program->fileName, procName);	Modules\Scripting\OpcodeContext.cpp
+	fo::func::debug_printf(fmt, name);	Modules\Scripting\Handlers\Objects.cpp
+void debug_log()	call fo::funcoffs::debug_log_;	Modules\DebugEditor.cpp
+void setSystemPalette()	call fo::funcoffs::setSystemPalette_;	HRP\Init.cpp
+void loadColorTable()	__asm call fo::funcoffs::loadColorTable_;	HRP\DeathScreen.cpp
+	__asm call fo::funcoffs::loadColorTable_;	HRP\HelpScreen.cpp
+	call fo::funcoffs::loadColorTable_;	Modules\Scripting\Handlers\Misc.cpp
+void rebuildColorBlendTables()	// jmp  fo::funcoffs::rebuildColorBlendTables_;	Modules\SubModules\DirectDraw.cpp
+BlendColorTableData* getColorBlendTable(DWORD color)	fo::BlendColorTableData* blendTable = fo::func::getColorBlendTable(colorFlags);	HRP\Image.cpp
+void freeColorBlendTable(DWORD color)	fo::func::freeColorBlendTable(colorFlags);	HRP\Image.cpp
+DWORD get_input()	return (!reqGameQuit) ? fo::func::get_input() : 27; // ESC code	WinProc.cpp
+	button = fo::func::get_input();	Modules\ExtraSaveSlots.cpp
+	button = fo::func::get_input();	Modules\HeroAppearance.cpp
+	int button = fo::func::get_input();	Modules\HeroAppearance.cpp
+	call fo::funcoffs::get_input_;	Modules\MainLoopHook.cpp
+	call fo::funcoffs::get_input_;	Modules\MainLoopHook.cpp
+	call fo::funcoffs::get_input_; // also windows message pump	Modules\Movies.cpp
+	} while (fo::var::mouse_buttons != 2 && fo::func::get_input() != 27); // 27 - escape code	Modules\PartyControl.cpp
+	jmp  fo::funcoffs::get_input_;	Modules\Worldmap.cpp
+	jmp  fo::funcoffs::get_input_;	Modules\Worldmap.cpp
+	jmp  fo::funcoffs::get_input_;	Modules\Worldmap.cpp
+void process_bk()	jmp  fo::funcoffs::process_bk_;	HRP\Init.cpp
+	call fo::funcoffs::process_bk_;	Modules\AI.cpp
+	fo::func::process_bk(); // eliminate lag when loading textures	Modules\TalkingHeads.cpp
+	__asm call fo::funcoffs::process_bk_;	Modules\Worldmap.cpp
+void GNW_do_bk_process()	call fo::funcoffs::GNW_do_bk_process_;	Modules\BugFixes.cpp
+void add_bk_process()	call fo::funcoffs::add_bk_process_;	HRP\MoviesScreen.cpp
+void remove_bk_process()	call fo::funcoffs::remove_bk_process_;	HRP\MoviesScreen.cpp
+	jmp  fo::funcoffs::remove_bk_process_;	Modules\LoadGameHook.cpp
+void dump_screen()	MakeJump(0x4C8F4C, dump_screen_hack_replacement);	Modules\Graphics.cpp
+void get_time()	jmp  fo::funcoffs::get_time_;	Modules\BugFixes.cpp
+void pause_for_tocks()	call fo::funcoffs::pause_for_tocks_;	Modules\MiscPatches.cpp
+DWORD block_for_tocks(DWORD ticks)	call fo::funcoffs::block_for_tocks_;	Modules\BugFixes.cpp
+	call fo::funcoffs::block_for_tocks_;	Modules\Worldmap.cpp
+	fo::func::block_for_tocks(200);	Modules\Scripting\Handlers\Worldmap.cpp
+void set_focus_func(void* func)	fo::func::set_focus_func(LostFocus);	Modules\Movies.cpp
+void GNW95_hook_input()	call fo::funcoffs::GNW95_hook_input_;	WinProc.cpp
+	__asm call fo::funcoffs::GNW95_hook_input_;	WinProc.cpp
+void GNW95_process_message()	__asm call fo::funcoffs::GNW95_process_message_;	Modules\DebugEditor.cpp
+void mouse_show()	fo::func::mouse_show(); // for updating background cursor area	Game\GUI\render.cpp
+	fo::func::mouse_show();	Game\GUI\render.cpp
+	if (mouseWasHidden) fo::func::mouse_show();	Modules\HeroAppearance.cpp
+void mouse_hide()	if (mouseWasHidden) fo::func::mouse_hide();	Modules\HeroAppearance.cpp
+DWORD mouse_in(DWORD x, DWORD y, DWORD x_offs, DWORD y_offs)	if (fo::var::mouse_is_hidden || !fo::func::mouse_in(updateRect->left, updateRect->top, updateRect->right, updateRect->bottom)) {	Game\GUI\render.cpp
+	if (!toBuffer && !fo::var::getInt(FO_VAR_doing_refresh_all) && !fo::var::mouse_is_hidden && fo::func::mouse_in(updateRect->left, updateRect->top, updateRect->right, updateRect->bottom)) {	Game\GUI\render.cpp
+DWORD mouse_click_in(DWORD x, DWORD y, DWORD x_offs, DWORD y_offs)	jmp  fo::funcoffs::mouse_click_in_;	HRP\Dialog.cpp
+	jmp  fo::funcoffs::mouse_click_in_;	HRP\Inventory.cpp
+	jmp  fo::funcoffs::mouse_click_in_;	HRP\Worldmap.cpp
+	return fo::func::mouse_click_in(mapVisibleArea.left, mapVisibleArea.top, mapVisibleArea.right, mapVisibleArea.bottom);	HRP\ViewMap\EdgeClipping.cpp
+	call fo::funcoffs::mouse_click_in_;	Modules\BugFixes.cpp
+	if (fo::func::mouse_click_in(rect->left, rect->top, rect->right, rect->bottom)) return 0; // 0 - block clicking in the window area	Modules\Interface.cpp
+	return fo::func::mouse_click_in(rect->left, rect->top, rect->right, rect->bottom); // 1 - click in the display window area	Modules\Interface.cpp
+	call fo::funcoffs::mouse_click_in_;	Modules\Inventory.cpp
+	call fo::funcoffs::mouse_click_in_;	Modules\Inventory.cpp
+	call fo::funcoffs::mouse_click_in_;	Modules\Inventory.cpp
+	call fo::funcoffs::mouse_click_in_;	Modules\Inventory.cpp
+	call fo::funcoffs::mouse_click_in_;	Modules\HookScripts\InventoryHs.cpp
+void mouse_get_rect()	call fo::funcoffs::mouse_get_rect_;	Game\GUI\render.cpp
+void mouse_get_position(DWORD* outX, DWORD* outY)	call fo::funcoffs::mouse_get_position_;	HRP\Character.cpp
+	call fo::funcoffs::mouse_get_position_;	HRP\LoadSave.cpp
+	call fo::funcoffs::mouse_get_position_;	HRP\MiscInterface.cpp
+	call fo::funcoffs::mouse_get_position_;	HRP\Worldmap.cpp
+	fo::func::mouse_get_position(&x, &y);	HRP\ViewMap\EdgeClipping.cpp
+	SafeWriteBytes(0x4CA9DC, (BYTE*)&data, 5); // mouse_get_position_	Modules\BugFixes.cpp
+	call fo::funcoffs::mouse_get_position_;	Modules\Scripting\Handlers\Misc.cpp
+void GNW95_SetPaletteEntries()	MakeJump(fo::funcoffs::GNW95_SetPaletteEntries_ + 1, GNW95_SetPaletteEntries_replacement); // 0x4CB311	Modules\Graphics.cpp
+	MakeJump(fo::funcoffs::GNW95_SetPaletteEntries_ + 1, GNW95_SetPaletteEntries_hack_replacement); // 0x4CB310	Modules\SubModules\DirectDraw.cpp
+void GNW95_SetPalette()	MakeJump(fo::funcoffs::GNW95_SetPalette_, GNW95_SetPalette_replacement); // 0x4CB568	Modules\Graphics.cpp
+	MakeJump(fo::funcoffs::GNW95_SetPalette_, GNW95_SetPalette_hack_replacement); // 0x4CB568	Modules\SubModules\DirectDraw.cpp
+void kb_clear()	__asm call fo::funcoffs::kb_clear_;	InputFuncs.cpp
+	__asm call fo::funcoffs::kb_clear_;	Modules\MetaruleExtender.cpp
+void cscale(unsigned char* src, DWORD sWidth, DWORD sHeight, DWORD sStride, unsigned char* dst, DWORD width, DWORD height, DWORD stride)	fo::func::cscale(scr, width, frm->frames->height, frm->frames->width, win->surface, win->width, win->height, win->width);	HRP\InterfaceBar.cpp
+	fo::func::cscale(scr + 30, sw, h, w, dst + 30, dw, dh, IFaceBar::IFACE_BAR_WIDTH); // TODO: replace the scaling algorithm with a better one	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::cscale_;	HRP\LoadSave.cpp
+	fo::func::cscale((BYTE*)desc.lpSurface, bW, bH, bW, dst, toW, toH, win->width);	HRP\MoviesScreen.cpp
+	call fo::funcoffs::cscale_;	Modules\Interface.cpp
+void trans_cscale(void* fromBuff, DWORD width, DWORD height, DWORD fromPitch, void* toBuff, DWORD toWidth, DWORD toHeight, DWORD toPitch)	call fo::funcoffs::trans_cscale_; // *from_buff<eax>, i_width<edx>, i_height<ebx>, i_width2<ecx>, to_buff, width, height, to_width	FalloutEngine\Functions.cpp
+	fo::func::trans_cscale(btnBackgroundFrm->frames->indexBuff, sw, sh, sw, dst, (long)(sw * scaleFactor), (long)(sh * scaleFactor), dstW);	HRP\MainMenu.cpp
+	fo::func::trans_cscale(((frmPtr->id == 'PCX') ? frmPtr->pixelData : framePtr->data), framePtr->width, framePtr->height, framePtr->width,	Modules\Scripting\Handlers\Interface.cpp
+void buf_to_buf()	auto drawFunc = (win->flags & fo::WinFlags::Transparent && win->wID) ? fo::func::trans_buf_to_buf : fo::func::buf_to_buf;	Game\GUI\render.cpp
+	sf::MakeJump(fo::funcoffs::buf_to_buf_, fo::func::buf_to_buf); // 0x4D36D4	Game\GUI\render.cpp
+	fo::func::buf_to_buf(src, w, h, srcW, dst, Setting::ScreenWidth());	HRP\CreditsScreen.cpp
+	fo::func::buf_to_buf(frm->frame.data, width, height, width, dst, Setting::ScreenWidth());	HRP\DeathScreen.cpp
+	jmp  fo::funcoffs::buf_to_buf_;	HRP\Dialog.cpp
+	fo::func::buf_to_buf((BYTE*)fo::var::getInt(FO_VAR_display_buf) + x + (y * srcWidth), w, h, srcWidth, dst, width);	HRP\Dialog.cpp
+	fo::func::buf_to_buf(src, w, h, srcWidth, dst, dstWidth);	HRP\Dialog.cpp
+	fo::func::buf_to_buf(frm->frame.data, width, height, width, dst, Setting::ScreenWidth());	HRP\HelpScreen.cpp
+	fo::func::buf_to_buf(scr, 30, dh, w, dst, IFaceBar::IFACE_BAR_WIDTH);	HRP\InterfaceBar.cpp
+	fo::func::buf_to_buf(scr + sxOffset, 460, dh, w, dst + dxOffset, IFaceBar::IFACE_BAR_WIDTH);	HRP\InterfaceBar.cpp
+	fo::func::buf_to_buf(frm->frames->indexBuff, frm->frames->width, h, frm->frames->width, dst, IFaceBar::IFACE_BAR_WIDTH);	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::buf_to_buf_;	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::buf_to_buf_;	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::buf_to_buf_;	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::buf_to_buf_;	HRP\InterfaceBar.cpp
+	fo::func::buf_to_buf(ifaceWin->surface + 23 + (24 * IFaceBar::IFACE_BAR_WIDTH), IFaceBar::display_width, h, IFaceBar::IFACE_BAR_WIDTH, dispBuff, IFaceBar::display_width);	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::buf_to_buf_;	HRP\InterfaceBar.cpp
+	fo::func::buf_to_buf(src, sw, sh, sw, dst, dstW); // direct copy	HRP\MainMenu.cpp
+	fo::func::buf_to_buf(src, width, height, width, dst, Setting::ScreenWidth());	HRP\SlidesScreen.cpp
+	fo::func::buf_to_buf(src, w, h, srcW, dst, Setting::ScreenWidth());	HRP\SlidesScreen.cpp
+	fo::func::buf_to_buf(mveSurface, width, mveDesc.dwHeight, width, (BYTE*)dRect.pBits, dRect.Pitch);	Modules\Graphics.cpp
+	jmp  fo::funcoffs::buf_to_buf_;	Modules\Interface.cpp
+	fo::func::buf_to_buf(src, width, height, sWidth, ddObject->BufferSurface() + (x + (y * HRP::Setting::ScreenWidth())), HRP::Setting::ScreenWidth());	Modules\SubModules\DirectDraw.cpp
+void trans_buf_to_buf()	auto drawFunc = (win->flags & fo::WinFlags::Transparent && win->wID) ? fo::func::trans_buf_to_buf : fo::func::buf_to_buf;	Game\GUI\render.cpp
+	fo::func::trans_buf_to_buf(surface, width, height, widthFrom, &toBuffer[rect.left - updateRect->left] + ((rect.top - updateRect->top) * toWidth), toWidth);	Game\GUI\render.cpp
+	fo::func::trans_buf_to_buf(surface, width, height, widthFrom, &GetBuffer()[rect.left] + (rect.top * toWidth), toWidth);	Game\GUI\render.cpp
+	sf::MakeJump(fo::funcoffs::trans_buf_to_buf_, fo::func::trans_buf_to_buf); // 0x4D3704	Game\GUI\render.cpp
+	jmp  fo::funcoffs::trans_buf_to_buf_;	HRP\InterfaceBar.cpp
+	fo::func::trans_buf_to_buf(btnBackgroundFrm->frames->indexBuff, sw, sh, sw, dst, dstW); // direct copy	HRP\MainMenu.cpp
+void Create_AudioDecoder()	jmp  fo::funcoffs::Create_AudioDecoder_;	Modules\Sound.cpp
+	jmp  fo::funcoffs::Create_AudioDecoder_;	Modules\Sound.cpp
+void text_curr()	jmp fo::funcoffs::text_curr_;	Modules\LoadGameHook.cpp
+DWORD text_font(DWORD fontNum)	fo::func::text_font(101);	Game\GUI\Text.cpp
+	fo::func::text_font(font);	Game\GUI\Text.cpp
+	call fo::funcoffs::text_font_;	Modules\BugFixes.cpp
+	call fo::funcoffs::text_font_;	Modules\BugFixes.cpp
+	fo::func::text_font(ref);	Modules\HeroAppearance.cpp
+	jmp  fo::funcoffs::text_font_;	Modules\Interface.cpp
+	call fo::funcoffs::text_font_;	Modules\MiscPatches.cpp
+	jmp  fo::funcoffs::text_font_;	Modules\PartyControl.cpp
+DWORD win_add(DWORD x, DWORD y, DWORD width, DWORD height, DWORD bgColorIndex, DWORD flags)	return fo::func::win_add(xPos, yPos, width, height, color, flags);	HRP\Character.cpp
+	jmp  fo::funcoffs::win_add_;	HRP\Character.cpp
+	return fo::func::win_add(xPos, yPos, width, height, color, flags);	HRP\Character.cpp
+	return fo::func::win_add(0, 0, Setting::ScreenWidth(), Setting::ScreenHeight(), color, flags);	HRP\DeathScreen.cpp
+	return fo::func::win_add(xPos, yPos, width, height, color, flags);	HRP\Dialog.cpp
+	jmp  fo::funcoffs::win_add_;	HRP\Dialog.cpp
+	jmp  fo::funcoffs::win_add_;	HRP\Dialog.cpp
+	jmp  fo::funcoffs::win_add_;	HRP\Dialog.cpp
+	return fo::func::win_add(0, 0, Setting::ScreenWidth(), Setting::ScreenHeight(), color, flags);	HRP\HelpScreen.cpp
+	long leftID = fo::func::win_add(0, yPos, xPos, height, 0, flags);	HRP\InterfaceBar.cpp
+	long rightID = fo::func::win_add(xPos + width, yPos, Setting::ScreenWidth() - (xPos + width), height, 0, flags);	HRP\InterfaceBar.cpp
+	return fo::func::win_add(xPos, yPos, width, height, color, flags);	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::win_add_;	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::win_add_;	HRP\InterfaceBar.cpp
+	return fo::func::win_add(xPos, yPos, width, height, color, flags);	HRP\Inventory.cpp
+	return fo::func::win_add(xPos, yPos, width, height, color, flags);	HRP\LoadSave.cpp
+	jmp  fo::funcoffs::win_add_;	HRP\LoadSave.cpp
+	return fo::func::win_add(x, y, w, h, color, flags | fo::WinFlags::DontMoveTop);	HRP\MainMenu.cpp
+	return fo::func::win_add(xPosition, yPosition, width, height, color, flags);	HRP\MiscInterface.cpp
+	return fo::func::win_add(xPos, yPos, width, height, color, flags);	HRP\Worldmap.cpp
+	int winRef = fo::func::win_add(resWidth / 2 - 242, (resHeight - 100) / 2 - 65, 484, 230, 100, 0x4);	Modules\HeroAppearance.cpp
+void win_delete(DWORD winRef)	call fo::funcoffs::win_delete_;	HRP\Dialog.cpp
+	call fo::funcoffs::win_delete_;	HRP\Worldmap.cpp
+	fo::func::win_delete(winRef);	Modules\HeroAppearance.cpp
+	jmp  fo::funcoffs::win_delete_;	Modules\LoadGameHook.cpp
+	jmp fo::funcoffs::win_delete_;	Modules\LoadGameHook.cpp
+	jmp  fo::funcoffs::win_delete_;	Modules\LoadGameHook.cpp
+void win_print(DWORD winID, char* text, DWORD textWidth, DWORD xPos, DWORD yPos, DWORD colorFlags)	jmp  fo::funcoffs::win_print_;	HRP\MainMenu.cpp
+	call fo::funcoffs::win_print_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::win_print_;	Modules\Interface.cpp
+	fo::func::win_print(winId, text, fWidth, xPos, yPos - 12, color); // fallout print	Modules\MainMenu.cpp
+	fo::func::win_print(winId, VerString1, sWidth, xPos + fWidth - sWidth, yPos, color); // sfall print	Modules\MainMenu.cpp
+void win_line()	call fo::funcoffs::win_line_;	FalloutEngine\Functions.cpp
+void win_show(DWORD winRef)	fo::func::win_show(fo::var::getInt(FO_VAR_display_win));	HRP\Dialog.cpp
+	fo::func::win_show(leftBarID);	HRP\InterfaceBar.cpp
+	fo::func::win_show(rightBarID);	HRP\InterfaceBar.cpp
+	fo::func::win_show(winID);	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::win_show_;	HRP\Worldmap.cpp
+	jmp  fo::funcoffs::win_show_;	Modules\BugFixes.cpp
+	fo::func::win_show(winRef);	Modules\HeroAppearance.cpp
+	fo::func::win_show(fo::var::sWindows[i].wID);	Modules\Scripting\Handlers\Interface.cpp
+void win_hide(DWORD winRef)	fo::func::win_hide(fo::var::getInt(FO_VAR_display_win));	HRP\Dialog.cpp
+	fo::func::win_hide(leftBarID);	HRP\InterfaceBar.cpp
+	fo::func::win_hide(rightBarID);	HRP\InterfaceBar.cpp
+	fo::func::win_hide(winID);	HRP\InterfaceBar.cpp
+	fo::func::win_hide(fo::var::getInt(FO_VAR_display_win));	HRP\Worldmap.cpp
+	fo::func::win_hide(fo::var::sWindows[i].wID);	Modules\Scripting\Handlers\Interface.cpp
+void win_draw(DWORD winRef)	fo::func::win_draw(fo::var::getInt(FO_VAR_display_win));	HRP\Dialog.cpp
+	fo::func::win_draw_rect(fo::var::interfaceWindow, (RECT*)&rect);	HRP\InterfaceBar.cpp
+	//fo::func::win_draw(fo::var::getInt(FO_VAR_display_win)); // for test	HRP\ViewMap\EdgeBorder.cpp
+	jmp  fo::funcoffs::win_draw_; // update black edges after tile_set_center_	HRP\ViewMap\ViewMap.cpp
+	fo::func::win_draw(winRef);	Modules\ExtraSaveSlots.cpp
+	fo::func::win_draw(WinRef);	Modules\HeroAppearance.cpp
+	fo::func::win_draw(winRef);	Modules\HeroAppearance.cpp
+	fo::func::win_draw_rect(fo::var::wmBkWin, &rect);	Modules\Interface.cpp
+	jmp  fo::funcoffs::win_draw_;	Modules\LoadGameHook.cpp
+	fo::func::win_draw(fo::var::edit_win);	Modules\Scripting\Handlers\Interface.cpp
+	fo::func::win_draw(fo::var::i_wid);	Modules\Scripting\Handlers\Interface.cpp
+void win_draw_rect(DWORD winRef, RECT* rect)	fo::func::win_draw_rect(fo::var::interfaceWindow, (RECT*)&rect);	HRP\InterfaceBar.cpp
+	fo::func::win_draw_rect(fo::var::wmBkWin, &rect);	Modules\Interface.cpp
+void GNW_win_refresh(Window* win, RECT* rect, DWORD* buffer)	fo::func::GNW_win_refresh(win, &win->rect, nullptr);	FalloutEngine\EngineUtils.cpp
+	fo::func::GNW_win_refresh(fo::var::window[i], &fo::var::scr_size, 0);	FalloutEngine\EngineUtils.cpp
+	call fo::funcoffs::GNW_win_refresh_;	Modules\BugFixes.cpp
+void win_refresh_all()	call fo::funcoffs::win_refresh_all_;	WinProc.cpp
+	call fo::funcoffs::win_refresh_all_;	WinProc.cpp
+	__asm call fo::funcoffs::win_refresh_all_;	Modules\SubModules\DirectDraw.cpp
+void win_clip(Window* window, RectList** rects, void* buffer)	fo::func::win_clip(win, &rects, toBuffer);	Game\GUI\render.cpp
+void refresh_all()	call fo::funcoffs::refresh_all_;	Game\GUI\render.cpp
+Window* GNW_find(DWORD winRef)	fo::Window* win = fo::func::GNW_find(winID);	FalloutEngine\EngineUtils.cpp
+	fo::Window* win = fo::func::GNW_find(winID);	FalloutEngine\EngineUtils.cpp
+	fo::Window* win = fo::func::GNW_find(winId);	HRP\InterfaceBar.cpp
+	fo::Window* ifaceWin = fo::func::GNW_find(fo::var::interfaceWindow);	HRP\InterfaceBar.cpp
+	fo::Window* win = fo::func::GNW_find(fo::var::interfaceWindow);	HRP\InterfaceBar.cpp
+	fo::Window* win = fo::func::GNW_find(fo::var::getInt(FO_VAR_GNWWin));	HRP\MoviesScreen.cpp
+	fo::Window* win = fo::func::GNW_find(fo::var::interfaceWindow);	HRP\ViewMap\EdgeClipping.cpp
+	call fo::funcoffs::GNW_find_;	Modules\BugFixes.cpp
+	fo::Window *SaveLoadWin = fo::func::GNW_find(winRef);	Modules\ExtraSaveSlots.cpp
+	fo::Window *SaveLoadWin = fo::func::GNW_find(fo::var::lsgwin);	Modules\ExtraSaveSlots.cpp
+	fo::Window *WinInfo = fo::func::GNW_find(WinRef);	Modules\HeroAppearance.cpp
+	fo::Window *winInfo = fo::func::GNW_find(winRef);	Modules\HeroAppearance.cpp
+	return (winID > 0) ? fo::func::GNW_find(winID) : nullptr;	Modules\Interface.cpp
+	win = fo::func::GNW_find(fo::var::getInt(FO_VAR_display_win));	Modules\Interface.cpp
+	call fo::funcoffs::GNW_find_;	Modules\Inventory.cpp
+	call fo::funcoffs::GNW_find_;	Modules\Inventory.cpp
+	call fo::funcoffs::GNW_find_;	Modules\Inventory.cpp
+	fo::Window* dialogWin = fo::func::GNW_find(fo::var::dialogueBackWindow);	Modules\TalkingHeads.cpp
+	fo::Window* win = fo::func::GNW_find(fo::var::sWindows[i].wID);	Modules\Scripting\Handlers\Interface.cpp
+	fo::Window* win = fo::func::GNW_find((wid > 0) ? wid : fo::var::i_wid); // i_wid - set flag to current game interface window	Modules\Scripting\Handlers\Interface.cpp
+DWORD win_get_top_win(DWORD x, DWORD y)	if (fo::func::win_get_top_win(x, y) == fo::var::getInt(FO_VAR_display_win)) {	HRP\ViewMap\EdgeClipping.cpp
+	SafeWriteBytes(0x4D78CC, (BYTE*)&data, 5); // win_get_top_win_	Modules\BugFixes.cpp
+void win_get_rect()	jmp fo::funcoffs::win_get_rect_;	Modules\Sound.cpp
+void win_register_button()	call fo::funcoffs::win_register_button_;	FalloutEngine\Functions.cpp
+	jmp  fo::funcoffs::win_register_button_;	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::win_register_button_;	HRP\InterfaceBar.cpp
+	jmp  fo::funcoffs::win_register_button_;	HRP\MainMenu.cpp
+	fo::func::win_register_button(winRef, 100, 60, 24, 20, -1, 0x500, 0x54B, 0x14B, 0, 0, 0, 32);	Modules\ExtraSaveSlots.cpp
+	fo::func::win_register_button(winRef,  68, 60, 24, 20, -1, 0x500, 0x549, 0x149, 0, 0, 0, 32);	Modules\ExtraSaveSlots.cpp
+	fo::func::win_register_button(winRef, 216, 60, 24, 20, -1, 0x500, 0x54D, 0x14D, 0, 0, 0, 32);	Modules\ExtraSaveSlots.cpp
+	fo::func::win_register_button(winRef, 248, 60, 24, 20, -1, 0x500, 0x551, 0x151, 0, 0, 0, 32);	Modules\ExtraSaveSlots.cpp
+	fo::func::win_register_button(winRef, 140, 60, 60, 20, -1, -1, 'p', -1, 0, 0, 0, 32);	Modules\ExtraSaveSlots.cpp
+	fo::func::win_register_button(winRef, 115, 181, 26, 26, -1, -1, -1, 0x0D, MenuUSurface, MenuDSurface, 0, 0x20);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(winRef, 25, 84, 24, 25, -1, -1, -1, 0x150, DidownUSurface, DidownDSurface, 0, 0x20);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(winRef, 25, 59, 23, 24, -1, -1, -1, 0x148, DiupUSurface, DiupDSurface, 0, 0x20);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(WinRef, 332,   0, 82, 32, -1, -1, 0x501, -1, 0, 0, 0, 0);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(WinRef, 332, 226, 82, 32, -1, -1, 0x502, -1, 0, 0, 0, 0);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(WinRef, 348, 37, 20, 18, -1, -1, -1, 0x511, newButtonSurface, newButtonSurface + (20 * 18), 0, 0x20);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(WinRef, 374, 37, 20, 18, -1, -1, -1, 0x513, newButtonSurface + (20 * 18 * 2), newButtonSurface + (20 * 18 * 3), 0, 0x20);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(WinRef, 348, 199, 20, 18, -1, -1, -1, 0x512, newButtonSurface, newButtonSurface + (20 * 18), 0, 0x20);	Modules\HeroAppearance.cpp
+	fo::func::win_register_button(WinRef, 374, 199, 20, 18, -1, -1, -1, 0x514, newButtonSurface + (20 * 18 * 2), newButtonSurface + (20 * 18 * 3), 0, 0x20);	Modules\HeroAppearance.cpp
+	jmp  fo::funcoffs::win_register_button_;	Modules\Interface.cpp
+	call fo::funcoffs::win_register_button_;	Modules\Interface.cpp
+	if (fo::func::win_register_button(winRef, xPos, yPos, width, height, -1, -1, -1, 0x300, picUp,  picDown, 0, 32) != -1) {	Modules\QuestList.cpp
+	if (fo::func::win_register_button(winRef, xPos, yPos + height, width, height, -1, -1, -1, 0x301, picUp,  picDown, 0, 32) != -1) {	Modules\QuestList.cpp
+void win_register_button_sound_func()	call fo::funcoffs::win_register_button_sound_func_;	Modules\Interface.cpp
+	call fo::funcoffs::win_register_button_sound_func_;	Modules\Interface.cpp
+	call fo::funcoffs::win_register_button_sound_func_; // eax - register button	Modules\QuestList.cpp
+void GNW_button_refresh()	call fo::funcoffs::GNW_button_refresh_;	Game\GUI\render.cpp
+	call fo::funcoffs::GNW_button_refresh_;	Game\GUI\render.cpp
+	call fo::funcoffs::GNW_button_refresh_;	Game\GUI\render.cpp
+void WindowProc()	MakeJump(0x4DE9FC, WindowProc); // WindowProc_	WinProc.cpp
+void stricmp()	call fo::funcoffs::stricmp_; // compare music file name	Modules\MiscPatches.cpp
+void xfclose()	jmp  fo::funcoffs::xfclose_;	Modules\FileSystem.cpp
+	call fo::funcoffs::xfclose_;	Modules\FileSystem.cpp
+DbFile* xfopen(char* fileName, char* flags)	jmp  fo::funcoffs::xfopen_;	Modules\FileSystem.cpp
+	call fo::funcoffs::xfopen_;	Modules\FileSystem.cpp
+void xvfprintf()	jmp  fo::funcoffs::xvfprintf_;	Modules\FileSystem.cpp
+void xfgetc()	jmp  fo::funcoffs::xfgetc_;	Modules\FileSystem.cpp
+void xfgets()	jmp  fo::funcoffs::xfgets_;	Modules\FileSystem.cpp
+void xfputc()	jmp  fo::funcoffs::xfputc_;	Modules\FileSystem.cpp
+void xfputs()	jmp  fo::funcoffs::xfputs_;	Modules\FileSystem.cpp
+void xungetc()	jmp  fo::funcoffs::xungetc_;	Modules\FileSystem.cpp
+void xfread()	call fo::funcoffs::xfread_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::xfread_;	Modules\FileSystem.cpp
+	call fo::funcoffs::xfread_;	Modules\FileSystem.cpp
+void xfwrite()	jmp  fo::funcoffs::xfwrite_;	Modules\FileSystem.cpp
+DWORD xfseek(DbFile* file, DWORD fOffset, DWORD origin)	jmp  fo::funcoffs::xfseek_;	Modules\FileSystem.cpp
+void xftell()	jmp fo::funcoffs::xftell_;	Modules\FileSystem.cpp
+void xrewind()	jmp  fo::funcoffs::xrewind_;	Modules\FileSystem.cpp
+void xfeof()	jmp  fo::funcoffs::xfeof_;	Modules\FileSystem.cpp
+void xfilelength()	jmp  fo::funcoffs::xfilelength_;	Modules\FileSystem.cpp
+	call fo::funcoffs::xfilelength_;	Modules\FileSystem.cpp
+void xremovepath()	call fo::funcoffs::xremovepath_;	Modules\LoadOrder.cpp
+void WinMainCRTStartup()	bool isEnabled = (*(DWORD*)0x4E4480 != 0x278805C7); // check if Mash's HRP is enabled	HRP\Init.cpp
+	std::fseek(ft, 0xD4880, SEEK_SET); // 0x4E4480	HRP\Init.cpp
+void* dbase_open(char* fileName)	return fo::func::dbase_open(fileName);	Modules\HeroAppearance.cpp
+void dbase_close(void* dbPtr)	fo::func::dbase_close(dat);	Modules\HeroAppearance.cpp
+void exit()	__asm call fo::funcoffs::exit_;	WinProc.cpp
+void nfree()	call fo::funcoffs::nfree_; // free path string	Modules\LoadOrder.cpp
+	call fo::funcoffs::nfree_; // free self	Modules\LoadOrder.cpp
+void sprintf()	call fo::funcoffs::sprintf_;	Modules\BugFixes.cpp
+	call fo::funcoffs::sprintf_;	Modules\BugFixes.cpp
+	call fo::funcoffs::sprintf_;	Modules\BugFixes.cpp
+	call fo::funcoffs::sprintf_;	Modules\BugFixes.cpp
+	jmp  fo::funcoffs::sprintf_;	Modules\DamageMod.cpp
+	jmp  fo::funcoffs::sprintf_;	Modules\DamageMod.cpp
+	call fo::funcoffs::sprintf_;	Modules\DebugEditor.cpp
+	call fo::funcoffs::sprintf_;	Modules\Message.cpp
+	call fo::funcoffs::sprintf_;	Modules\QuestList.cpp
+void strncpy()	call fo::funcoffs::strncpy_;	Modules\Sound.cpp
+	jmp  fo::funcoffs::strncpy_;	Modules\Sound.cpp
+void qsort(void* base, DWORD number, DWORD elSize, DWORD comp)	jmp  fo::funcoffs::qsort_;	Modules\BugFixes.cpp
+	call fo::funcoffs::qsort_;	Modules\HookScripts\CombatHs.cpp
+void fprintf()	call fo::funcoffs::fprintf_;	Modules\DebugEditor.cpp
+void nrealloc()	call fo::funcoffs::nrealloc_                  // eax = mem, edx = size	Modules\BugFixes.cpp
+void sfShowFrame()	0x44E949, 0x44E94A, 0x44E937, 0x4F5F40, 0x44E932, // from movies.cpp	CheckAddress.cpp
+	{0x4F5F40, 1},	CheckAddress.cpp
+	SafeWrite8(0x4F5F40, CodeType::Ret); // blocking sfShowFrame_ for disabling the display of mve video frames	Modules\Movies.cpp
+	SafeWrite8(0x4F5F40, 0x53); // push ebx	Modules\Movies.cpp
+void MVE_gfxSetSplit()	if (illegalArg || (checkValidMemAddr && (args[0] < 0x410010 || args[0] > 0x4FCE34))) {	Modules\Scripting\Handlers\Memory.cpp

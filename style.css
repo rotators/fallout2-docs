@@ -88,6 +88,211 @@ pre {
     border: 1px solid #555;
 }
 
+.viewer-panel {
+    background: #11170f;
+    border: 1px solid #535b5aba;
+    margin: 15px 0;
+    padding: 12px;
+}
+
+#main .viewer-panel,
+#main .viewer-controls,
+#main .viewer-status,
+#main .canvas-wrap {
+    width: auto;
+}
+
+.viewer-controls {
+    align-items: end;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    margin-bottom: 10px;
+}
+
+.viewer-controls label {
+    display: block;
+}
+
+.viewer-controls input,
+.viewer-panel input {
+    background: #222;
+    border: 1px solid #555;
+    box-sizing: border-box;
+    color: #cdcdcd;
+    margin-top: 4px;
+    padding: 4px;
+    width: 100%;
+}
+
+.viewer-status {
+    color: #f49205;
+    min-height: 18px;
+}
+
+.font-summary {
+    margin: 8px 0;
+}
+
+.font-summary td:first-child {
+    color: #f49205;
+    width: 180px;
+}
+
+.canvas-wrap {
+    background: #040c00;
+    border: 1px solid #333;
+    margin-top: 10px;
+    max-width: 100%;
+    overflow: auto;
+    padding: 8px;
+}
+
+.canvas-wrap canvas {
+    display: block;
+    image-rendering: pixelated;
+}
+
+.acm-player {
+    background: #111;
+    border: 1px solid #535b5aba;
+    margin: 10px 3px 18px 3px;
+    padding: 12px;
+}
+
+#main .acm-player,
+#main .acm-player-controls,
+#main #acmStatus,
+#main #acmMetadata {
+    width: auto;
+}
+
+.acm-player-controls {
+    align-items: end;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.acm-player label {
+    color: #e0e0e0;
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.acm-player input,
+.acm-player select,
+.acm-player button {
+    background: #222;
+    border: 1px solid #535b5aba;
+    box-sizing: border-box;
+    color: #cdcdcd;
+    font: inherit;
+    padding: 6px;
+    width: 100%;
+}
+
+.acm-player button {
+    color: #f49205;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.acm-player button:disabled {
+    color: #777;
+    cursor: default;
+}
+
+#acmWaveform {
+    background: #050805;
+    border: 1px solid #333;
+    display: block;
+    height: 120px;
+    margin-top: 12px;
+    width: 100%;
+}
+
+#acmStatus {
+    color: #f49205;
+    margin-top: 10px;
+}
+
+#acmMetadata {
+    margin-top: 10px;
+    white-space: pre-wrap;
+}
+
+.fallout-palette {
+    text-align: center;
+}
+
+#main .fallout-palette,
+#main .palette-grid,
+#main .palette-info-list {
+    width: auto;
+}
+
+.palette-grid {
+    line-height: 0;
+    margin: 0 auto;
+    max-width: 520px;
+}
+
+.palette-swatch {
+    border: 2px solid transparent;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block !important;
+    height: 25px;
+    position: relative;
+    width: 25px;
+}
+
+.palette-swatch.selected {
+    border-color: #fff;
+}
+
+.palette-swatch .color {
+    background-image: url('img/empty.png');
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.palette-hover-index {
+    margin: 12px 0;
+}
+
+.palette-cycle-toggle {
+    background: #222;
+    border: 1px solid #535b5aba;
+    color: #f49205;
+    cursor: pointer;
+    font: inherit;
+    margin: 6px 0 18px 0;
+    padding: 6px 10px;
+}
+
+.color_info {
+    display: none;
+    margin-top: 10px;
+}
+
+.color_info:target {
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .viewer-controls,
+    .acm-player-controls {
+        grid-template-columns: 1fr;
+    }
+}
+
 #main div {
     margin: auto;
     width: 1000px;

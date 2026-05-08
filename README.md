@@ -80,9 +80,47 @@ ignored by Git.
 
 Current migrated pages:
 
+- [aaf.html](aaf.html) from `content/pages/aaf.md`
+- [acm.html](acm.html) from `content/pages/acm.md`
+- [ai_txt.html](ai_txt.html) from `content/pages/ai_txt.md`
+- [anim_names.html](anim_names.html) from `content/pages/anim_names.md`
+- [bio.html](bio.html) from `content/pages/bio.md`
+- [cfg.html](cfg.html) from `content/pages/cfg.md`
+- [criticals.html](criticals.html) from `content/pages/criticals.md`
 - [dat.html](dat.html) from `content/pages/dat.md`
+- [elevators.html](elevators.html) from `content/pages/elevators.md`
+- [fallout2_re.html](fallout2_re.html) from `content/pages/fallout2_re.md` and `content/data/fallout2_re.tsv`
+- [fo1in2.html](fo1in2.html) from `content/pages/fo1in2.md`
+- [fo_colors.html](fo_colors.html) from `content/pages/fo_colors.md`
+- [fon.html](fon.html) from `content/pages/fon.md`
 - [frm.html](frm.html) from `content/pages/frm.md`
+- [gam.html](gam.html) from `content/pages/gam.md`
+- [gcd.html](gcd.html) from `content/pages/gcd.md`
+- [hrp.html](hrp.html) from `content/pages/hrp.md`
+- [index.html](index.html) from `content/pages/index.md`
+- [int.html](int.html) from `content/pages/int.md`
+- [lip.html](lip.html) from `content/pages/lip.md`
+- [lst.html](lst.html) from `content/pages/lst.md`
+- [map.html](map.html) from `content/pages/map.md`
+- [mods.html](mods.html) from `content/pages/mods.md`
+- [msk.html](msk.html) from `content/pages/msk.md`
+- [msg.html](msg.html) from `content/pages/msg.md`
+- [mve.html](mve.html) from `content/pages/mve.md`
 - [pal.html](pal.html) from `content/pages/pal.md`
+- [party_txt.html](party_txt.html) from `content/pages/party_txt.md`
+- [pipboy_txt.html](pipboy_txt.html) from `content/pages/pipboy_txt.md`
+- [pro.html](pro.html) from `content/pages/pro.md`
+- [rix.html](rix.html) from `content/pages/rix.md`
+- [savegame.html](savegame.html) from `content/pages/savegame.md`
+- [scripts_lst.html](scripts_lst.html) from `content/pages/scripts_lst.md`
+- [sfall_refs.html](sfall_refs.html) from `content/pages/sfall_refs.md` and `content/data/sfall_refs.tsv`
+- [ssl.html](ssl.html) from `content/pages/ssl.md`
+- [structs.html](structs.html) from `content/pages/structs.md`
+- [symbols.html](symbols.html) from `content/pages/symbols.md` and `content/data/symbols.tsv`
+- [sve.html](sve.html) from `content/pages/sve.md`
+- [tools.html](tools.html) from `content/pages/tools.md`
+- [worldmap_config.html](worldmap_config.html) from `content/pages/worldmap_config.md`
+- [worldmap_dat.html](worldmap_dat.html) from `content/pages/worldmap_dat.md`
 - [docs-generator.html](docs-generator.html) from `content/pages/docs-generator.md`
 
 During the migration, root-level HTML files remain in place for compatibility

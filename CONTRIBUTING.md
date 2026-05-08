@@ -117,8 +117,17 @@ Migration guidelines:
 - Compare the generated `_site/<page>.html` with the original page before
   removing or replacing any root-level HTML source.
 
-Currently migrated pages are `dat.html`, `frm.html`, `pal.html`, and the
-generator note page `docs-generator.html`.
+Currently migrated pages are `aaf.html`, `acm.html`, `ai_txt.html`, `anim_names.html`, `bio.html`,
+`cfg.html`, `criticals.html`, `dat.html`, `elevators.html`, `fallout2_re.html`,
+`fo1in2.html`,
+`fo_colors.html`, `fon.html`, `frm.html`,
+`gam.html`, `gcd.html`, `hrp.html`, `index.html`, `int.html`, `lip.html`, `lst.html`,
+`map.html`, `mods.html`, `msk.html`, `msg.html`, `mve.html`, `pal.html`, `party_txt.html`,
+`pipboy_txt.html`, `pro.html`, `rix.html`, `savegame.html`,
+`scripts_lst.html`, `sfall_refs.html`, `ssl.html`, `structs.html`,
+`symbols.html`, `sve.html`, `tools.html`,
+`worldmap_config.html`, `worldmap_dat.html`, and the generator note page
+`docs-generator.html`.
 
 ## Data and Compatibility Notes
 
