@@ -1,167 +1,212 @@
 <html>
 <head>
-    <title>PAL File Format</title>
+    <title>PAL/COL File Format and Color Tables</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
 <div style="width: 1200px; margin: auto;">
-    <h1>.PAL Format</h1>
-<p>This document describes the raw data format of the color palette (PAL) file. The same format was used for both Fallout and Fallout 2, giving all PAL files complete compatibility with both game engines. </p>
-<h3>Technical Information</h3>
-<p>PAL files contain a palette used when rendering FRM frame data. Additionally, they contain a table for transforming 15-bit RGB values into a palette index. Newer palette files can also contain precomputed intensity and color-mixing tables used by the engine's lighting and blending code. </p>
-<h3>Required Fields</h3>
-<p>As referenced below, the Palette area (<code>0x00000000</code> - <code>0x000002FF</code>) and the RGB Conversion Table area (<code>0x00000300</code> - <code>0x000082FF</code>) are required elements in PAL files. </p>
-<h3>.exe-Generated Data</h3>
-<p>The .exe-Generated Data block starts with the tag <code>NEWC</code>. When loading PAL files, if this tag and the following tables don't exist, FALLOUT2.exe and MAPPER2.exe generate the same tables in memory from the palette and RGB conversion table. </p>
-<p>Also note that values contained in custom PAL files provided for individual FRM files are subject to certain changes in the game and mapper engines. </p>
-<h3>PAL data</h3>
-<table style="text-align:center" cellspacing="0" cellpadding="5" border="1">
-    <tbody><tr>
-    <th>Offset
-    </th><th>Size
-    </th><th>Type
-    </th><th>Value
-    </th><th colspan="2">Description
-    </th></tr>
-    <tr>
-    <td>0x00000000
-    </td><td>1
-    </td><td>unsigned byte
-    </td><td> 0..63
-    </td><td>Red000
-    </td><td rowspan="10"><b>Palette</b>
-    <p><b>Colors in the palette are in the range 0..63</b>. The first element (index 0) is always considered transparent (actual color is ignored). If the value of one color component is not in the range 0..63, in a special table the index is marked as unused, and all components of the color are set to 0.
-    </p><p>Elements from 229 to 254 are used as 'animation colors' and Fallout sets their values itself. 229 to 232 are animated green (for radioactive waste), 238 to 247 are orange, red and yellow (for fires), and the rest are bright blue (computer screens).
-    </p><p>Since normal RGB goes from 0..255, using palette colors (0..63) directly to draw the image will make it very dark. The easiest way to get correct colors is to multiply the value by 4, so that a palette entry of "1,2,3" actually becomes "4,8,12" in RGB.
-    </p>
-    </td></tr>
-    <tr>
-    <td>0x00000001
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Green000
-    </td></tr>
-    <tr>
-    <td>0x00000002
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Blue000
-    </td></tr>
-    <tr>
-    <td>0x00000003
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Red001
-    </td></tr>
-    <tr>
-    <td>0x00000004
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Green001
-    </td></tr>
-    <tr>
-    <td>0x00000005
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Blue001
-    </td></tr>
-    <tr>
-    <td>...
-    </td><td>...
-    </td><td>...
-    </td><td>...
-    </td><td>...
-    </td></tr>
-    <tr>
-    <td>0x000002FD
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Red255
-    </td></tr>
-    <tr>
-    <td>0x000002FE
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Green255
-    </td></tr>
-    <tr>
-    <td>0x000002FF
-    </td><td>1
-    </td><td>--"--
-    </td><td>--"--
-    </td><td>Blue255
-    </td></tr>
-    <tr>
-    <td>0x00000300
-    </td><td>1
-    </td><td>unsigned byte
-    </td><td>0..255
-    </td><td>Element00000
-    </td><td rowspan="3"><b>RGB Conversion Table</b>
-    <p>Table for converting 15-bit RGB values =&gt; index in the palette. The index is <code>(red &lt;&lt; 10) | (green &lt;&lt; 5) | blue</code>, where each component is 0..31.
-    </p>
-    </td></tr>
-    <tr>
-    <td>...
-    </td><td>...
-    </td><td>...
-    </td><td>...
-    </td><td>...
-    </td></tr>
-    <tr>
-    <td>0x000082FF
-    </td><td>1
-    </td><td>unsigned byte
-    </td><td>0..255
-    </td><td>Element32767
-    </td></tr>
-    <tr>
-    <td colspan="6" style="text-align: center;">
-    <p><b>.exe-Generated Data</b>
-    </p>
-    </td></tr>
-    <tr>
-    <td>0x00008300
-    </td><td>4
-    </td><td>char[4]
-    </td><td>'NEWC'
-    </td><td>
-    </td><td>Tag for the availability of precomputed color tables.
-    </td></tr>
-    <tr>
-    <td>0x00008304
-    </td><td>65536
-    </td><td>byte[65536]
-    </td><td>
-    </td><td>
-    </td><td>Intensity table. Indexed as <code>intensityColorTable[paletteIndex][intensity]</code>.
-    </td></tr>
-    <tr>
-    <td>0x00018304
-    </td><td>65536
-    </td><td>byte[65536]
-    </td><td>
-    </td><td>
-    </td><td>Additive color mix table. Indexed as <code>colorMixAddTable[colorA][colorB]</code>.
-    </td></tr>
-    <tr>
-    <td>0x00028304
-    </td><td>65536
-    </td><td>byte[65536]
-    </td><td>
-    </td><td>
-    </td><td>Multiplicative color mix table. Indexed as <code>colorMixMulTable[colorA][colorB]</code>.
-    </td></tr></tbody></table>
-    <h3>Source code</h3>
-    <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/color.cc">Fallout 2 Community Edition PAL loader and color tables - C++</a><br/>
-    <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/palette.cc">Fallout 2 Community Edition palette application - C++</a>
-    <h2>History</h2>
-    2020-01-18 - Ported from <a href="https://falloutmods.fandom.com/wiki/PAL_File_Format">https://falloutmods.fandom.com/wiki/PAL_File_Formatt</a>
+<h1>PAL/COL File Format and Color Tables</h1>
+
+<p>PAL files are Fallout and Fallout 2 palette resources. They define a 256-entry indexed-color palette, a 15-bit RGB-to-palette-index lookup table, and optionally precomputed color transformation tables used by lighting and blending code.</p>
+
+<p>The "COL" part of this page refers to the engine's color tables and color-index behavior, not to a separate well-attested Fallout 1/2 <tt>.COL</tt> resource format. In the released games and current source references, palette files are <tt>.pal</tt>; color conversion, intensity, blending, and cycling are runtime systems built from PAL data.</p>
+
+<h2>Format Properties</h2>
+
+<table>
+<tr><th>Property</th><th>Description</th></tr>
+<tr><td>File type</td><td>Binary palette and color-table file.</td></tr>
+<tr><td>Typical main path</td><td><tt>color.pal</tt> at the root of the Fallout data namespace.</td></tr>
+<tr><td>Typical special paths</td><td><tt>art\intrface\*.pal</tt>, <tt>art\cuts\*.pal</tt>, and same-basename PAL files for special FRM screens.</td></tr>
+<tr><td>Required size</td><td><tt>0x8300</tt> bytes: <tt>768</tt> palette bytes plus <tt>32768</tt> RGB555 lookup bytes.</td></tr>
+<tr><td>Extended size</td><td><tt>0x38304</tt> bytes when the optional <tt>NEWC</tt> block and three 65536-byte tables are present.</td></tr>
+<tr><td>Byte order</td><td>Mostly byte arrays. The optional <tt>NEWC</tt> tag is read as the literal four bytes <tt>N E W C</tt>.</td></tr>
+<tr><td>Color component range</td><td>Stored palette components are VGA-style <tt>0..63</tt>, not full <tt>0..255</tt> RGB.</td></tr>
+<tr><td>Primary users</td><td><a href="frm.html">FRM</a> art, interface screens, dialogue/head backgrounds, movie subtitles, splash/help-style screens, lighting, translucency, and UI text color lookup.</td></tr>
+</table>
+
+<h2>File Layout</h2>
+
+<table>
+<tr><th>Offset</th><th>Size</th><th>Name</th><th>Description</th></tr>
+<tr><td><tt>0x000000</tt></td><td><tt>768</tt></td><td>Palette</td><td>256 RGB triples. Entry <tt>n</tt> is stored at <tt>n * 3</tt> as red, green, blue.</td></tr>
+<tr><td><tt>0x000300</tt></td><td><tt>32768</tt></td><td>RGB conversion table</td><td>Maps a 15-bit RGB555 value to the nearest palette index.</td></tr>
+<tr><td><tt>0x008300</tt></td><td><tt>4</tt></td><td>Optional tag</td><td>Literal <tt>NEWC</tt>, present only when the precomputed color tables follow.</td></tr>
+<tr><td><tt>0x008304</tt></td><td><tt>65536</tt></td><td>Intensity table</td><td><tt>intensityColorTable[paletteIndex][intensity]</tt>.</td></tr>
+<tr><td><tt>0x018304</tt></td><td><tt>65536</tt></td><td>Additive mix table</td><td><tt>colorMixAddTable[colorA][colorB]</tt>.</td></tr>
+<tr><td><tt>0x028304</tt></td><td><tt>65536</tt></td><td>Multiplicative mix table</td><td><tt>colorMixMulTable[colorA][colorB]</tt>.</td></tr>
+</table>
+
+<p>A minimal PAL file can stop after the RGB conversion table. Fallout 2 CE tries to read the four bytes after <tt>0x8300</tt>; if they are <tt>NEWC</tt>, it reads the three precomputed tables. Otherwise it regenerates them from the palette and RGB conversion table.</p>
+
+<h2>Palette Entries</h2>
+
+<p>The first 768 bytes are 256 RGB triples:</p>
+
+<pre>
+offset = palette_index * 3
+red   = file[offset + 0]
+green = file[offset + 1]
+blue  = file[offset + 2]
+</pre>
+
+<p>Each component should be in the range <tt>0..63</tt>. Fallout 2 CE marks an entry as mapped only when all three components are at most <tt>0x3F</tt>. If any component is above <tt>0x3F</tt>, the loader stores black for that palette entry and marks the index as unmapped for generated color tables.</p>
+
+<p>For modern display, expand 6-bit components to 8-bit components. A quick conversion is:</p>
+
+<pre>
+rgb8 = rgb6 &lt;&lt; 2
+</pre>
+
+<p>A slightly fuller bit-spread conversion is:</p>
+
+<pre>
+rgb8 = (rgb6 &lt;&lt; 2) | (rgb6 &gt;&gt; 4)
+</pre>
+
+<p>The original engine keeps palette values in the <tt>0..63</tt> range internally. Gamma/brightness is applied when the current palette is sent to the system palette, not by rewriting the PAL file itself.</p>
+
+<h2>Index 0 And Transparency</h2>
+
+<p>Palette index <tt>0</tt> is special in many Fallout drawing routines. Transparent blitters treat pixel value <tt>0</tt> as transparent for FRM/object art, so the visible RGB value of palette entry <tt>0</tt> is usually irrelevant for those paths.</p>
+
+<p>Do not assume that every indexed buffer treats <tt>0</tt> as transparent. Some buffers are full-screen or opaque surfaces, and some code fills regions with palette index <tt>0</tt> as a visible background/clear color. Transparency is a property of the drawing routine and asset role, not merely of the palette file.</p>
+
+<h2>RGB555 Lookup Table</h2>
+
+<p>The table at <tt>0x300</tt> maps every 15-bit RGB555 color to a palette index. The index into this table is:</p>
+
+<pre>
+rgb555 = (red5 &lt;&lt; 10) | (green5 &lt;&lt; 5) | blue5
+palette_index = colorTable[rgb555]
+</pre>
+
+<p>Each channel is <tt>0..31</tt>, producing <tt>32 * 32 * 32 = 32768</tt> table entries. This table is why tools can map arbitrary RGB colors back into Fallout's 256-color palette when importing images, generating lighting tables, drawing text, or blending colors.</p>
+
+<p>Fallout 2 CE exposes this table as <tt>_colorTable[32768]</tt>. Functions such as <tt>Color2RGB</tt> convert a palette index back to RGB555 by reading <tt>_cmap</tt>, shifting the <tt>0..63</tt> palette components down to <tt>0..31</tt>, and packing them as RGB555.</p>
+
+<h2>NEWC Tables</h2>
+
+<p>The optional <tt>NEWC</tt> block contains tables that older public notes called ".exe-generated data". Source code gives them concrete names and behavior:</p>
+
+<table>
+<tr><th>Table</th><th>Runtime name</th><th>Use</th></tr>
+<tr><td>Table 1</td><td><tt>intensityColorTable[256][256]</tt></td><td>Maps a source palette index and intensity level to a darker or lighter palette index.</td></tr>
+<tr><td>Table 2</td><td><tt>colorMixAddTable[256][256]</tt></td><td>Additive color mixing, used for light-like blending effects.</td></tr>
+<tr><td>Table 3</td><td><tt>colorMixMulTable[256][256]</tt></td><td>Multiplicative color mixing, used for darker/tint-like blending effects.</td></tr>
+</table>
+
+<p>If the <tt>NEWC</tt> tag is missing, Fallout 2 CE rebuilds the same runtime tables after loading the palette. Rebuilding is slower than loading precomputed data, but it means tools can emit a minimal <tt>0x8300</tt>-byte PAL and still be compatible with engines that regenerate the tables.</p>
+
+<p>The intensity table has 256 intensity slots per color. CE builds the first 128 slots as darker versions and the next 128 slots as lighter versions toward white, remapping each computed RGB555 value through <tt>_colorTable</tt>.</p>
+
+<h2>Runtime Palette State</h2>
+
+<p>The engine keeps several palette arrays with different meanings:</p>
+
+<table>
+<tr><th>Name</th><th>Description</th></tr>
+<tr><td><tt>_cmap</tt></td><td>The palette loaded from the current PAL file, in 6-bit RGB triples.</td></tr>
+<tr><td><tt>_systemCmap</tt></td><td>The current system palette state before gamma mapping. Color cycling edits this array.</td></tr>
+<tr><td><tt>_currentGammaTable</tt></td><td>64-entry brightness/gamma table applied when sending palette entries to the display backend.</td></tr>
+<tr><td><tt>gPalette</tt></td><td>The palette module's current fade/source palette.</td></tr>
+<tr><td><tt>gPaletteBlack</tt></td><td>All components zero, used for fades to black.</td></tr>
+<tr><td><tt>gPaletteWhite</tt></td><td>All components <tt>63</tt>, used as a white target palette.</td></tr>
+</table>
+
+<p>Loading a PAL changes <tt>_cmap</tt> and the color tables. Applying a palette to the screen is a separate step: <tt>paletteSetEntries</tt> or <tt>paletteFadeTo</tt> sends palette data to the display. This distinction matters for screens that temporarily load a special PAL, then later restore <tt>color.pal</tt>.</p>
+
+<h2>Color Cycling</h2>
+
+<p>Fallout's animated colors are palette animation, not per-pixel animation. Art pixels that use the cycling indexes remain unchanged, while the RGB values assigned to those indexes rotate or pulse over time.</p>
+
+<table>
+<tr><th>Indexes</th><th>Runtime group</th><th>Period in CE before speed factor</th><th>Typical use</th></tr>
+<tr><td><tt>229..232</tt></td><td><tt>slime</tt></td><td><tt>1000 / 5</tt> ms</td><td>Green radioactive waste/slime.</td></tr>
+<tr><td><tt>233..237</tt></td><td><tt>monitors</tt></td><td><tt>1000 / 10</tt> ms</td><td>Blue monitor/computer glow.</td></tr>
+<tr><td><tt>238..242</tt></td><td><tt>fire_slow</tt></td><td><tt>1000 / 5</tt> ms</td><td>Orange/yellow fire cycle.</td></tr>
+<tr><td><tt>243..247</tt></td><td><tt>fire_fast</tt></td><td><tt>1000 / 7</tt> ms</td><td>Red faster fire cycle.</td></tr>
+<tr><td><tt>248..253</tt></td><td><tt>shoreline</tt></td><td><tt>1000 / 5</tt> ms</td><td>Shoreline/water-edge shimmer.</td></tr>
+<tr><td><tt>254</tt></td><td><tt>bobber_red</tt></td><td><tt>1000 / 30</tt> ms</td><td>Fast red pulse.</td></tr>
+</table>
+
+<p>CE stores the hardcoded cycling colors as <tt>0..255</tt>-style values in source, shifts them down by two bits during color-cycle initialization, and then writes <tt>0..63</tt> palette entries. The ticker updates palette range <tt>229..255</tt> through <tt>paletteSetEntriesInRange</tt>.</p>
+
+<p>Because these colors are overwritten at runtime, custom art should treat indexes <tt>229..254</tt> as animated/reserved unless it intentionally wants those effects. Ordinary static artwork should avoid them.</p>
+
+<h2>Common Palette Files</h2>
+
+<table>
+<tr><th>Path</th><th>Use</th></tr>
+<tr><td><tt>color.pal</tt></td><td>Main game palette loaded during color initialization and restored after many special screens.</td></tr>
+<tr><td><tt>art\intrface\helpscrn.pal</tt></td><td>Help screen palette used with the help-screen FRM.</td></tr>
+<tr><td><tt>art\intrface\&lt;frm-basename&gt;.pal</tt></td><td>Special interface/endgame-screen palettes loaded by basename in some screen-specific paths.</td></tr>
+<tr><td><tt>art\cuts\subtitle.pal</tt></td><td>Default movie subtitle palette. Movie palette fade effects can also be controlled by same-basename <a href="cfg.html">CFG</a> sidecars.</td></tr>
+<tr><td><tt>art\cuts\introsub.pal</tt></td><td>Subtitle palette for <tt>intro.mve</tt>.</td></tr>
+<tr><td><tt>art\cuts\eldersub.pal</tt></td><td>Subtitle palette for <tt>elder.mve</tt>.</td></tr>
+<tr><td><tt>art\cuts\artmrsub.pal</tt></td><td>Subtitle palette for Arroyo timer/failure/timeout-style movies.</td></tr>
+<tr><td><tt>art\cuts\crdtssub.pal</tt></td><td>Subtitle palette for <tt>credits.mve</tt>.</td></tr>
+</table>
+
+<p>Same-basename FRM palette files are important for special screens. General world, critter, item, wall, scenery, tile, inventory, and interface art normally relies on <tt>color.pal</tt>, but some full-screen interface images deliberately switch palettes.</p>
+
+<h2>Related Formats</h2>
+
+<table>
+<tr><th>Format</th><th>Palette relationship</th></tr>
+<tr><td><a href="frm.html">FRM</a></td><td>Stores palette indexes only. Most FRMs use <tt>color.pal</tt>; special FRMs can have same-basename PAL files.</td></tr>
+<tr><td><a href="rix.html">RIX</a></td><td>Splash screens embed their own 768-byte palette, also in 6-bit VGA RGB form.</td></tr>
+<tr><td><a href="mve.html">MVE</a></td><td>8-bit movies carry palette updates inside the movie stream rather than using PAL files for video frames.</td></tr>
+<tr><td><a href="sve.html">SVE</a></td><td>SVE text has no palette data, but movie subtitle rendering uses PAL files from <tt>art\cuts</tt>.</td></tr>
+<tr><td><a href="msk.html">MSK</a></td><td>World-map walk masks are not display images and do not use palettes.</td></tr>
+<tr><td><a href="aaf.html">AAF</a> and <a href="fon.html">FON</a></td><td>Font pixels are not standalone RGB colors; rendering maps glyph data through current text color and palette/color tables.</td></tr>
+<tr><td><a href="dat.html">DAT</a></td><td>DAT archives store PAL files as ordinary resources; the archive layer does not alter palette bytes.</td></tr>
+</table>
+
+<h2>Implementation Notes</h2>
+
+<ul>
+<li>Accept both <tt>0x8300</tt>-byte minimal PAL files and <tt>0x38304</tt>-byte extended PAL files.</li>
+<li>Validate that required palette components are in <tt>0..63</tt>. Preserve invalid/sentinel entries only if the tool is intentionally round-tripping original bytes.</li>
+<li>When importing truecolor art, quantize or remap through the RGB555 lookup table instead of nearest-searching every pixel by hand.</li>
+<li>When exporting to PNG, expand 6-bit palette components to 8-bit RGB and handle index <tt>0</tt> transparency according to the source image role.</li>
+<li>Keep animated palette indexes reserved unless the artwork is meant to animate through color cycling.</li>
+<li>Do not confuse PAL files with generic RIFF/text palette formats used by other software. Fallout PAL is a custom binary layout.</li>
+<li>If a tool edits the first 768 bytes, it should regenerate the RGB555 table and either regenerate or omit the <tt>NEWC</tt> tables. Leaving stale tables can make imports, lighting, and blending inconsistent.</li>
+</ul>
+
+<h2>Source Code Map</h2>
+
+<table>
+<tr><th>Source</th><th>Relevant behavior</th></tr>
+<tr><td>Fallout 2 CE <tt>color.cc</tt></td><td>PAL loading, invalid component handling, <tt>NEWC</tt> table loading/generation, gamma table, RGB555 conversion, blend-table generation.</td></tr>
+<tr><td>Fallout 2 CE <tt>palette.cc</tt></td><td>Runtime palette arrays, fades, applying full palettes and palette ranges.</td></tr>
+<tr><td>Fallout 2 CE <tt>cycle.cc</tt></td><td>Hardcoded animated color groups and palette-index ranges.</td></tr>
+<tr><td>Fallout 2 CE <tt>game.cc</tt></td><td>Game initialization, help screen palette switching, RIX splash palette loading.</td></tr>
+<tr><td>Fallout 2 CE <tt>game_movie.cc</tt></td><td>Movie subtitle palette selection and restoration of <tt>color.pal</tt>.</td></tr>
+<tr><td>Fallout 2 CE <tt>movie_effect.cc</tt></td><td>Movie palette fade effects driven by movie-side <tt>.cfg</tt> files.</td></tr>
+</table>
+
+<h2>References</h2>
+
+<p>
+<a href="https://fallout.wiki/wiki/PAL_File_Format">PAL File Format - The Fallout Wiki</a><br/>
+<a href="https://fallout.wiki/wiki/Pal_Files">Pal Files - The Fallout Wiki</a><br/>
+<a href="https://fodev.net/files/fo2/pal.html">PAL File Format - FODEV mirror</a><br/>
+<a href="https://sucs.org/~grepwood/teamx/frm_2.html">TeamX FRM format notes</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/color.cc">Fallout 2 CE color.cc</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/palette.cc">Fallout 2 CE palette.cc</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/cycle.cc">Fallout 2 CE cycle.cc</a><br/>
+<a href="fo_colors.html">Fallout default color palette table</a>
+</p>
+
+<h2>History</h2>
+
+<p>
+2026-05-07 - Expanded into PAL/COL documentation covering file layout, RGB555 lookup, <tt>NEWC</tt> tables, runtime palette state, color cycling, special palettes, related formats, and implementation notes.<br/>
+2020-01-18 - Ported from <a href="https://falloutmods.fandom.com/wiki/PAL_File_Format">Vault-Tec Labs PAL File Format</a>.
+</p>
+
 </div>
+</body>
+</html>

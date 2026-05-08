@@ -55,8 +55,16 @@
 					<td><a href="https://www.nma-fallout.com/resources/fallout-2-proto-manager.73/">Fallout 2 - Proto Manager</a></td>
 				</tr>
 				<tr>
+					<td><a href="party_txt.html">PARTY.TXT - Party-member registry, combat-control option whitelist, and companion level-up data.</a></td>
+					<td>Texteditor</td>
+				</tr>
+				<tr>
+					<td><a href="pipboy_txt.html">Pip-Boy text data - quests.txt, holodisk.txt, quest status, holodisk text, and GVAR-controlled display rules.</a></td>
+					<td>Texteditor</td>
+				</tr>
+				<tr>
 					<td><a href="acm.html">ACM - Interplay compressed audio for music, speech, and sound effects.</a></td>
-					<td>Use <a href="https://github.com/markokr/libacm">libacm</a>, 
+					<td>Use <a href="https://github.com/markokr/libacm">libacm</a>,
 					<a href="https://fodev.net/files/mirrors/teamx-utils/acm2wav.rar">acm2wav</a> or <a href="https://fodev.net/files/archive/gap.zip"  style="display: inline">Game Audio Player</a> for playback.</td>
 				</tr>
 				<tr>
@@ -68,15 +76,27 @@
 					<td>Texteditor</td>
 				</tr>
 				<tr>
+					<td><a href="cfg.html">CFG/INI - Runtime configuration files, parser behavior, sfall INI settings, high-resolution options, and movie sidecars.</a></td>
+					<td>Texteditor</td>
+				</tr>
+				<tr>
+					<td><a href="criticals.html">Critical hit tables - Executable combat tables, sfall/CE override INI layout, damage flags, and combat message dependencies.</a></td>
+					<td>Texteditor, hex editor</td>
+				</tr>
+				<tr>
 					<td><a href="dat.html">DAT - Archive containers for Fallout 1/2 resources, including DAT1 and DAT2 layouts.</a></td>
 					<td><a href="https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar">Dat Explorer 1.43</a>, <a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat">many others</a></td>
+				</tr>
+				<tr>
+					<td><a href="elevators.html">Elevators.ini - sfall/CE elevator destination tables, interface templates, and script activation rules.</a></td>
+					<td>Texteditor</td>
 				</tr>
 				<tr>
 					<td><a href="fon.html">FON - Fonts used for text on the world map</a></td>
 					<td><a href="https://fodev.net/files/mirrors/teamx-utils/fonedit1.0.rar" style="display: inline">FON editor</a></td>
 				</tr>
 				<tr>
-					<td><a href="frm.html">FRM - FRM files are unpaletted 256-color image files containing either one or several images in one file</a></td>
+					<td><a href="frm.html">FRM - Indexed art, animation frames, rotations, offsets, FID lookup, and palette-dependent rendering.</a></td>
 					<td><a href="https://fodev.net/files/archive/fo2/Titanium%20FRM%20Browser%201.3%20(en).zip" style="display: inline">Titanium FRM browser</a>, <a href="https://fodev.net/files/mirrors/teamx-utils/viewer.rar" style="display: inline">Graphics viewer 1.36</a> <a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics">and many others.</a></td>
 				</tr>
 				<tr>
@@ -86,6 +106,14 @@
 				<tr>
 					<td><a href="ssl.html">SSL - Source language and build format for Fallout and Fallout 2 scripts.</a></td>
 					<td><a href="https://sfall-team.github.io/sfall/sslc/">sfall SSLC</a>, <a href="https://fallout.fandom.com/wiki/Fallout_2_script_library">Fallout 2 script library</a></td>
+				</tr>
+				<tr>
+					<td><a href="scripts_lst.html">SCRIPTS.LST - Indexed registry for compiled INT scripts, dialogue MSG binding, and script local-variable metadata.</a></td>
+					<td>Texteditor</td>
+				</tr>
+				<tr>
+					<td><a href="savegame.html">Savegame structure - SAVE.DAT, saved map sidecars, party PRO sidecars, automap data, and sfall save extensions.</a></td>
+					<td>Hex editor, gzip tools</td>
 				</tr>
 				<tr>
 					<td><a href="gcd.html">GCD File Format - Premade characters.</a></td>
@@ -100,7 +128,7 @@
 					<td><a href="https://fodev.net/files/mirrors/teamx-utils/LIPEditor0.96b.rar">LIP editor</a>, <a href="https://fodev.net/files/mirrors/teamx-utils/wav2lip.rar">wav2lip</a></td>
 				</tr>
 				<tr>
-					<td><a href="lst.html">LST - LST files are simple text files, each line is terminated with CRLF ("\r\n").</a></td>
+					<td><a href="lst.html">LST - Line-indexed tables, art FID resolution, critter/head metadata, and filename construction.</a></td>
 					<td>Texteditor</td>
 				</tr>
 				<tr>
@@ -116,7 +144,7 @@
 					<td><a href="https://fodev.net/files/mirrors/teamx-utils/MSKTools.rar">MSK tools</a>, <a href="https://fodev.net/files/mirrors/teamx-utils/msk2bmp.rar">msk2bmp</a> </td>
 				</tr>
 				<tr>
-					<td><a href="pal.html">PAL - Palette file, used for rendering FRM data with the correct colors.</a></td>
+					<td><a href="pal.html">PAL/COL - Fallout palette files, RGB555 lookup, color tables, and animated palette ranges.</a></td>
 					<td>
                   <a href="fo_colors.html">Fallout default color sheet
                </td>
@@ -130,12 +158,12 @@
 					<td><a href="https://fodev.net/files/mirrors/teamx-utils/viewer.rar" style="display: inline">Graphics viewer 1.36 to load/save</a></td>
 				</tr>
 				<tr>
-					<td><a href="https://falloutmods.fandom.com/wiki/MVE_File_Format">MVE - Movie files, used for intro/outros, cutscenes.</a></td>
+					<td><a href="mve.html">MVE - Interplay movie container for intro, ending, logo, credits, and cutscene videos.</a></td>
 					<td><a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#video">Various</a></td>
 				</tr>
 				<tr>
-					<td><a href="https://falloutmods.fandom.com/wiki/SVE_File_Format">SVE File Format - Subtitles for MVE movies.</a></td>
-					<td>Texteditor</a>
+					<td><a href="sve.html">SVE - Frame-numbered subtitle cue lists for MVE movies.</a></td>
+					<td>Texteditor</td>
 				</tr>
 				<tr>
 					<td><a href="worldmap_dat.html">Worldmap.dat - Serialized world-map state and related world map definition files.</a></td>
@@ -169,13 +197,13 @@
             </p>
             <p><a href="https://web.archive.org/web/20150503230850/http://openwatcom.org/index.php/Calling_Conventions#Specifying_Calling_Conventions">Read more</a></p>
             </div>
-            
+
             <h2 id="asm">ASM</h2>
             <a href="https://c9x.me/x86/">x86 reference</a><br/>
             <a href="https://www.felixcloutier.com/x86/">x86 and amd64 instruction reference</a><br/>
             <a href="http://ref.x86asm.net/coder32.html">x86 opcode table</a><br/>
             <a href="https://defuse.ca/online-x86-assembler.htm">Online x86 / x64 Assembler and Disassembler</a><br/>
-            
+
             <h2 id="revtools">Reversing tools</h2>
             <a href="https://www.ollydbg.de">OllyDBG - debugger</a><br/>
             <a href="https://x64dbg.com/">x64dbg - debugger</a><br/>
@@ -187,8 +215,8 @@
             <a href="https://github.com/NtQuery/Scylla">Scylla - Imports viewer</a><br/>
             <a href="https://github.com/nlitsme/pyidbutil">idbutil - Tool for dumping data from IDA pro databases</a><br/>
             <a href="https://github.com/tylerha97/awesome-reversing">Additional stuff</a></p><br/>
-            
-            
+
+
             <h2 id="ida">IDA database</h2>
             <p><a href="https://rotators.fodev.net/ghosthack/scrapheap/reversing/ida/Fallout_1_and_2_IDA68.rar">Fallout_1_and_2_IDA68.rar</a>
             <p><a href="https://rotators.fodev.net/ghosthack/scrapheap/reversing/ida/idbtool.exe">idbtool.exe</a></p>
@@ -220,7 +248,7 @@
             <h3 id="sfall-bin">Binary distros</h3>
             <a href="https://sourceforge.net/projects/sfall/files/sfall/">Sourceforge</a>
             <h3 id="sfall-src">Source code</h3>
-            
+
             Check out the code from the <a href="https://github.com/sfall-team/sfall" style="display: inline">main repo</a>.</p>
             <h3 id="sfall-dx">DirectX</h3>
             <div>

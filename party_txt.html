@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PARTY.TXT File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>PARTY.TXT File Format</h1>
+
+<p><tt>PARTY.TXT</tt> is Fallout 2's party-member registry. It lists objects that can become party members, defines which combat-control options the party UI may expose for each one, and provides the prototype chain used when companions level up. Savegames serialize party roster, companion level-up state, mutable party AI, and party prototype sidecars using this registry; see <a href="savegame.html">Savegame Structure</a>.</p>
+
+<p>The file is loaded from <tt>data\party.txt</tt>. Most paths and message references below are relative to <tt>master.dat</tt>, <tt>critter.dat</tt>, or an unpacked Fallout 2 data directory.</p>
+
+<h2>Format Summary</h2>
+
+<table>
+<tr><th>Property</th><th>Description</th></tr>
+<tr><td>File path</td><td><tt>data\party.txt</tt>.</td></tr>
+<tr><td>File type</td><td>INI/config style text file.</td></tr>
+<tr><td>Section names</td><td><tt>[Party Member 0]</tt>, <tt>[Party Member 1]</tt>, and so on.</td></tr>
+<tr><td>Primary key</td><td><tt>party_member_pid</tt>, a Fallout object PID.</td></tr>
+<tr><td>Main consumers</td><td>Party-member registry, party combat-control UI, companion level-up code, save/load party state.</td></tr>
+<tr><td>Related text</td><td><tt>game\custom.msg</tt> for combat-control UI labels and <tt>game\misc.msg</tt> for companion level-up messages.</td></tr>
+</table>
+
+<h2>Section Discovery</h2>
+
+<p>The parser starts at <tt>Party Member 0</tt> and increments the section number while <tt>party_member_pid</tt> exists. The list length is therefore determined by the first missing numbered section. Tools should keep sections contiguous even if the shipped transcript or comments make some entries look sparse.</p>
+
+<p><tt>Party Member 0</tt> is conventionally the player. Runtime description lookup and support checks start at index 1, while the active party list stores the player at slot 0. Treat section 0 as reserved.</p>
+
+<pre>
+[Party Member 0]
+party_member_pid=16777216
+area_attack_mode=always, sometimes, be_sure, be_careful, be_absolutely_sure
+attack_who=whomever_attacking_me, strongest, weakest, whomever, closest
+best_weapon=no_pref, melee, melee_over_ranged, ranged_over_melee, ranged, unarmed
+chem_use=clean, stims_when_hurt_little, stims_when_hurt_lots, sometimes, anytime
+distance=stay_close, charge, snipe, on_your_own, stay
+run_away_mode=none, coward, finger_hurts, bleeding, not_feeling_good, tourniquet, never
+disposition=none, custom, coward, defensive, aggressive, berserk
+level_minimum=0
+level_up_every=0
+level_pids=-1
+</pre>
+
+<h2>Parsed Keys</h2>
+
+<table>
+<tr><th>Key</th><th>Type</th><th>Runtime role</th></tr>
+<tr><td><tt>party_member_pid</tt></td><td>Integer PID</td><td>Identifies the party-capable object or critter prototype.</td></tr>
+<tr><td><tt>area_attack_mode</tt></td><td>Comma-separated strings</td><td>Allowed burst/area-attack safety choices in the party customization UI.</td></tr>
+<tr><td><tt>attack_who</tt></td><td>Comma-separated strings</td><td>Allowed target-preference choices.</td></tr>
+<tr><td><tt>best_weapon</tt></td><td>Comma-separated strings</td><td>Allowed weapon-preference choices.</td></tr>
+<tr><td><tt>chem_use</tt></td><td>Comma-separated strings</td><td>Allowed drug-use policy choices.</td></tr>
+<tr><td><tt>distance</tt></td><td>Comma-separated strings</td><td>Allowed movement/distance preference choices.</td></tr>
+<tr><td><tt>run_away_mode</tt></td><td>Comma-separated strings</td><td>Allowed flee-threshold choices.</td></tr>
+<tr><td><tt>disposition</tt></td><td>Comma-separated strings</td><td>Allowed main combat-control dispositions shown on the party control panel.</td></tr>
+<tr><td><tt>level_minimum</tt></td><td>Integer</td><td>Minimum player level before this party member can level up.</td></tr>
+<tr><td><tt>level_up_every</tt></td><td>Integer</td><td>Player-level cadence used by the companion level-up algorithm. A value of <tt>0</tt> disables leveling.</td></tr>
+<tr><td><tt>level_pids</tt></td><td>Comma-separated integer PIDs</td><td>Prototype stages copied into the companion as they level up. <tt>-1</tt> means no stages.</td></tr>
+</table>
+
+<p>Behavior-list values use the same string tables as <a href="ai_txt.html">AI.TXT</a>: <tt>area_attack_mode</tt>, <tt>attack_who</tt>, <tt>best_weapon</tt>, <tt>chem_use</tt>, <tt>distance</tt>, <tt>run_away_mode</tt>, and <tt>disposition</tt>. The string parser lowercases the field, skips leading spaces for each comma-separated item, and matches case-insensitively against the engine's known values.</p>
+
+<p>Be strict in tools: unknown strings are logged by the parser but the party-member loader does not check the return value before indexing the support arrays. A bad option name is therefore more dangerous than an ignored cosmetic typo.</p>
+
+<h2>Combat UI Whitelist</h2>
+
+<p>The comma-separated behavior lists do not set the companion's current AI behavior by themselves. They define which choices are enabled in the party-member control and customization windows. The current values still come from the companion's current <a href="ai_txt.html">AI.TXT</a> packet and from runtime setters.</p>
+
+<table>
+<tr><th>UI area</th><th>PARTY.TXT key</th><th>Runtime setter used when changed</th></tr>
+<tr><td>Main combat mode buttons</td><td><tt>disposition</tt></td><td><tt>aiSetDisposition</tt>, which switches within the companion's contiguous AI packet family.</td></tr>
+<tr><td>Burst/area attack safety</td><td><tt>area_attack_mode</tt></td><td><tt>aiSetAreaAttackMode</tt>.</td></tr>
+<tr><td>Run-away threshold</td><td><tt>run_away_mode</tt></td><td><tt>aiSetRunAwayMode</tt>.</td></tr>
+<tr><td>Weapon preference</td><td><tt>best_weapon</tt></td><td><tt>aiSetBestWeapon</tt>.</td></tr>
+<tr><td>Distance preference</td><td><tt>distance</tt></td><td><tt>aiSetDistance</tt>.</td></tr>
+<tr><td>Target preference</td><td><tt>attack_who</tt></td><td><tt>aiSetAttackWho</tt>.</td></tr>
+<tr><td>Drug-use policy</td><td><tt>chem_use</tt></td><td><tt>aiSetChemUse</tt>.</td></tr>
+</table>
+
+<p>The UI has its own hardcoded choice tables and labels from <tt>game\custom.msg</tt>. This means <tt>PARTY.TXT</tt> can only enable or disable choices the UI knows how to show. In Fallout 2 CE's UI table, for example, <tt>best_weapon</tt> exposes <tt>no_pref</tt>, <tt>melee</tt>, <tt>melee_over_ranged</tt>, <tt>ranged_over_melee</tt>, <tt>ranged</tt>, and <tt>unarmed</tt>, while <tt>unarmed_over_thrown</tt> and <tt>random</tt> are parser-recognized AI values but not normal customization-window choices. The <tt>chem_use</tt> customization list similarly exposes up through <tt>anytime</tt>, not <tt>always</tt>.</p>
+
+<h2>AI.TXT Relationship</h2>
+
+<p>For a normal companion, three separate pieces need to line up:</p>
+
+<table>
+<tr><th>Place</th><th>Responsibility</th></tr>
+<tr><td><tt>PARTY.TXT</tt></td><td>Declares that the PID is party-capable and lists the UI-supported choices for that companion.</td></tr>
+<tr><td>Critter <a href="pro.html">PRO</a></td><td>Stores the current/default AI packet number for the companion's prototype.</td></tr>
+<tr><td><tt>AI.TXT</tt></td><td>Defines the actual AI packet fields and the companion's contiguous disposition packet family.</td></tr>
+</table>
+
+<p>The <tt>disposition</tt> support list controls which main mode buttons are available. The packet-number arithmetic still depends on <tt>AI.TXT</tt> ordering: <tt>BERSERK</tt>, <tt>AGGRESSIVE</tt>, <tt>DEFENSIVE</tt>, <tt>COWARD</tt>, then <tt>CUSTOM</tt>. <tt>PARTY.TXT</tt> cannot fix a broken AI packet family.</p>
+
+<h2>Level-up Data</h2>
+
+<p><tt>level_minimum</tt>, <tt>level_up_every</tt>, and <tt>level_pids</tt> drive the companion level-up mechanism. If <tt>level_up_every</tt> is missing or zero, the companion does not use this mechanism.</p>
+
+<table>
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td><tt>level_minimum</tt></td><td>The player must be at least this level before the companion can advance.</td></tr>
+<tr><td><tt>level_up_every</tt></td><td>Number of player level-ups used as the normal cadence for companion advancement.</td></tr>
+<tr><td><tt>level_pids</tt></td><td>Prototype stages copied into the companion. Fallout 2 CE supports up to six stage PIDs.</td></tr>
+</table>
+
+<p>The level-up state saved per party-member description is <tt>level</tt>, <tt>numLevelUps</tt>, and <tt>isEarly</tt>. When the player levels up, the engine increments the companion's counter, checks the cadence, and may allow an early level-up by probability. If a companion levels early, it waits until the next exact cadence boundary before the next cycle starts.</p>
+
+<p>One indexing detail is easy to miss: CE increments the saved <tt>level</tt> value before indexing <tt>level_pids</tt>. A fresh companion starts at <tt>level=0</tt>, so the first successful advancement copies <tt>level_pids[1]</tt>, not <tt>level_pids[0]</tt>. This matches the idea that the list can include a baseline/current-stage PID before later upgrade stages. Do not reorder these lists unless you have checked the intended companion progression.</p>
+
+<p>When a companion advances, the engine copies base stats, bonus stats, and skills from the stage prototype into the companion's current prototype. It temporarily removes armor and unwields the right-hand item so derived stats can be recalculated, restores HP to the new maximum, then restores the armor and right-hand item. It does not wholesale replace the object with the stage PID.</p>
+
+<p>Level-up messages are in <tt>game\misc.msg</tt>. Message <tt>9000</tt> is the generic display-monitor line, and individual companion float messages are addressed as <tt>9000 + 10 * party_member_index + level - 1</tt>.</p>
+
+<h2>Runtime Party State</h2>
+
+<p><tt>PARTY.TXT</tt> defines descriptions, but the active party is runtime state. Adding a member sets a stable object id based on the PID, marks the object <tt>NO_REMOVE</tt> and <tt>NO_SAVE</tt> while it is actively managed, moves critters to the player's team, and retargets the script owner id to the party-member object id. Removing a member reverses the managed flags and disables the party script flags.</p>
+
+<p>Save data stores the active party length, a party-member item id counter, active member object ids, and the level-up state for each described party member. During load, the engine resolves saved object ids back to objects on the map and repairs duplicate party-member instances when possible.</p>
+
+<p>The active party list is allocated with room for <tt>gPartyMemberDescriptionsLength + 20</tt> entries. This is runtime capacity, not an invitation to leave holes in the numbered descriptions.</p>
+
+<h2>Active Count and Rest Healing</h2>
+
+<p>The active party list and the player-visible active party count are not identical. The count helper starts from the active party list length, then excludes dead, hidden, and non-critter entries after slot 0. This is why a managed object can exist in the party system without behaving like a live companion for count-limited logic.</p>
+
+<p>Rest-healing helpers apply similar filters. "Rest until party healed" checks party entries after the player and ignores non-critters, dead critters, hidden critters, and robots. The lower-level rest-heal routine applies healing-rate based HP adjustment to critter party members, but the "does anyone need healing" and "maximum wound" queries deliberately exclude robots because they cannot be healed by resting.</p>
+
+<h2>Party Positioning</h2>
+
+<p>When the engine synchronizes party positions, it places visible critter party members around the player. It skips hidden entries and non-critters, alternates between two rotations offset from the player's facing, and slowly increases the placement distance as more members are positioned. This is runtime placement behavior; no coordinates are stored in <tt>PARTY.TXT</tt>.</p>
+
+<h2>Save and Script Recovery</h2>
+
+<p>Party members receive special save/load treatment because their objects and scripts need to survive map transitions. Before loading or changing party state, the engine can copy the party member's script record and local variables, remove the active script, then later recreate and reattach the script with its saved locals. Scripted inventory items carried by party members go through similar prep/recover handling.</p>
+
+<p>The party loader also runs duplicate repair after recovery. It scans objects for PIDs listed in <tt>PARTY.TXT</tt>, compares them with the active party member object for that PID, and tries to remove duplicate party-member critters that are not the active instance. This is one reason duplicate companion prototypes or copied map objects can create confusing load-time behavior.</p>
+
+<h2>Non-critter Entries</h2>
+
+<p>Most entries are critter PIDs, but the car trunk is also represented in the party system. Several runtime helpers explicitly filter to critter objects, alive objects, or visible objects, so a non-critter party entry can be managed by party save/load without behaving like a living companion in combat counts, best-skill queries, rest healing, or party positioning.</p>
+
+<h2>custom.msg Message IDs</h2>
+
+<p>The party customization window uses hardcoded message id groups in <tt>game\custom.msg</tt>. <tt>PARTY.TXT</tt> controls which choices are enabled, but the text shown for those choices comes from these ids:</p>
+
+<table>
+<tr><th>Customization group</th><th>Message ids</th><th>Notes</th></tr>
+<tr><td>Burst/area attack safety</td><td><tt>100..104</tt></td><td><tt>99</tt> is used for "Not Applicable" when no burst option is selected.</td></tr>
+<tr><td>Run-away threshold</td><td><tt>200..205</tt></td><td>Six run-away choices, from cowardly through never.</td></tr>
+<tr><td>Weapon preference</td><td><tt>300..305</tt></td><td>The normal UI exposes six weapon-preference choices.</td></tr>
+<tr><td>Distance preference</td><td><tt>400..404</tt></td><td>Five distance choices.</td></tr>
+<tr><td>Target preference</td><td><tt>500..504</tt></td><td>Five target choices.</td></tr>
+<tr><td>Drug-use policy</td><td><tt>600..604</tt></td><td>The normal UI exposes five drug-use choices.</td></tr>
+</table>
+
+<p>The selection popup also reads <tt>custom.msg</tt> lines <tt>10</tt> and <tt>11</tt> for its shared action labels. Missing message lines do not change parser behavior, but they make the UI unreadable.</p>
+
+<h2>Inter-file Dependencies</h2>
+
+<table>
+<tr><th>File</th><th>Dependency</th></tr>
+<tr><td><a href="ai_txt.html">AI.TXT</a></td><td>Defines actual combat behavior packets. <tt>PARTY.TXT</tt> only whitelists which options the player may choose for a companion.</td></tr>
+<tr><td><a href="pro.html">PRO</a></td><td>Party-member PIDs and level-stage PIDs refer to prototype entries. Level-up copies stats and skills from these prototypes.</td></tr>
+<tr><td><a href="msg.html">MSG</a></td><td><tt>game\custom.msg</tt> labels party-combat choices. <tt>game\misc.msg</tt> contains party level-up messages.</td></tr>
+<tr><td><a href="ssl.html">SSL</a> / <a href="int.html">INT</a></td><td>Scripts add and remove party members and may change AI settings through engine procedures.</td></tr>
+<tr><td>SSL headers / PID constants</td><td>Classic modding notes warn that adding a party member also requires script-side PID definitions, commonly in party-related headers. The text file alone does not make scripts know the new companion.</td></tr>
+<tr><td>Save data</td><td>Active member ids and per-companion level-up counters are saved separately from the text file.</td></tr>
+</table>
+
+<h2>Validation Checklist</h2>
+
+<ul>
+<li>Sections are contiguous from <tt>Party Member 0</tt> onward.</li>
+<li>Every section has <tt>party_member_pid</tt>.</li>
+<li>Section 0 remains reserved for the player convention.</li>
+<li>Every behavior-list token is recognized by the corresponding <a href="ai_txt.html">AI.TXT</a> string table.</li>
+<li>Behavior lists do not rely on values the party customization UI cannot expose, unless the target engine or UI is known to be extended.</li>
+<li>Every <tt>party_member_pid</tt> and <tt>level_pids</tt> entry points to an existing prototype.</li>
+<li><tt>level_pids</tt> order matches intended companion progression, including the baseline/current-stage slot.</li>
+<li>Companion AI packet families in <tt>AI.TXT</tt> remain contiguous and ordered correctly.</li>
+<li>Related <tt>custom.msg</tt> and <tt>misc.msg</tt> lines exist when UI labels or level-up messages are expected.</li>
+<li>Scripts and PID constants are updated together with the text file.</li>
+<li>Copied companion objects do not create duplicate active instances with the same PID.</li>
+<li>Non-critter party entries are tested against the specific systems that should see them.</li>
+</ul>
+
+<h2>Source-backed Function Map</h2>
+
+<table>
+<tr><th>Function</th><th>Relationship to PARTY.TXT</th></tr>
+<tr><td><tt>partyMembersInit</tt></td><td>Loads <tt>data\party.txt</tt>, counts contiguous sections, parses support lists, and stores level-up data.</td></tr>
+<tr><td><tt>partyMemberSupports*</tt></td><td>Checks whether a companion supports a requested UI option.</td></tr>
+<tr><td><tt>partyMemberAdd</tt> / <tt>partyMemberRemove</tt></td><td>Maintain the active party list and party-specific object/script flags.</td></tr>
+<tr><td><tt>partyMembersSave</tt> / <tt>partyMembersLoad</tt></td><td>Serialize active party object ids and level-up state.</td></tr>
+<tr><td><tt>_partyMemberPrepLoad</tt> / <tt>_partyMemberRecoverLoad</tt></td><td>Preserve party-member scripts, local variables, and scripted inventory items across load/recovery.</td></tr>
+<tr><td><tt>_partyMemberSyncPosition</tt></td><td>Places visible critter party members around the player.</td></tr>
+<tr><td><tt>_getPartyMemberCount</tt></td><td>Counts active visible living critter party members and excludes hidden/dead/non-critter entries.</td></tr>
+<tr><td><tt>partyIsAnyoneCanBeHealedByRest</tt> / <tt>partyGetMaxWoundToHealByRest</tt></td><td>Check rest-healing needs while excluding hidden, dead, non-critter, and robot entries.</td></tr>
+<tr><td><tt>partyFixMultipleMembers</tt></td><td>Attempts to remove duplicate party-member critters after load/recovery.</td></tr>
+<tr><td><tt>_partyMemberIncLevels</tt></td><td>Applies the <tt>level_minimum</tt>, <tt>level_up_every</tt>, and <tt>level_pids</tt> rules.</td></tr>
+<tr><td><tt>_partyMemberCopyLevelInfo</tt></td><td>Copies stats and skills from the selected level-stage prototype.</td></tr>
+<tr><td><tt>partyMemberCustomizationWindowInit</tt></td><td>Loads <tt>game\custom.msg</tt> and displays the customization UI.</td></tr>
+<tr><td><tt>_gdCustomUpdateSetting</tt></td><td>Calls the AI setters after a supported customization value is selected.</td></tr>
+</table>
+
+<h2>Source References</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/party_member.cc">Fallout 2 CE <tt>party_member.cc</tt></a> - parser, active party state, save/load, support checks, and level-up behavior.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_dialog.cc">Fallout 2 CE <tt>game_dialog.cc</tt></a> - party combat-control UI, hardcoded option lists, <tt>custom.msg</tt> loading, and AI setter calls.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/string_parsers.cc">Fallout 2 CE <tt>string_parsers.cc</tt></a> - comma-separated integer and string-list parsing behavior.</li>
+<li><a href="https://fallout.wiki/wiki/Party.txt">Party.txt on The Fallout Wiki</a> - transcript of the shipped Fallout 2 party file and classic modding notes.</li>
+</ul>
+
+<hr/>
+<h2>History</h2>
+<p>
+2026-05-07 - Documented PARTY.TXT from Fallout 2 CE source and available format notes.<br/>
+</p>
+</div>
+</body>
+</html>

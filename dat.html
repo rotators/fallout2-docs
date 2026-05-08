@@ -35,27 +35,61 @@
 
 <p>Paths stored inside DAT archives are relative game paths such as <tt>art\intrface\iface.frm</tt> or <tt>text\english\game\worldmap.msg</tt>. The same relative paths are used when resources are unpacked under <tt>data\</tt>.</p>
 
-<h2>Lookup Behavior</h2>
+<h2>Resource Loading And Override Order</h2>
 
-<p>Fallout 2 CE opens resource roots into an internal list. New or reopened roots are moved to the front, and relative file lookup searches that list from front to back. In the CE startup order, this means later-opened patch archives can override earlier archives. If a file is not found in any open DAT or patch directory, the engine tries the current working directory as a final fallback.</p>
+<p>The Fallout resource layer behaves like a small virtual filesystem. Most game code asks for a relative path such as <tt>art\items\stimpak.frm</tt>, <tt>proto\items\items.lst</tt>, or <tt>text\english\game\misc.msg</tt>. The database layer searches all currently opened resource roots until it finds the first matching file.</p>
 
-<p>With the usual CE startup flow and default patch directory, effective lookup precedence is approximately:</p>
+<p>The base roots come from <a href="cfg.html"><tt>fallout2.cfg</tt></a>:</p>
+
+<table>
+<tr><th>Config key</th><th>Typical value</th><th>Role</th></tr>
+<tr><td><tt>[system] master_dat</tt></td><td><tt>master.dat</tt></td><td>Main archive.</td></tr>
+<tr><td><tt>[system] master_patches</tt></td><td><tt>data</tt></td><td>Loose patch directory for master resources.</td></tr>
+<tr><td><tt>[system] critter_dat</tt></td><td><tt>critter.dat</tt></td><td>Critter archive.</td></tr>
+<tr><td><tt>[system] critter_patches</tt></td><td><tt>data</tt></td><td>Loose patch directory for critter resources.</td></tr>
+</table>
+
+<p>Fallout 2 CE opens those roots in this startup order:</p>
+
+<ol>
+<li><tt>master_dat</tt>, if configured.</li>
+<li><tt>master_patches</tt>, if configured.</li>
+<li><tt>critter_dat</tt>, if configured.</li>
+<li><tt>critter_patches</tt>, if configured.</li>
+<li>Patch archives matching the sfall <tt>[Misc] PatchFile</tt> template, normally <tt>patch000.dat</tt> through <tt>patch999.dat</tt>, if present.</li>
+<li><tt>f2_res.dat</tt>, if present.</li>
+</ol>
+
+<p>Every successful <tt>xbaseOpen</tt> inserts the root at the front of the internal search list. Reopening an already-open root moves it to the front. Relative file lookup then searches that list from front to back. Because of that front-insertion behavior, the effective lookup precedence is the reverse of the opening sequence.</p>
+
+<p>With the usual CE startup flow and default patch directory, effective lookup precedence is:</p>
 
 <table>
 <tr><th>Priority</th><th>Root</th><th>Notes</th></tr>
 <tr><td>Highest</td><td><tt>f2_res.dat</tt></td><td>Opened last when present.</td></tr>
 <tr><td></td><td>Highest-numbered <tt>patchNNN.dat</tt></td><td>Patch archives are opened from <tt>patch000.dat</tt> upward, so later numbers sit earlier in the search list.</td></tr>
 <tr><td></td><td>Lower-numbered <tt>patchNNN.dat</tt></td><td>Still above the base archives.</td></tr>
-<tr><td></td><td>Configured patch/data directory</td><td>Commonly <tt>data\</tt>; loose files here override <tt>master.dat</tt> and <tt>critter.dat</tt> in CE's normal order.</td></tr>
-<tr><td></td><td><tt>critter.dat</tt></td><td>Opened after <tt>master.dat</tt>.</td></tr>
+<tr><td></td><td><tt>critter_patches</tt></td><td>Commonly <tt>data\</tt>. If the same directory is also <tt>master_patches</tt>, reopening moves it to this position.</td></tr>
+<tr><td></td><td><tt>critter.dat</tt></td><td>Opened after the master roots.</td></tr>
+<tr><td></td><td><tt>master_patches</tt></td><td>Commonly <tt>data\</tt>, unless it was the same root as <tt>critter_patches</tt> and got moved later.</td></tr>
 <tr><td>Lowest</td><td><tt>master.dat</tt></td><td>Main base archive.</td></tr>
 </table>
 
-<p>Different executable builds, launchers, or mods can change which roots are opened and in what order, so archive tools should not assume this table is universal. It is the behavior visible in Fallout 2 CE's resource-opening code.</p>
+<p>In the default configuration, both patch directory keys usually point to <tt>data</tt>. The first open from <tt>master_patches</tt> adds it, and the second open from <tt>critter_patches</tt> moves the same root to the front again. The practical result is that loose files under <tt>data\</tt> override both <tt>master.dat</tt> and <tt>critter.dat</tt>, but numbered patch archives and <tt>f2_res.dat</tt> can still override loose <tt>data\</tt> files in CE's normal order.</p>
+
+<p>Different executable builds, launchers, or mods can change which roots are opened and in what order, so archive tools should not assume this table is universal. It is the behavior visible in Fallout 2 CE's <tt>gameDbInit</tt>, <tt>dbOpen</tt>, <tt>xbaseOpen</tt>, and <tt>xfileOpen</tt> flow.</p>
 
 <p>Absolute paths and paths beginning with <tt>.</tt>, <tt>\</tt>, or <tt>/</tt> bypass the DAT search list and are opened directly from the filesystem. Normal game asset references should therefore be relative paths.</p>
 
 <p>Loose filesystem files can be gzip-compressed: CE checks the first two bytes of a plain file for gzip magic <tt>1F 8B</tt> and reopens it as a gzip stream. This is separate from DAT2 entry compression. DAT2 compressed entries are zlib streams inside the archive, not gzip files.</p>
+
+<h3>Lookup Examples</h3>
+
+<p>For a relative path such as <tt>art\critters\hmjmpsaa.frm</tt>, CE tries the highest-precedence open root first. If <tt>f2_res.dat</tt> does not contain it, CE tries patch archives from highest number to lowest number, then the loose patch directory, then <tt>critter.dat</tt>, then <tt>master.dat</tt>. The first match wins.</p>
+
+<p>For a text path such as <tt>text\english\game\misc.msg</tt>, the same database search applies. Language-specific code changes the relative path it asks for; the database layer still performs the same root search on that path.</p>
+
+<p>For save-game sidecars and other explicitly absolute or dot-relative paths, the database roots are not used. Those paths are opened directly from the filesystem.</p>
 
 <h2>Path Rules</h2>
 

@@ -8,7 +8,7 @@
 <div style="width: 1200px; margin: auto;">
 <h1>GAM File Format</h1>
 
-<p>GAM files are text files that define initial integer variables. Fallout uses one game-wide GAM file for global variables and optional per-map GAM files for map variables. The files are not save files by themselves; they seed runtime arrays that are later stored inside saved game data and saved maps.</p>
+<p>GAM files are text files that define initial integer variables. Fallout uses one game-wide GAM file for global variables and optional per-map GAM files for map variables. The files are not save files by themselves; they seed runtime arrays that are later stored inside <a href="savegame.html">saved game data</a> and saved maps.</p>
 
 <h2>Locations</h2>
 
@@ -80,6 +80,8 @@ rebels_leave_date       := 100;         // (5)
 <h2>Game global variables</h2>
 
 <p>At game initialization and reset, Fallout 2 CE reads <tt>data\vault13.gam</tt> with the <tt>GAME_GLOBAL_VARS:</tt> section and builds the game-global integer array. Scripts access this array through game-global opcodes. Some engine systems also use hard-coded global variable indexes for reputation, addiction, car state, timers, and game progression.</p>
+
+<p>The Pip-Boy quest and holodisk tables are another GVAR consumer. <a href="pipboy_txt.html"><tt>data\quests.txt</tt></a> uses GVAR thresholds to decide when quest descriptions appear and when they are drawn as completed. <tt>data\holodisk.txt</tt> uses non-zero GVAR values to decide which DATA entries are known.</p>
 
 <p>During save-game writing, the current game-global array is written into <tt>SAVE.DAT</tt> as big-endian 32-bit integers. Fallout 2 CE's load/save handler table stores the game-global array twice: the first copy is loaded back into the live array, and the second copy is read and discarded. This is save-file behavior, not GAM text-file behavior.</p>
 

@@ -3,7 +3,7 @@
 	<head>
 		<title>Animation Naming conventions</title>
 		<link rel="stylesheet" href="style.css" type="text/css" />
-      
+
       <style>
          .divTable{
             display: table;
@@ -35,17 +35,21 @@
             display: table-row-group;
          }
       </style>
-      
+
 	</head>
    <body>
-   
+
       <div style="width: 1200px; margin: auto;">
-      
+
       <h1>Animation Naming conventions</h1>
-         
+
       <h3>Technicalities</h3>
 
-      <p>A critter consists of many "frm" files. It's the standard graphic format used in Fallout. Basically, there are 2 different types of this format, each of them with unique extension:</p>
+      <p>A critter consists of many <a href="frm.html">FRM</a> files. The engine does not store most critter art as direct paths in PRO or MAP data; it builds paths from an art <a href="lst.html">FID</a>, the base name in <tt>art\critters\critters.lst</tt>, the animation code, the weapon animation code, and sometimes a directional suffix.</p>
+
+      <p>For example, a base name such as <tt>hmjmps</tt> can become <tt>hmjmpsaa.frm</tt> for stand/no-weapon art. Directional knockdown/death art can become <tt>hmjmpsba.fr0</tt>, <tt>hmjmpsba.fr1</tt>, and so on. See <a href="lst.html">LST File Format and FID Resolution</a> for the packed FID fields, critter alias metadata, and exact filename construction rules.</p>
+
+      <p>Basically, there are 2 different types of this format, each of them with unique extension:</p>
 
       <ul>
          <li>*.FRM extension - a single *.frm file containing up to 6 directions of a sprite.</li>
@@ -53,7 +57,7 @@
       </ul>
 
       <p>Each of the frm/fr0-fr5 files represents a kind of animation. Name of the frm files designate the type of animation (see table below).</p>
-      <p>Note: *.fr0-*.fr5 files take precedence over *.frm!</p>
+      <p>Note: in Fallout 2 CE, most non-death critter animations are forced to the normal <tt>.frm</tt> path. Directional <tt>.fr0</tt>-<tt>.fr5</tt> lookup is mainly used for the knockdown/death animation range, with fallback behavior if the requested direction is missing.</p>
 
       <div class="divTable" style="width: 400px;" >
       <div class="divTableBody">
@@ -102,7 +106,7 @@
             <div class="divTableCell">running</div>
             <div class="divTableCell">*at.frm</div>
          </div>
-         
+
          <h3>Knockdown and Death</h3>
 
          <div class="divTableRow">
@@ -161,7 +165,7 @@
             <div class="divTableCell">fall_front_blood</div>
             <div class="divTableCell">*bp.frm</div>
          </div>
-         
+
          <h3>Change Positions</h3>
          <div class="divTableRow">
             <div class="divTableCell">prone_to_standing</div>
@@ -234,15 +238,15 @@
             <div class="divTableCell">targeting picture</div>
             <div class="divTableCell">*na.frm</div>
          </div>
-         
+
       </div>
       </div>
-               
+
          <h2 style="text-align: left;">History</h2>
          <p>2020-01-16 - Updated information and moved from readme.txt to html.<br/>
          <p>2007-07-22 - Written by Lisac2k</p>
-      
+
       </div> <!-- wrapper -->
-   
+
    </body>
 </html>

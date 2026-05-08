@@ -31,7 +31,7 @@
 
 <p>Many vanilla PRO filenames follow an eight-digit decimal naming convention such as <tt>00000032.pro</tt>, but the list file is authoritative. Tools should use the list entry rather than generating a filename from the PID.</p>
 
-<p>PRO files stored inside save-game directories, for example <tt>data\savegame\slot##\proto</tt>, may be gzip-compressed like saved map objects. If a saved-game PRO does not parse as the binary format described here, try treating it as gzip data first.</p>
+<p>PRO files stored inside save-game directories, for example <tt>data\savegame\slot##\proto</tt>, may be gzip-compressed like saved map objects. If a saved-game PRO does not parse as the binary format described here, try treating it as gzip data first. See <a href="savegame.html">Savegame Structure</a> for how party-member PRO sidecars are copied into save slots.</p>
 
 <h2>Encoding and byte order</h2>
 
@@ -59,7 +59,7 @@
 <tr><th>Offset</th><th>Type</th><th>Field</th><th>Description</th></tr>
 <tr><td><tt>0x00</tt></td><td><tt>int32</tt></td><td><tt>pid</tt></td><td>Prototype id. High byte is the object type; low 24 bits are the list index.</td></tr>
 <tr><td><tt>0x04</tt></td><td><tt>int32</tt></td><td><tt>message_num</tt></td><td>Base id in the type's <tt>pro_*.msg</tt> file.</td></tr>
-<tr><td><tt>0x08</tt></td><td><tt>int32</tt></td><td><tt>fid</tt></td><td>Art FID. See <a href="lst.html">LST File Format</a> for the FID layout.</td></tr>
+<tr><td><tt>0x08</tt></td><td><tt>int32</tt></td><td><tt>fid</tt></td><td>Art FID. See <a href="lst.html">LST File Format</a> for the packed FID layout and <a href="frm.html">FRM File Format</a> for the art container it usually resolves to.</td></tr>
 </table>
 
 <p>Prototype names and descriptions are not stored as strings in the PRO file. The engine uses <tt>message_num + 0</tt> for the name and <tt>message_num + 1</tt> for the description in the message file associated with the PID's object type. See <a href="msg.html">MSG File Format</a> for the message-list syntax and lookup behavior.</p>
@@ -74,7 +74,7 @@
 <tr><td><tt>light_intensity</tt></td><td>Items, critters, scenery, walls, misc</td><td>Light intensity.</td></tr>
 <tr><td><tt>flags</tt></td><td>All six PRO types</td><td>Main object flags.</td></tr>
 <tr><td><tt>flags_ext</tt></td><td>All six PRO types</td><td>Extended flags. Some values control action availability.</td></tr>
-<tr><td><tt>sid</tt></td><td>Items, critters, scenery, walls, tiles</td><td>Script id, or <tt>-1</tt> for no script. This refers to <tt>scripts.lst</tt>.</td></tr>
+<tr><td><tt>sid</tt></td><td>Items, critters, scenery, walls, tiles</td><td>Script id, or <tt>-1</tt> for no script. This refers to <a href="scripts_lst.html"><tt>scripts.lst</tt></a>.</td></tr>
 <tr><td><tt>material</tt></td><td>Items, scenery, walls, tiles</td><td>Material type used by engine logic and editor UI.</td></tr>
 </table>
 
@@ -115,7 +115,7 @@
 
 <h3>Script ids</h3>
 
-<p>Script ids are stored as packed 32-bit values. <tt>0xFFFFFFFF</tt> means no script. For normal object scripts the high byte is the script type and the low 16 bits are the line number in <tt>scripts\scripts.lst</tt>.</p>
+<p>Script ids are stored as packed 32-bit values. <tt>0xFFFFFFFF</tt> means no script. For normal object scripts the high byte is the script type and the low 16 bits are the line number in <a href="scripts_lst.html"><tt>scripts\scripts.lst</tt></a>.</p>
 
 <table>
 <tr><th>Script type</th><th>Value</th></tr>
@@ -185,6 +185,8 @@
 
 <p>Critter base and bonus stat arrays each contain 35 values in engine stat order: seven SPECIAL stats, hit points, action points, armor class, unarmed damage, melee damage, carry weight, sequence, healing rate, critical chance, better criticals, seven damage thresholds, nine damage resistances, age, and gender. The skill array contains 18 values in skill order from Small Guns through Outdoorsman.</p>
 
+<p>The critter <tt>kill type</tt> field selects the target table used by <a href="criticals.html">critical hit effects</a>. For example, men, ghouls, robots, and deathclaws each have different critical rows for the same hit location. The player character is special: incoming criticals against <tt>gDude</tt> use a separate player critical table instead of the critter PRO kill type path.</p>
+
 <table>
 <tr><th>Critter data flag</th><th>Meaning</th></tr>
 <tr><td><tt>0x00000002</tt></td><td>Can barter.</td></tr>
@@ -217,7 +219,7 @@
 <tr><th>Scenery subtype</th><th>Value</th><th>Payload fields</th></tr>
 <tr><td>Door</td><td><tt>0</tt></td><td><tt>open_flags</tt>, <tt>key_code</tt>.</td></tr>
 <tr><td>Stairs</td><td><tt>1</tt></td><td><tt>lower_tile</tt>, <tt>upper_tile</tt>.</td></tr>
-<tr><td>Elevator</td><td><tt>2</tt></td><td>Elevator type, elevator level.</td></tr>
+<tr><td>Elevator</td><td><tt>2</tt></td><td>Elevator type, elevator level. The type selects the built-in or <a href="elevators.html">external elevator table</a>.</td></tr>
 <tr><td>Ladder up</td><td><tt>3</tt></td><td>One destination field.</td></tr>
 <tr><td>Ladder down</td><td><tt>4</tt></td><td>One destination field.</td></tr>
 <tr><td>Generic</td><td><tt>5</tt></td><td>One generic field.</td></tr>
@@ -274,7 +276,7 @@
 <li>Changing a PRO filename requires updating the matching <tt>proto\&lt;type&gt;\&lt;type&gt;.lst</tt> line.</li>
 <li>Changing <tt>message_num</tt> changes which name and description are loaded from <tt>pro_*.msg</tt>.</li>
 <li>Script ids refer to <tt>scripts.lst</tt>; inserting or deleting script-list lines can retarget existing protos.</li>
-<li>FID fields use the same packed object-art identifiers described on the <a href="lst.html">LST page</a>.</li>
+<li>FID fields use the same packed object-art identifiers described on the <a href="lst.html">LST page</a>, and usually resolve to <a href="frm.html">FRM</a> art.</li>
 </ul>
 
 <h2>Minimal parser subset</h2>

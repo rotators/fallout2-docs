@@ -1,0 +1,306 @@
+<html>
+<head>
+    <title>MVE File Format</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>MVE File Format</h1>
+
+<p>MVE is Interplay's full-motion video container used by Fallout, Fallout 2, and several other Interplay-era games. In Fallout it stores intro, ending, logo, credits, and cutscene movies below <tt>art\cuts</tt>. The companion subtitle file, when present, is a plain text <a href="sve.html">SVE</a> file below <tt>text\&lt;language&gt;\cuts</tt>.</p>
+
+<p>This page describes the Interplay MVE format used by Fallout's <tt>.mve</tt> movies. Do not confuse it with unrelated files that happen to use an <tt>.mve</tt> extension, such as the Wing Commander III MVE format.</p>
+
+<h2>Format Properties</h2>
+
+<table>
+<tr><th>Property</th><th>Description</th></tr>
+<tr><td>File type</td><td>Binary movie container with custom video and optional audio streams.</td></tr>
+<tr><td>Typical Fallout path</td><td><tt>art\cuts\*.mve</tt>, or localized <tt>art\&lt;language&gt;\cuts\*.mve</tt>.</td></tr>
+<tr><td>Header signature</td><td><tt>Interplay MVE File</tt>, followed by DOS EOF byte <tt>0x1A</tt> and NUL.</td></tr>
+<tr><td>Byte order</td><td>Container fields are little-endian, unlike many Fallout game-data formats.</td></tr>
+<tr><td>Video</td><td>Interplay video. Fallout-era content is usually 8-bit paletted video; later Interplay variants can use 16-bit RGB555.</td></tr>
+<tr><td>Audio</td><td>PCM or Interplay DPCM, depending on audio init flags.</td></tr>
+<tr><td>Palette</td><td>8-bit movies carry VGA-style 6-bit RGB palette updates inside the movie stream.</td></tr>
+<tr><td>Compression</td><td>The MVE file itself is not a DAT archive or gzip file. It may be stored inside <a href="dat.html">master.dat</a> or another DAT archive.</td></tr>
+</table>
+
+<h2>Fallout Lookup</h2>
+
+<p>Fallout 2 CE keeps a fixed movie-name table for the shipped Fallout 2 movies:</p>
+
+<table>
+<tr><th>Index</th><th>File</th><th>Typical use</th></tr>
+<tr><td><tt>0</tt></td><td><tt>iplogo.mve</tt></td><td>Interplay logo.</td></tr>
+<tr><td><tt>1</tt></td><td><tt>intro.mve</tt></td><td>Opening narration.</td></tr>
+<tr><td><tt>2</tt></td><td><tt>elder.mve</tt></td><td>Elder cutscene.</td></tr>
+<tr><td><tt>3</tt></td><td><tt>vsuit.mve</tt></td><td>Vault suit/character-related cutscene.</td></tr>
+<tr><td><tt>4</tt></td><td><tt>afailed.mve</tt></td><td>Arroyo failed ending/cutscene.</td></tr>
+<tr><td><tt>5</tt></td><td><tt>adestroy.mve</tt></td><td>Arroyo destroyed ending/cutscene.</td></tr>
+<tr><td><tt>6</tt></td><td><tt>car.mve</tt></td><td>Car movie.</td></tr>
+<tr><td><tt>7</tt></td><td><tt>cartucci.mve</tt></td><td>Cathedral/Tucci-style special movie entry.</td></tr>
+<tr><td><tt>8</tt></td><td><tt>timeout.mve</tt></td><td>Time-out ending.</td></tr>
+<tr><td><tt>9</tt></td><td><tt>tanker.mve</tt></td><td>Tanker cutscene.</td></tr>
+<tr><td><tt>10</tt></td><td><tt>enclave.mve</tt></td><td>Enclave cutscene.</td></tr>
+<tr><td><tt>11</tt></td><td><tt>derrick.mve</tt></td><td>Derrick/oil-related cutscene.</td></tr>
+<tr><td><tt>12</tt></td><td><tt>artimer1.mve</tt></td><td>Arroyo timer movie 1.</td></tr>
+<tr><td><tt>13</tt></td><td><tt>artimer2.mve</tt></td><td>Arroyo timer movie 2.</td></tr>
+<tr><td><tt>14</tt></td><td><tt>artimer3.mve</tt></td><td>Arroyo timer movie 3.</td></tr>
+<tr><td><tt>15</tt></td><td><tt>artimer4.mve</tt></td><td>Arroyo timer movie 4.</td></tr>
+<tr><td><tt>16</tt></td><td><tt>credits.mve</tt></td><td>Credits.</td></tr>
+</table>
+
+<p>The Fallout 2 CE lookup order is:</p>
+
+<ol>
+<li>If the configured language is not English, try <tt>art\&lt;language&gt;\cuts\&lt;movie&gt;.mve</tt>.</li>
+<li>If that file is missing, fall back to <tt>art\cuts\&lt;movie&gt;.mve</tt>.</li>
+<li>If subtitles are enabled, build <tt>text\&lt;language&gt;\cuts\&lt;movie&gt;.SVE</tt> from the movie filename.</li>
+</ol>
+
+<p>Subtitles use special <a href="pal.html">palette</a> files for some movies. Fallout 2 CE uses <tt>art\cuts\introsub.pal</tt>, <tt>eldersub.pal</tt>, <tt>artmrsub.pal</tt>, <tt>crdtssub.pal</tt>, or the default <tt>art\cuts\subtitle.pal</tt> depending on the movie index.</p>
+
+<h2>File Header</h2>
+
+<p>An Interplay MVE begins with a fixed 26-byte header:</p>
+
+<table>
+<tr><th>Offset</th><th>Size</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0x0000</tt></td><td><tt>20</tt></td><td>Signature</td><td>ASCII <tt>Interplay MVE File</tt>, byte <tt>0x1A</tt>, and byte <tt>0x00</tt>.</td></tr>
+<tr><td><tt>0x0014</tt></td><td><tt>2</tt></td><td>Magic word 1</td><td>Little-endian <tt>0x001A</tt>.</td></tr>
+<tr><td><tt>0x0016</tt></td><td><tt>2</tt></td><td>Magic word 2</td><td>Little-endian <tt>0x0100</tt>.</td></tr>
+<tr><td><tt>0x0018</tt></td><td><tt>2</tt></td><td>Magic word 3</td><td>Little-endian <tt>0x1133</tt>.</td></tr>
+</table>
+
+<p>ScummVM asserts the three magic words when loading an MVE. FFmpeg's demuxer searches for the signature in probe/read-header code, then positions the stream at the first chunk.</p>
+
+<h2>Container Layout</h2>
+
+<p>After the header, the file is a sequence of chunks. Each chunk contains one or more opcodes.</p>
+
+<pre>
+MVE file
+    header
+    chunk
+        opcode
+        opcode
+        ...
+    chunk
+        opcode
+        ...
+</pre>
+
+<h3>Chunk Header</h3>
+
+<table>
+<tr><th>Offset</th><th>Size</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0x00</tt></td><td><tt>2</tt></td><td><tt>chunk_size</tt></td><td>Little-endian byte length of chunk payload, not including this 4-byte chunk header.</td></tr>
+<tr><td><tt>0x02</tt></td><td><tt>2</tt></td><td><tt>chunk_type</tt></td><td>Little-endian chunk type.</td></tr>
+</table>
+
+<h3>Opcode Header</h3>
+
+<table>
+<tr><th>Offset</th><th>Size</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0x00</tt></td><td><tt>2</tt></td><td><tt>opcode_size</tt></td><td>Little-endian byte length of opcode payload, not including this 4-byte opcode header.</td></tr>
+<tr><td><tt>0x02</tt></td><td><tt>1</tt></td><td><tt>opcode_type</tt></td><td>Operation id, normally <tt>0x00..0x15</tt>.</td></tr>
+<tr><td><tt>0x03</tt></td><td><tt>1</tt></td><td><tt>opcode_version</tt></td><td>Version/subtype byte for that opcode.</td></tr>
+</table>
+
+<p>Some source code displays opcodes as a big-endian 16-bit pair such as <tt>0x0502</tt>, which means type <tt>0x05</tt>, version <tt>0x02</tt>. A binary parser should still read the type and version as separate bytes.</p>
+
+<h2>Chunk Types</h2>
+
+<table>
+<tr><th>Type</th><th>Name</th><th>Description</th></tr>
+<tr><td><tt>0x0000</tt></td><td>Init audio</td><td>Audio stream setup, usually contains opcode <tt>0x03</tt>.</td></tr>
+<tr><td><tt>0x0001</tt></td><td>Audio only</td><td>Audio prebuffer or audio-only chunk.</td></tr>
+<tr><td><tt>0x0002</tt></td><td>Init video</td><td>Video mode/buffer/palette setup.</td></tr>
+<tr><td><tt>0x0003</tt></td><td>Video</td><td>Main movie chunk, commonly contains audio, decoding maps, video data, and send-buffer opcode.</td></tr>
+<tr><td><tt>0x0004</tt></td><td>Shutdown</td><td>End-of-playback/shutdown chunk.</td></tr>
+<tr><td><tt>0x0005</tt></td><td>End</td><td>Terminal end chunk. Usually no useful payload.</td></tr>
+</table>
+
+<h2>Stream Opcodes</h2>
+
+<table>
+<tr><th>Opcode</th><th>Name</th><th>Payload and behavior</th></tr>
+<tr><td><tt>0x00</tt></td><td>End of stream</td><td>No payload. Stops playback.</td></tr>
+<tr><td><tt>0x01</tt></td><td>End of chunk</td><td>No payload in normal files. Decoder moves to the next chunk.</td></tr>
+<tr><td><tt>0x02</tt></td><td>Create timer</td><td>Version 0, size 6: <tt>uint32 rate</tt>, <tt>uint16 subdivision</tt>. Frame interval is <tt>rate * subdivision</tt> microseconds.</td></tr>
+<tr><td><tt>0x03</tt></td><td>Init audio buffers</td><td>Version 0 size 8 or version 1 size 10. Contains unknown word, flags, sample rate, and buffer length.</td></tr>
+<tr><td><tt>0x04</tt></td><td>Start/stop audio</td><td>Playback-control opcode. Common demuxers skip the payload.</td></tr>
+<tr><td><tt>0x05</tt></td><td>Init video buffers</td><td>Version 0/1/2. Width and height are stored in 8-pixel blocks. Version 2 can indicate 16-bit video.</td></tr>
+<tr><td><tt>0x06</tt></td><td>Video data format 6</td><td>Older 8-bit video frame format. FFmpeg treats its decoding map as embedded at the start of the video payload.</td></tr>
+<tr><td><tt>0x07</tt></td><td>Send buffer</td><td>Marks the current decoded frame ready for display. ScummVM also reads palette start/count from version 1 payload.</td></tr>
+<tr><td><tt>0x08</tt></td><td>Audio frame</td><td>Audio payload: sequence index, stream mask, stream length, and audio data.</td></tr>
+<tr><td><tt>0x09</tt></td><td>Silence frame</td><td>Silent audio payload: sequence index, stream mask, and stream length.</td></tr>
+<tr><td><tt>0x0A</tt></td><td>Init video mode</td><td>Usually contains width, height, and flags. Fallout/ScummVM playback code reads and ignores these values after setup.</td></tr>
+<tr><td><tt>0x0B</tt></td><td>Create gradient</td><td>Documented/recognized by demuxers, but often skipped for normal playback.</td></tr>
+<tr><td><tt>0x0C</tt></td><td>Set palette</td><td>Palette start, palette count, then 3 bytes per entry in 6-bit VGA RGB format.</td></tr>
+<tr><td><tt>0x0D</tt></td><td>Set compressed palette</td><td>Compressed palette update. FFmpeg recognizes and skips it; older specs describe 32 groups of 8 palette entries selected by bit masks.</td></tr>
+<tr><td><tt>0x0E</tt></td><td>Set skip map</td><td>Stores the skip map used by video format <tt>0x10</tt>.</td></tr>
+<tr><td><tt>0x0F</tt></td><td>Set decoding map</td><td>Stores the block decoding map used by video formats <tt>0x10</tt> and <tt>0x11</tt>.</td></tr>
+<tr><td><tt>0x10</tt></td><td>Video data format 10</td><td>8-bit video frame format using separate skip map and decoding map opcodes.</td></tr>
+<tr><td><tt>0x11</tt></td><td>Video data format 11</td><td>Interplay block-coded video. FFmpeg supports 8-bit paletted and 16-bit RGB555 variants.</td></tr>
+<tr><td><tt>0x12..0x15</tt></td><td>Unknown/documented opcodes</td><td>Recognized in old specs and FFmpeg as documented-but-unknown values. Normal decoders skip them or treat unrecognized payloads conservatively.</td></tr>
+</table>
+
+<h2>Timing</h2>
+
+<p>The timer opcode stores a 32-bit rate and a 16-bit subdivision. The effective frame interval is:</p>
+
+<pre>
+frame_interval_us = timer_rate * timer_subdivision
+fps = 1000000 / frame_interval_us
+</pre>
+
+<p>Older MVE notes mention a common timer rate of <tt>8341</tt> and subdivision <tt>8</tt>, giving about <tt>14.99</tt> frames per second. Do not hardcode that value: read the timer opcode because files can differ.</p>
+
+<h2>Audio</h2>
+
+<p>Audio is optional. FFmpeg checks whether the first chunk after video initialization is another video chunk; if so, it treats the file as silent. Otherwise it expects an audio initialization chunk.</p>
+
+<h3>Audio Init Flags</h3>
+
+<table>
+<tr><th>Bit</th><th>Meaning</th></tr>
+<tr><td><tt>0</tt></td><td><tt>0</tt> mono, <tt>1</tt> stereo.</td></tr>
+<tr><td><tt>1</tt></td><td><tt>0</tt> 8-bit samples, <tt>1</tt> 16-bit samples.</td></tr>
+<tr><td><tt>2</tt></td><td>Version 1 only: <tt>0</tt> uncompressed PCM, <tt>1</tt> Interplay DPCM.</td></tr>
+</table>
+
+<p>Uncompressed audio is PCM: 8-bit unsigned PCM or 16-bit little-endian PCM. Compressed audio is Interplay DPCM.</p>
+
+<h3>Audio Frame Payload</h3>
+
+<table>
+<tr><th>Offset</th><th>Size</th><th>Field</th><th>Description</th></tr>
+<tr><td><tt>0x00</tt></td><td><tt>2</tt></td><td>Sequence index</td><td>Sequential audio frame number.</td></tr>
+<tr><td><tt>0x02</tt></td><td><tt>2</tt></td><td>Stream mask</td><td>Bitmask selecting one or more of up to 16 audio tracks.</td></tr>
+<tr><td><tt>0x04</tt></td><td><tt>2</tt></td><td>Stream length</td><td>Length of the following audio data for opcode <tt>0x08</tt>; silence duration for opcode <tt>0x09</tt>.</td></tr>
+<tr><td><tt>0x06</tt></td><td>variable</td><td>Audio data</td><td>Present only for opcode <tt>0x08</tt>.</td></tr>
+</table>
+
+<p>ScummVM exposes a selectable audio track index and queues only audio frames whose stream mask includes that track. This matters for multi-language MVE files, even though Fallout usually relies on localized files and a single active audio stream.</p>
+
+<h3>Interplay DPCM</h3>
+
+<p>Interplay DPCM uses a 256-entry signed delta table. Each chunk begins with one signed 16-bit little-endian predictor for mono audio, or two predictors for stereo audio. The remaining bytes are delta-table indexes. For each byte, the decoder adds the selected delta to the current predictor, clamps to signed 16-bit range, and outputs the new sample. Stereo samples are interleaved left/right.</p>
+
+<h2>Palette</h2>
+
+<p>8-bit MVE video uses palette indexes. Palette opcode <tt>0x0C</tt> carries a start index, count, and RGB triplets. Each RGB component is a VGA-style 6-bit value from <tt>0</tt> to <tt>63</tt>. Decoders typically expand to 8-bit display color with a shift and low-bit fill, for example <tt>(value &lt;&lt; 2) | (value &gt;&gt; 4)</tt>.</p>
+
+<p>Palette changes are frame-adjacent state. A demuxer should attach palette updates to the next decoded video packet or apply them before showing the corresponding frame.</p>
+
+<h2>Video Setup</h2>
+
+<p>Video buffer initialization stores width and height in 8-pixel blocks. For example, width block count <tt>80</tt> and height block count <tt>60</tt> describe a <tt>640x480</tt> movie. FFmpeg multiplies both fields by <tt>8</tt> when setting stream dimensions.</p>
+
+<p>Version 2 of the video-buffer opcode can select 16-bit video. In FFmpeg, 8-bit output is <tt>PAL8</tt> and 16-bit output is <tt>RGB555</tt>. Fallout's normal cutscene path is paletted, and the movie window is a 640 by 480 indexed-color window.</p>
+
+<h2>Video Data Formats</h2>
+
+<table>
+<tr><th>Format</th><th>Opcode</th><th>Maps</th><th>Description</th></tr>
+<tr><td><tt>0x06</tt></td><td><tt>0x06</tt></td><td>Embedded decoding map</td><td>Older block copy format. FFmpeg requires 8-bit video and rejects external skip/decoding maps for this format.</td></tr>
+<tr><td><tt>0x10</tt></td><td><tt>0x10</tt></td><td>Separate skip map and decoding map</td><td>8-bit block copy format using opcode <tt>0x0E</tt> skip map and <tt>0x0F</tt> decoding map.</td></tr>
+<tr><td><tt>0x11</tt></td><td><tt>0x11</tt></td><td>Separate decoding map</td><td>Interplay block codec. 8-bit and 16-bit variants are supported by FFmpeg.</td></tr>
+</table>
+
+<p>Each decoded frame is built from 8 by 8 blocks. The codec keeps previous frames because many block modes copy from the previous frame, the second previous frame, or a previously decoded block in the current frame.</p>
+
+<h2>Format 0x11 Block Modes</h2>
+
+<p>For video format <tt>0x11</tt>, the decoding map is a packed stream of 4-bit block opcodes, one per 8x8 block. FFmpeg's decoder names block modes <tt>0x0</tt> through <tt>0xF</tt>:</p>
+
+<table>
+<tr><th>Block opcode</th><th>8-bit meaning</th></tr>
+<tr><td><tt>0x0</tt></td><td>Copy 8x8 block from previous frame at the same position.</td></tr>
+<tr><td><tt>0x1</tt></td><td>Copy 8x8 block from the second previous frame at the same position.</td></tr>
+<tr><td><tt>0x2</tt></td><td>Copy from the second previous frame using a one-byte motion vector.</td></tr>
+<tr><td><tt>0x3</tt></td><td>Copy from the current frame using an up/left motion vector.</td></tr>
+<tr><td><tt>0x4</tt></td><td>Copy from the previous frame using a small one-byte motion vector.</td></tr>
+<tr><td><tt>0x5</tt></td><td>Copy from the previous frame using two signed motion-vector bytes.</td></tr>
+<tr><td><tt>0x6</tt></td><td>Mystery/rare mode in the 8-bit decoder. FFmpeg logs it as suspicious but does not consume extra data.</td></tr>
+<tr><td><tt>0x7</tt></td><td>2-color encoding for either individual pixels or 2x2 blocks, depending on color ordering.</td></tr>
+<tr><td><tt>0x8</tt></td><td>2-color encoding split by quadrants or by half-frame regions inside the 8x8 block.</td></tr>
+<tr><td><tt>0x9</tt></td><td>4-color encoding with pixel, 2x2, 2x1, or 1x2 grouping depending on color ordering.</td></tr>
+<tr><td><tt>0xA</tt></td><td>4-color encoding split by quadrants or half-block regions.</td></tr>
+<tr><td><tt>0xB</tt></td><td>Raw 64-color block: one byte per pixel.</td></tr>
+<tr><td><tt>0xC</tt></td><td>16-color block: one color per 2x2 cell.</td></tr>
+<tr><td><tt>0xD</tt></td><td>4-color block: one color per 4x4 quadrant-style area.</td></tr>
+<tr><td><tt>0xE</tt></td><td>Solid-color block.</td></tr>
+<tr><td><tt>0xF</tt></td><td>Dithered two-color block.</td></tr>
+</table>
+
+<p>The 16-bit variant uses the same broad block-mode table but reads RGB555 words instead of palette indexes for color-coded modes. FFmpeg maps 16-bit MVE frames to <tt>RGB555</tt>.</p>
+
+<h2>Frame Assembly</h2>
+
+<p>A demuxer should not pass raw opcode payloads independently to a video decoder. FFmpeg combines the frame format byte, send-buffer flag, video data, decoding map, skip map, and palette side data into a single video packet. ScummVM keeps the latest skip/decoding maps in decoder state and applies them when a video opcode arrives.</p>
+
+<p>The send-buffer opcode controls when a decoded frame is actually displayed. A video-data opcode may update decode buffers, while the send opcode marks the frame complete for presentation and increments the visible frame count.</p>
+
+<h2>Subtitles</h2>
+
+<p>Fallout subtitles are not embedded in the MVE stream. The movie subsystem builds a subtitle filename from the movie filename:</p>
+
+<pre>
+art\cuts\intro.mve
+text\english\cuts\intro.SVE
+</pre>
+
+<p>The <a href="sve.html">SVE</a> parser reads lines of the form <tt>frame:text</tt>. When playback reaches or passes that frame number, the text replaces the previous subtitle. Fallout 2 CE renders subtitles centered below the movie image, using the selected subtitle palette and font.</p>
+
+<p>A same-basename <a href="cfg.html">CFG</a> sidecar can also exist beside an MVE to define movie palette fade effects. For example, <tt>art\cuts\intro.mve</tt> can be accompanied by <tt>art\cuts\intro.cfg</tt>.</p>
+
+<h2>Savegame Relationship</h2>
+
+<p><a href="savegame.html">SAVE.DAT</a> handler 21 stores <tt>MOVIE_COUNT</tt> bytes of movie-seen flags. The movie files themselves are not copied into save slots. A save only records whether each movie index in the engine's fixed table has already been seen.</p>
+
+<h2>Implementation Notes</h2>
+
+<ul>
+<li>MVE container numbers are little-endian. Do not reuse the big-endian helpers used by PRO, MAP, INT, or SAVE.DAT without swapping.</li>
+<li>Chunk sizes exclude the 4-byte chunk header; opcode sizes exclude the 4-byte opcode header.</li>
+<li>Video dimensions are stored in 8-pixel blocks during video-buffer initialization.</li>
+<li>Palette entries are 6-bit VGA RGB values, not full 8-bit RGB values.</li>
+<li>Audio frames can be masked for up to 16 streams. A player should choose a stream and ignore frames whose mask does not include it.</li>
+<li>DPCM audio needs predictor state within each compressed frame and the Interplay DPCM delta table.</li>
+<li>Video decoding needs previous-frame buffers; block-copy modes cannot be decoded statelessly.</li>
+<li>Unknown opcodes <tt>0x12..0x15</tt> may appear in some Interplay movies. A robust player can skip documented unknown payloads, but should reject truly unknown opcode types unless it can safely skip by size.</li>
+<li>Fallout subtitle timing uses decoded/displayed movie frame counts, not wall-clock timestamps.</li>
+</ul>
+
+<h2>Source Code Map</h2>
+
+<table>
+<tr><th>Source</th><th>What it confirms</th></tr>
+<tr><td>FFmpeg <tt>libavformat/ipmovie.c</tt></td><td>Header probing, chunk types, opcode types, timer/audio/video/palette demuxing, packet assembly.</td></tr>
+<tr><td>FFmpeg <tt>libavcodec/interplayvideo.c</tt></td><td>Video frame formats <tt>0x06</tt>, <tt>0x10</tt>, <tt>0x11</tt>, block opcodes, previous-frame use, 8-bit and 16-bit output.</td></tr>
+<tr><td>ScummVM <tt>video/mve_decoder.cpp</tt></td><td>Practical player structure, signature/magic-word checks, selectable audio track, Fallout-like format 6/10 handling.</td></tr>
+<tr><td>Fallout 2 CE <tt>game_movie.cc</tt></td><td>Fallout movie filename table, localized movie lookup, subtitle filename construction, subtitle palette selection, movie-seen save flags.</td></tr>
+<tr><td>Fallout 2 CE <tt>movie.cc</tt></td><td>Movie playback integration, subtitle loading/rendering, SVE line parsing, frame-count-based subtitle display.</td></tr>
+</table>
+
+<h2>References</h2>
+<a href="https://wiki.multimedia.cx/index.php/Interplay_MVE">Interplay MVE - MultimediaWiki</a><br/>
+<a href="https://wiki.multimedia.cx/index.php/Interplay_DPCM">Interplay DPCM - MultimediaWiki</a><br/>
+<a href="https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/ipmovie.c">FFmpeg Interplay MVE demuxer</a><br/>
+<a href="https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/interplayvideo.c">FFmpeg Interplay video decoder</a><br/>
+<a href="https://github.com/scummvm/scummvm/blob/master/video/mve_decoder.cpp">ScummVM MVE decoder</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_movie.cc">Fallout 2 CE game_movie.cc</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/movie.cc">Fallout 2 CE movie.cc</a><br/>
+<a href="https://falloutmods.fandom.com/wiki/MVE_File_Format">MVE File Format - Vault-Tec Labs</a><br/>
+<a href="sve.html">SVE File Format</a><br/>
+<a href="https://falloutmods.fandom.com/wiki/SVE_File_Format">SVE File Format - Vault-Tec Labs</a>
+
+<h2>History</h2>
+<p>
+2026-05-07 - Added dedicated MVE documentation covering Fallout lookup behavior, container/chunk/opcode structure, audio, palette, video frame formats, block modes, subtitles, and savegame relationship.
+</p>
+</div>
+</body>
+</html>

@@ -9,7 +9,7 @@
 
 <p>MAP files describe playable locations: header metadata, map variables, floor and roof tiles, active scripts, and placed objects. Fallout maps can contain up to three elevations. Each elevation has a 200 by 200 hex grid for objects and a 100 by 100 square grid for floor and roof tiles.</p>
 
-<p>In Fallout 2, map files are normally loaded from <tt>maps\*.map</tt>. When a save-game version exists, the engine checks for a matching <tt>.sav</tt> map first and loads that instead. The saved map has the same broad structure, but includes runtime state that a clean mapper-authored MAP may not contain.</p>
+<p>In Fallout 2, map files are normally loaded from <tt>maps\*.map</tt>. When a save-game version exists, the engine checks for a matching <tt>.sav</tt> map first and loads that instead. The saved map has the same broad structure, but includes runtime state that a clean mapper-authored MAP may not contain. See <a href="savegame.html">Savegame Structure</a> for the surrounding <tt>SAVE.DAT</tt> and slot sidecar layout.</p>
 
 <h2>Clean maps and saved maps</h2>
 
@@ -28,6 +28,8 @@
 </table>
 
 <p>Fallout 2 CE also treats saved and clean maps differently during load. For example, when the saved-map flag is not set, loaded script <tt>local_vars_count</tt> is cleared and can be recovered later from <tt>scripts.lst</tt>; when the flag is set, saved local variable state is preserved. Static parsers should therefore avoid assuming that zeroed runtime fields mean the format lacks those fields.</p>
+
+<p>Some travel systems reference MAPs indirectly. <a href="elevators.html">Elevator configuration</a>, for example, stores destination map indexes, elevations, and tiles; the map index resolves through <tt>data\maps.txt</tt>, while the target elevation and tile must be valid in the destination MAP.</p>
 
 <h2>File order</h2>
 
@@ -130,7 +132,7 @@
 <tr><td><tt>extent.next</tt></td><td><tt>int32</tt></td><td>Serialized linked-list pointer placeholder. Fallout 2 CE writes <tt>0</tt> and ignores the value when reading.</td></tr>
 </table>
 
-<p>Script ids use the same packed style described on the <a href="lst.html">LST page</a>. The high byte is the script type, which also controls whether the record has spatial or timed extra fields.</p>
+<p>Script ids use the packed style described on the <a href="scripts_lst.html">SCRIPTS.LST page</a>. The high byte is the script type, which also controls whether the record has spatial or timed extra fields.</p>
 
 <table>
 <tr><th>Offset</th><th>Field</th><th>Description</th></tr>
@@ -169,18 +171,18 @@
 
 <table>
 <tr><th>Place</th><th>Field</th><th>Meaning</th></tr>
-<tr><td>PRO</td><td><tt>sid</tt></td><td>Default packed script id for objects created from that prototype. The low bits identify an entry in <tt>scripts\scripts.lst</tt>.</td></tr>
+<tr><td>PRO</td><td><tt>sid</tt></td><td>Default packed script id for objects created from that prototype. The low bits identify an entry in <a href="scripts_lst.html"><tt>scripts\scripts.lst</tt></a>.</td></tr>
 <tr><td>MAP header</td><td><tt>script_index</tt></td><td>Map script reference. Fallout 2 CE treats positive values as one-based and stores <tt>script_index - 1</tt> in the created system script record.</td></tr>
 <tr><td>MAP object</td><td><tt>sid</tt></td><td>Runtime script instance id attached to this placed object, or <tt>-1</tt> when no runtime script is attached.</td></tr>
 <tr><td>MAP object</td><td><tt>script_index</tt></td><td>Cached script-list index for the object. For critters, CE updates this from the runtime script when creating an instance.</td></tr>
 <tr><td>MAP script record</td><td><tt>sid</tt></td><td>Runtime script instance id. The high byte is the script type.</td></tr>
-<tr><td>MAP script record</td><td><tt>script_index</tt></td><td>Zero-based index into <tt>scripts\scripts.lst</tt>; this selects the <tt>.int</tt> program name.</td></tr>
+<tr><td>MAP script record</td><td><tt>script_index</tt></td><td>Zero-based index into <a href="scripts_lst.html"><tt>scripts\scripts.lst</tt></a>; this selects the <tt>.int</tt> program name.</td></tr>
 <tr><td>MAP script record</td><td><tt>owner_id</tt></td><td>Object id of the owning object. For spatial/map helper scripts, the engine may create hidden helper objects as owners.</td></tr>
 </table>
 
 <p>When CE creates a new object script instance, it allocates a fresh runtime <tt>sid</tt>, copies the script-list index from the PRO script id, and sets <tt>owner_id</tt> to the object's id. For spatial scripts it also initializes <tt>built_tile</tt> from the object's tile/elevation and gives the script a default radius of <tt>3</tt>.</p>
 
-<p>Script local variables are stored in the MAP local-variable array, not inside the script record itself. A script record's <tt>local_vars_offset</tt> is the starting index in that array, and <tt>local_vars_count</tt> is the number of values reserved for the script. The <tt>local_vars=N</tt> metadata in <tt>scripts.lst</tt> tells the engine how many locals a script wants when it needs to allocate or re-discover them.</p>
+<p>Script local variables are stored in the MAP local-variable array, not inside the script record itself. A script record's <tt>local_vars_offset</tt> is the starting index in that array, and <tt>local_vars_count</tt> is the number of values reserved for the script. The <tt>local_vars=N</tt> metadata in <a href="scripts_lst.html"><tt>scripts.lst</tt></a> tells the engine how many locals a script wants when it needs to allocate or re-discover them.</p>
 
 <p>Saved maps preserve local variable values and set the saved-map flag <tt>0x00000001</tt>. For non-saved maps, Fallout 2 CE clears loaded script <tt>local_vars_count</tt>; the script engine can later recover the intended count from <tt>scripts.lst</tt> and allocate fresh zeroed local variables. This is why clean mapper-authored maps and runtime <tt>.sav</tt> maps can differ even when their script records point to the same <tt>.int</tt> files.</p>
 
@@ -380,15 +382,15 @@
 <tr><td><tt>proto\items\items.lst</tt>, <tt>proto\critters\critters.lst</tt>, <tt>proto\scenery\scenery.lst</tt>, <tt>proto\walls\walls.lst</tt>, <tt>proto\tiles\tiles.lst</tt>, <tt>proto\misc\misc.lst</tt></td><td>Resolve a PID's low bits to a PRO filename.</td><td><tt>pid</tt>.</td></tr>
 <tr><td><tt>proto\...\*.pro</tt></td><td>Determine object type/subtype payloads, default flags, message ids, FID, material, scripts, critter stats, item data, and scenery behavior.</td><td><tt>pid</tt>.</td></tr>
 <tr><td><tt>art\items\items.lst</tt>, <tt>art\critters\critters.lst</tt>, <tt>art\scenery\scenery.lst</tt>, <tt>art\walls\walls.lst</tt>, <tt>art\tiles\tiles.lst</tt>, <tt>art\misc\misc.lst</tt></td><td>Resolve FID art ids to FRM filenames.</td><td><tt>fid</tt>, tile roof/floor ids, PRO FID fields.</td></tr>
-<tr><td><tt>art\...\*.frm</tt></td><td>Render objects, tiles, inventory images, critters, walls, scenery, and animation frames.</td><td>Resolved from <tt>fid</tt> and art LST entries.</td></tr>
+<tr><td><a href="frm.html"><tt>art\...\*.frm</tt></a></td><td>Render objects, tiles, inventory images, critters, walls, scenery, and animation frames.</td><td>Resolved from <tt>fid</tt> and art LST entries.</td></tr>
 <tr><td><tt>scripts\scripts.lst</tt></td><td>Resolve script indexes to <tt>.int</tt> script names and read <tt>local_vars=N</tt> metadata.</td><td>Header <tt>script_index</tt>, object <tt>script_index</tt>, script record <tt>script_index</tt>, PRO <tt>sid</tt>.</td></tr>
 <tr><td><tt>scripts\*.int</tt></td><td>Executable script bytecode used by the engine.</td><td>Resolved through <tt>scripts.lst</tt>.</td></tr>
 <tr><td><tt>text\english\game\pro_item.msg</tt>, <tt>pro_crit.msg</tt>, <tt>pro_scen.msg</tt>, <tt>pro_wall.msg</tt>, <tt>pro_tile.msg</tt>, <tt>pro_misc.msg</tt></td><td>Object names and descriptions. See <a href="msg.html">MSG File Format</a>.</td><td>PRO message ids reached through object <tt>pid</tt>.</td></tr>
 <tr><td><tt>data\maps.txt</tt> / worldmap map list</td><td>Resolve map indexes used by the header, transitions, stairs, ladders, and exit grids. See <a href="worldmap_config.html">World-map Text Configuration Files</a>.</td><td>Header <tt>map_index</tt>, exit-grid <tt>map</tt>, scenery <tt>destination_map</tt>.</td></tr>
-<tr><td><tt>elevators.ini</tt> / elevator definitions in modern engines</td><td>Resolve elevator type and level behavior.</td><td>Elevator scenery <tt>elevator_type</tt> and <tt>elevator_level</tt>.</td></tr>
+<tr><td><a href="elevators.html"><tt>elevators.ini</tt></a> / elevator definitions in modern engines</td><td>Resolve elevator type and level behavior.</td><td>Elevator scenery <tt>elevator_type</tt> and <tt>elevator_level</tt>.</td></tr>
 </table>
 
-<p>For a static object index, PRO files are the most important dependency because MAP object payload size depends on PID type and item/scenery subtype. For a visual map preview, art LSTs and FRM files become equally important. For script analysis, <tt>scripts.lst</tt> is required even if the <tt>.int</tt> bytecode itself is not parsed.</p>
+<p>For a static object index, PRO files are the most important dependency because MAP object payload size depends on PID type and item/scenery subtype. For a visual map preview, art LSTs and <a href="frm.html">FRM</a> files become equally important. For script analysis, <tt>scripts.lst</tt> is required even if the <tt>.int</tt> bytecode itself is not parsed.</p>
 
 <h2>Minimal parser recipe</h2>
 

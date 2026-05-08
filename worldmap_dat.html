@@ -20,7 +20,7 @@
 <tr><td>Integer byte order</td><td>All stored values are 32-bit big-endian integers. Engine booleans are also written as 32-bit integers: <tt>0</tt> or <tt>1</tt>.</td></tr>
 <tr><td>Static dependency</td><td>The file can only be interpreted safely after the matching <tt>maps.txt</tt>, <tt>city.txt</tt>, and <tt>worldmap.txt</tt> data have been loaded.</td></tr>
 <tr><td>Variable length</td><td>Length depends on the number of loaded cities, each city's entrance count, the number of world-map tiles, and the number of stored encounter counters.</td></tr>
-<tr><td>Typical location</td><td>The engine reads and writes a plain <tt>worldmap.dat</tt> through the normal file layer. Save-game code also serializes the same world-map state into the save data.</td></tr>
+<tr><td>Typical location</td><td>The engine reads and writes a plain <tt>worldmap.dat</tt> through the normal file layer. Save-game code also serializes the same world-map state into <a href="savegame.html"><tt>SAVE.DAT</tt></a>.</td></tr>
 </table>
 
 <p>Classic documentation describes <tt>worldmap.dat</tt> as a cache, and that is a good mental model. It is small state derived from larger configuration files. If <tt>city.txt</tt> or <tt>worldmap.txt</tt> is changed but an old saved world-map state is reused, the saved state can point at the wrong amount of city, entrance, tile, or encounter data.</p>

@@ -78,13 +78,19 @@
 <tr><td><tt>text\&lt;language&gt;\game\pro_misc.msg</tt></td><td>Misc prototype names and descriptions.</td></tr>
 <tr><td><tt>text\&lt;language&gt;\dialog\*.msg</tt></td><td>Script dialogue files, loaded lazily from the script filename.</td></tr>
 <tr><td><tt>text\&lt;language&gt;\game\combatai.msg</tt></td><td>Combat AI floats referenced by <a href="ai_txt.html">AI.TXT</a>, <tt>AIBDYMSG.TXT</tt>, and <tt>AIGENMSG.TXT</tt>.</td></tr>
-<tr><td><tt>text\&lt;language&gt;\game\combat.msg</tt></td><td>General combat messages.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\combat.msg</tt></td><td>General combat messages, including message ids referenced by <a href="criticals.html">critical hit tables</a>.</td></tr>
 <tr><td><tt>text\&lt;language&gt;\game\item.msg</tt></td><td>Shared item-use messages, book text hooks, explosive messages, and other item-system strings.</td></tr>
 <tr><td><tt>text\&lt;language&gt;\game\stat.msg</tt>, <tt>skill.msg</tt>, <tt>perk.msg</tt>, <tt>trait.msg</tt></td><td>Displayed names and descriptions for character stats, skills, perks, and traits.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pipboy.msg</tt></td><td>Pip-Boy UI labels, holodisk titles, and holodisk body text used with <a href="pipboy_txt.html"><tt>holodisk.txt</tt></a>.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\quests.msg</tt></td><td>Quest description lines displayed through <a href="pipboy_txt.html"><tt>quests.txt</tt></a>.</td></tr>
 <tr><td><tt>text\&lt;language&gt;\game\worldmap.msg</tt></td><td>Worldmap UI and encounter text.</td></tr>
 </table>
 
 <p>Fallout 2 CE falls back to <tt>text\english\...</tt> when the configured language's message file is missing. The original executables should be treated more conservatively: ship the localized file in the language directory you expect the game to use.</p>
+
+<h2>Critical hit messages</h2>
+
+<p><a href="criticals.html">Critical hit tables</a> store numeric <tt>Message</tt> and <tt>FailMessage</tt> ids. These ids are looked up in <tt>combat.msg</tt> after the critical effect and any failed defensive stat check have been resolved. If a critical table is edited without matching <tt>combat.msg</tt> entries, the combat log can show fallback lookup text even though the critical effect still applies mechanically.</p>
 
 <h2>PRO dependencies</h2>
 
@@ -120,13 +126,13 @@
 
 <h2>Script and dialogue use</h2>
 
-<p>Compiled scripts call message operations by numeric message-list id and message id. For normal script dialogue, the engine converts the list id to a script index, reads that script's filename from <tt>scripts\scripts.lst</tt>, strips the extension, and loads <tt>dialog\&lt;scriptname&gt;.msg</tt> on first use.</p>
+<p>Compiled scripts call message operations by numeric message-list id and message id. For normal script dialogue, the engine converts the list id to a script index, reads that script's filename from <a href="scripts_lst.html"><tt>scripts\scripts.lst</tt></a>, strips the extension, and loads <tt>dialog\&lt;scriptname&gt;.msg</tt> on first use.</p>
 
 <p>For example, a script file named <tt>VAULT13.INT</tt> expects dialogue text in <tt>text\&lt;language&gt;\dialog\VAULT13.msg</tt>. The dialogue MSG file is cached after the first lookup. During dialogue speech playback, the audio field is used as the speech name if it is non-empty.</p>
 
 <table>
 <tr><th>Script value</th><th>Meaning</th></tr>
-<tr><td><tt>message_str(list, id)</tt></td><td>Looks up <tt>id</tt> in the dialogue list selected by <tt>list</tt>. In normal dialogue use, <tt>list</tt> is one-based: list <tt>1</tt> maps to the first entry in <tt>scripts.lst</tt>, list <tt>2</tt> to the second, and so on.</td></tr>
+<tr><td><tt>message_str(list, id)</tt></td><td>Looks up <tt>id</tt> in the dialogue list selected by <tt>list</tt>. In normal dialogue use, <tt>list</tt> is one-based: list <tt>1</tt> maps to the first entry in <a href="scripts_lst.html"><tt>scripts.lst</tt></a>, list <tt>2</tt> to the second, and so on.</td></tr>
 <tr><td><tt>message_str(0, 0)</tt></td><td>Returns an empty string.</td></tr>
 <tr><td><tt>message_str(-1, -1)</tt></td><td>Returns an empty string.</td></tr>
 <tr><td><tt>message_str(-2, -2)</tt></td><td>Returns message <tt>650</tt> from <tt>proto.msg</tt>.</td></tr>
@@ -233,6 +239,7 @@
 <li><a href="map.html">MAP File Format</a> stores map indexes that are displayed through <tt>map.msg</tt>.</li>
 <li><a href="lst.html">LST File Format</a> documents the indexed lists used by prototypes, art, and scripts.</li>
 <li><a href="ai_txt.html">AI.TXT</a> references combat message ranges that resolve through <tt>combatai.msg</tt>.</li>
+<li><a href="pipboy_txt.html">Pip-Boy Text Data</a> documents how <tt>quests.txt</tt> and <tt>holodisk.txt</tt> reference <tt>map.msg</tt>, <tt>quests.msg</tt>, and <tt>pipboy.msg</tt>.</li>
 <li><a href="lip.html">LIP File Format</a> documents the lip-sync companion files used with dialogue MSG audio fields.</li>
 </ul>
 
@@ -243,6 +250,7 @@
 <li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/message.h">Fallout 2 CE <tt>message.h</tt></a> - message item structures, field buffer size, and standard/proto message list ids.</li>
 <li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.cc">Fallout 2 CE <tt>proto.cc</tt></a> - <tt>pro_*.msg</tt> loading and PRO name/description lookup.</li>
 <li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/map.cc">Fallout 2 CE <tt>map.cc</tt></a> - <tt>map.msg</tt> loading and map/city name lookup formulas.</li>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/pipboy.cc">Fallout 2 CE <tt>pipboy.cc</tt></a> - <tt>pipboy.msg</tt> and <tt>quests.msg</tt> loading for Pip-Boy status and holodisk text.</li>
 <li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc">Fallout 2 CE <tt>scripts.cc</tt></a> - <tt>script.msg</tt> loading, lazy <tt>dialog\*.msg</tt> loading, and <tt>message_str</tt> speech handling.</li>
 <li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/sfall_opcodes.cc">Fallout 2 CE <tt>sfall_opcodes.cc</tt></a> - <tt>message_str_game</tt> repository lookups.</li>
 <li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_dialog.cc">Fallout 2 CE <tt>game_dialog.cc</tt></a> and <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/lips.cc"><tt>lips.cc</tt></a> - dialogue audio-field and speech/lip-sync lookup behavior.</li>

@@ -1,173 +1,310 @@
 <html>
 <head>
-    <title>FRM</title>
+    <title>FRM File Format</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
-    <div style="width: 1200px; margin: auto;">
-    <h1>FRM files</h1>
-    <p>FRM files are unpaletted 256-color image files containing either one or several images in one file. The palette used for FRM files come in the form of external palette files. </p>
-    <p>The engine defaults to color.pal if not specified, but FRMs may have their own distinct palette files. These specific palette files have the same name as the FRM, but with the extension .pal. For example, the palette file of helpscrn.frm is helpscrn.pal. </p>
-    <p>An index color model is used to store raw pixel data, meaning each pixel is represented by an index in an array of colors. For the default palette (<a href="fo_colors.html">color.pal</a>) which has 256 color indexes, the color index of 0 represents transparency. </p>
-    
-    <h3>File Suffixes</h3>
-    <p>An FRM may contain image data for one or all of the 6 orientations used in Fallout. If an FRM has the extension .fr[0-5] instead of the usual .frm, then that file contains image data for the orientation given by the last digit in the extension. 0 represents the northeast direction and each subsequent suffix rotates in the clockwise direction (5 representing the northwest direction). Otherwise, the FRM contains image data for either orientation 0, or all 6 orientations. </p>
-    
-    <h3>Frame Positioning</h3>
-    <p>The FRM contains offset values used to correctly align (or center) the image data. For example, image data should be aligned so that each critter's feet should be on the same level. </p>
-    <p>Each frame contained within the FRM has an offset from the previous frame which must be applied before rendering. This offset ensures that each frame is correctly aligned during an animation sequence. </p>
-    <p>The center of the image data is the center of the bottom edge of the frame. To find the position of the top left corner of the frame (needed for rendering): </p>
-    <pre>
-left = center_x - (frame_width / 2)
-top  = center_y - frame_height
-    </pre>
-    <p>All numeric fields in FRM files are stored in big-endian byte order. This matches the Fallout 2 engine reader, which reads 16-bit and 32-bit FRM values with the same byte-swapping helpers used for other big-endian game data.</p>
-    <h3>FRM header & data</h3>
-    <table cellspacing="0" cellpadding="5" border="1">
-        <tbody><tr>
-        <th>Offset
-        </th><th>Size
-        </th><th>Datatype
-        </th><th>Possible values in Fallout 1/2 .FRM's
-        </th><th style="width: 45%;">Description
-        </th></tr>
-        <tr>
-        <td>0x0000
-        </td><td>4 bytes
-        </td><td>unsigned
-        </td><td>0x04
-        </td><td><b>Version number of the FRM format</b>
-        </td></tr>
-        <tr>
-        <td>0x0004
-        </td><td>2 bytes
-        </td><td>unsigned
-        </td><td>0x08 - 0x16, possibly more
-        </td><td><b>FPS</b> - Frames per second rate of the animation
-        </td></tr>
-        <tr>
-        <td>0x0006
-        </td><td>2 bytes
-        </td><td>unsigned
-        </td><td>0x01 -&gt; 0xFF (if the FRM has 255 single frames which is highly unlikely)
-        </td><td><b>Action frame</b> - Frame of the animation on which actions occur (shot, open doors, etc.)
-        </td></tr>
-        <tr>
-        <td>0x0008
-        </td><td>2 bytes
-        </td><td>unsigned
-        </td><td>0x01 -&gt; 0xFF
-        </td><td><b>Number of frames per direction</b> - All orientations of an FRM have the same number of frames. For a static image, this number will be 1. For an animation of 10 frames, this value will be 10, even though there would be a total of 60 frames stored (10 for each of the 6 orientations)
-        </td></tr>
-        <tr>
-        <td>0x000A
-        </td><td>2 bytes
-        </td><td>signed
-        </td><td>Signed pixel offset
-        </td><td><b>Pixel shift in the x direction, of frames with orientation 0</b> - This value is required so that the frames are centered correctly. The logical center of the frame will not necessarily be the absolute center of the frame (width/2, height/2). For example, the center of a critter will be the position of its feet, while the center of a tree will be its base. A positive value translates to shifting the frame to the right of the screen when rendering as the "origin" (0, 0) for images is the top left-most pixel
-        </td></tr>
-        <tr>
-        <td>0x000C
-        </td><td>5 * 2 bytes
-        </td><td>signed
-        </td><td>Signed pixel offsets
-        </td><td><b>Pixel shift in the x direction, of frames with orientations [1-5]</b>
-        </td></tr>
-        <tr>
-        <td>0x0016
-        </td><td>6 * 2 bytes
-        </td><td>signed
-        </td><td>Signed pixel offsets
-        </td><td><b>Pixel shift in the y direction, of frames with orientations [0-5]</b> - Positive values shift the frame down toward bottom of the screen when rendering
-        </td></tr>
-        <tr>
-        <td>0x0022
-        </td><td>4 bytes
-        </td><td>unsigned
-        </td><td>Usually 0
-        </td><td><b>Offset of first frame in orientation 0 from beginning of frame area</b> - The "frame area" begins from offset 0x003E. This is useful for seeking directly to where image data begins for each orientation
-        </td></tr>
-        <tr>
-        <td>0x0026
-        </td><td>5 * 4 bytes
-        </td><td>unsigned
-        </td><td>Frame-area offsets
-        </td><td><b>Offset of first frame in orientation[1-5] from beginning of frame area</b> - If an offset is the same as the previous orientation's offset, the engine reuses the already-read frame data for that orientation. This is common for single-direction art.
-        </td></tr>
-        <tr>
-        <td>0x003A
-        </td><td>4 bytes
-        </td><td>unsigned
-        </td><td>Total frame-area byte size
-        </td><td><b>Size of frame data</b> - Used to allocate memory for all frame data in the file. Some malformed FRMs have this set to zero; Fallout 2 Community Edition treats that as the remaining file size.
-        </td></tr>
-        <tr>
-        <td colspan="5" style="text-align: center; color:#ffffff" bgcolor="#343434">
-        <p><b>END OF HEADER // BEGINNING OF FRAME AREA</b>
-        </p>
-        </td></tr>
-        <tr>
-        <td>0x003E
-        </td><td>2 bytes
-        </td><td>unsigned
-        </td><td>Width in pixels
-        </td><td><b>FRAME-0-WIDTH: Width of frame 0</b> - The width (in pixels) of the 0th frame in the orientation 0
-        </td></tr>
-        <tr>
-        <td>0x0040
-        </td><td>2 bytes
-        </td><td>unsigned
-        </td><td>Height in pixels
-        </td><td><b>FRAME-0-HEIGHT: Height of frame 0</b> - The height (in pixels) of the 0th frame in the orientation 0
-        </td></tr>
-        <tr>
-        <td>0x0042
-        </td><td>4 bytes
-        </td><td>unsigned
-        </td><td>FRAME-0-WIDTH * FRAME-0-HEIGHT
-        </td><td><b>FRAME-0-SIZE: Number of pixels for frame 0</b> - The total area, and hence number of bytes taken up by the 0th frame
-        </td></tr>
-        <tr>
-        <td>0x0046
-        </td><td>2 bytes
-        </td><td>signed
-        </td><td>Signed pixel offset
-        </td><td><b>Pixel shift in x direction of frame 0</b> - The pixel offset of this frame from the previous frame. The frame shifts left if negative, right if positive.
-        </td></tr>
-        <tr>
-        <td>0x0048
-        </td><td>2 bytes
-        </td><td>signed
-        </td><td>Signed pixel offset
-        </td><td><b>Pixel shift in y direction of frame 0</b> The frame shifts up if negative, down if positive.
-        </td></tr>
-        <tr>
-        <td>0x004A
-        </td><td>FRAME-0-SIZE bytes
-        </td><td>unsigned
-        </td><td>0x00 -&gt; 0xFF
-        </td><td><b>colorIndex for frame 0</b> - Contains the colorIndex for the 0th frame. Each index is represented by one byte; there are 256 possible indices and their RGB values can be found in the appropriate .pal file. Pixel data starts at the top left corner of the frame and increases left to right, then top to bottom
-        </td></tr>
-        <tr>
-        <td>0x004A + (FRAME-0-SIZE)
-        </td><td>flexible
-        </td><td>unsigned
-        </td><td>0x00 -&gt; 0xFF
-        </td><td><b>Frame data for all the following frames</b> - Frames are stored for all the rest of the frames of orientation 0, then moves on to orientation 1 up to 5 (if these orientations are stored in the file)
-        </td></tr></tbody></table>
+<div style="width: 1200px; margin: auto;">
+<h1>FRM File Format</h1>
 
-        <h3>Tools</h3>
-        <a href="https://github.com/rotators/frm2png/archive/0.1.2.zip">frm2png (Rotators)</a> <a href="https://github.com/rotators/frm2png/">Source code</a><br/>
-        <a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics">TeamX graphics tools</a>
+<p>FRM files are Fallout and Fallout 2 indexed-color art containers. They store one or more raw 8-bit frames, optionally arranged into the six isometric rotations used by map objects and critters.</p>
 
-        <h3>Source code</h3>
-        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.cc">Fallout 2 Community Edition FRM reader/writer - C++</a><br/>
-        <a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.h">Fallout 2 Community Edition FRM structures - C++</a>
+<p>The format is used for map objects, critter animations, tiles, walls, scenery, items, inventory art, interface screens, skilldex images, talking heads, and talking-head backgrounds. Movies use <a href="mve.html">MVE</a>, splash/loading images commonly use <a href="rix.html">RIX</a>, and FRM color data comes from external <a href="pal.html">PAL</a> files.</p>
 
-        <h2>History</h2>
-        2020-01-18 - Ported from <a href="https://falloutmods.fandom.com/wiki/FRM_File_Format">https://falloutmods.fandom.com/wiki/FRM_File_Format</a>
+<h2>Format Properties</h2>
 
-    </div>
+<table>
+<tr><th>Property</th><th>Description</th></tr>
+<tr><td>File type</td><td>Binary indexed-color image or animation.</td></tr>
+<tr><td>Typical extensions</td><td><tt>.frm</tt>, plus directional critter extensions <tt>.fr0</tt> through <tt>.fr5</tt>.</td></tr>
+<tr><td>Byte order</td><td>All 16-bit and 32-bit numeric fields are big-endian.</td></tr>
+<tr><td>Compression</td><td>None. Pixel data is stored as one byte per pixel.</td></tr>
+<tr><td>Palette</td><td>External. Usually <tt>color.pal</tt>, with special same-basename PAL files for some screens.</td></tr>
+<tr><td>Transparency</td><td>Pixel value <tt>0</tt> is transparent in transparent blitters, especially object/FRM drawing paths.</td></tr>
+<tr><td>Frame order</td><td>All frames for rotation 0, then all frames for rotation 1, continuing through rotation 5 when present.</td></tr>
+<tr><td>Header size</td><td><tt>0x3E</tt> bytes.</td></tr>
+<tr><td>Frame record header size</td><td><tt>0x0C</tt> bytes before each frame's pixels.</td></tr>
+</table>
 
+<h2>Where FRMs Live</h2>
+
+<p>The art system resolves FRM names through art list files. The art type selects a directory and LST file, while the low bits of the art FID select a line in that list. See <a href="lst.html">LST File Format</a> for the full FID layout.</p>
+
+<table>
+<tr><th>Art type</th><th>Directory</th><th>List</th><th>Typical contents</th></tr>
+<tr><td>0</td><td><tt>art\items</tt></td><td><tt>items.lst</tt></td><td>Ground item art.</td></tr>
+<tr><td>1</td><td><tt>art\critters</tt></td><td><tt>critters.lst</tt></td><td>Critter animation base names.</td></tr>
+<tr><td>2</td><td><tt>art\scenery</tt></td><td><tt>scenery.lst</tt></td><td>Doors, ladders, containers, plants, props.</td></tr>
+<tr><td>3</td><td><tt>art\walls</tt></td><td><tt>walls.lst</tt></td><td>Wall art.</td></tr>
+<tr><td>4</td><td><tt>art\tiles</tt></td><td><tt>tiles.lst</tt></td><td>Hex floor/roof tile art.</td></tr>
+<tr><td>5</td><td><tt>art\misc</tt></td><td><tt>misc.lst</tt></td><td>Projectiles, effects, and miscellaneous art.</td></tr>
+<tr><td>6</td><td><tt>art\intrface</tt></td><td><tt>intrface.lst</tt></td><td>Interface screens and widgets.</td></tr>
+<tr><td>7</td><td><tt>art\inven</tt></td><td><tt>inven.lst</tt></td><td>Inventory item art.</td></tr>
+<tr><td>8</td><td><tt>art\heads</tt></td><td><tt>heads.lst</tt></td><td>Talking-head animation base names.</td></tr>
+<tr><td>9</td><td><tt>art\backgrnd</tt></td><td><tt>backgrnd.lst</tt></td><td>Talking-head dialogue backgrounds.</td></tr>
+<tr><td>10</td><td><tt>art\skilldex</tt></td><td><tt>skilldex.lst</tt></td><td>Skilldex and stat images.</td></tr>
+</table>
+
+<p>When <tt>[system] language</tt> is not English, Fallout 2 CE can try a localized art path before the normal path. The FID and LST line do not change; only the resolved resource path changes.</p>
+
+<h2>Palette And Transparency</h2>
+
+<p>FRM pixel bytes are palette indexes, not RGB colors. To display a frame, read each byte and map it through the active <a href="pal.html">PAL</a> palette. Most world art uses <tt>color.pal</tt>. Some full-screen interface art uses a same-basename palette such as <tt>helpscrn.pal</tt>.</p>
+
+<p>Pixel value <tt>0</tt> is treated as transparent by the transparent blitters used for most object art. This is a drawing-rule convention, not a field inside the FRM. If an FRM is drawn into an opaque full-screen buffer, index <tt>0</tt> can still appear as whatever color the active palette assigns to index <tt>0</tt>.</p>
+
+<p>Palette indexes <tt>229..254</tt> are animated by the main palette color-cycling system. Static FRM artwork should avoid those indexes unless it intentionally wants glowing slime, monitors, fire, shoreline, or pulse effects.</p>
+
+<h2>Header Layout</h2>
+
+<p>The FRM header is always <tt>0x3E</tt> bytes. Offsets in the header's direction table are relative to the beginning of the frame area, not to the start of the file. The frame area begins immediately after the header at file offset <tt>0x3E</tt>.</p>
+
+<table>
+<tr><th>Offset</th><th>Size</th><th>Type</th><th>Name</th><th>Description</th></tr>
+<tr><td><tt>0x0000</tt></td><td>4</td><td><tt>uint32</tt></td><td><tt>version</tt></td><td>Format version. Released Fallout 1/2 art normally uses <tt>4</tt>.</td></tr>
+<tr><td><tt>0x0004</tt></td><td>2</td><td><tt>uint16</tt></td><td><tt>fps</tt></td><td>Animation frames per second. Fallout 2 CE exposes this as <tt>framesPerSecond</tt> and uses <tt>10</tt> if the value is zero.</td></tr>
+<tr><td><tt>0x0006</tt></td><td>2</td><td><tt>uint16</tt></td><td><tt>action_frame</tt></td><td>Frame index associated with the action point of an animation, such as a shot, swing, or door action. Some older notes call this field unknown because it is merely loaded in lower-level art code.</td></tr>
+<tr><td><tt>0x0008</tt></td><td>2</td><td><tt>uint16</tt></td><td><tt>frames_per_direction</tt></td><td>Number of frame records in each stored direction. Static art usually has <tt>1</tt>.</td></tr>
+<tr><td><tt>0x000A</tt></td><td>12</td><td><tt>int16[6]</tt></td><td><tt>x_offsets</tt></td><td>Base X offset for rotations 0 through 5.</td></tr>
+<tr><td><tt>0x0016</tt></td><td>12</td><td><tt>int16[6]</tt></td><td><tt>y_offsets</tt></td><td>Base Y offset for rotations 0 through 5.</td></tr>
+<tr><td><tt>0x0022</tt></td><td>24</td><td><tt>uint32[6]</tt></td><td><tt>data_offsets</tt></td><td>Offset of the first frame record for each rotation, relative to file offset <tt>0x3E</tt>.</td></tr>
+<tr><td><tt>0x003A</tt></td><td>4</td><td><tt>uint32</tt></td><td><tt>frame_area_size</tt></td><td>Total byte size of the serialized frame area. CE tolerates malformed files with this value set to zero by using the file size as a fallback.</td></tr>
+</table>
+
+<h2>Frame Record Layout</h2>
+
+<p>Every stored frame starts with a 12-byte frame header followed by <tt>size</tt> bytes of pixel data. The pixel data is row-major: left to right, then top to bottom.</p>
+
+<table>
+<tr><th>Relative offset</th><th>Size</th><th>Type</th><th>Name</th><th>Description</th></tr>
+<tr><td><tt>0x00</tt></td><td>2</td><td><tt>uint16</tt></td><td><tt>width</tt></td><td>Frame width in pixels.</td></tr>
+<tr><td><tt>0x02</tt></td><td>2</td><td><tt>uint16</tt></td><td><tt>height</tt></td><td>Frame height in pixels.</td></tr>
+<tr><td><tt>0x04</tt></td><td>4</td><td><tt>uint32</tt></td><td><tt>size</tt></td><td>Number of pixel bytes. Normally <tt>width * height</tt>.</td></tr>
+<tr><td><tt>0x08</tt></td><td>2</td><td><tt>int16</tt></td><td><tt>x</tt></td><td>Per-frame X offset from the previous/current animation position.</td></tr>
+<tr><td><tt>0x0A</tt></td><td>2</td><td><tt>int16</tt></td><td><tt>y</tt></td><td>Per-frame Y offset from the previous/current animation position.</td></tr>
+<tr><td><tt>0x0C</tt></td><td><tt>size</tt></td><td><tt>uint8[]</tt></td><td><tt>pixels</tt></td><td>Palette indexes.</td></tr>
+</table>
+
+<pre>
+frame_offset = 0x3E + data_offsets[rotation]
+for frame_index in 0..frames_per_direction - 1:
+    read width, height, size, x, y
+    read size pixel bytes
+    next frame follows immediately
+</pre>
+
+<p>On disk, frame records are tightly packed. Fallout 2 CE adds 32-bit alignment padding only in memory after loading each frame, so tools should not write CE's in-memory padding back into the file.</p>
+
+<h2>Directions And Suffixes</h2>
+
+<p>Fallout uses six rotations:</p>
+
+<table>
+<tr><th>Rotation</th><th>Direction</th></tr>
+<tr><td>0</td><td>Northeast</td></tr>
+<tr><td>1</td><td>East</td></tr>
+<tr><td>2</td><td>Southeast</td></tr>
+<tr><td>3</td><td>Southwest</td></tr>
+<tr><td>4</td><td>West</td></tr>
+<tr><td>5</td><td>Northwest</td></tr>
+</table>
+
+<p>A normal <tt>.frm</tt> can contain one direction or all six directions. Directional critter art can also be split into <tt>.fr0</tt> through <tt>.fr5</tt> files. Public format notes describe those suffixes as the six orientations, starting with northeast and rotating clockwise.</p>
+
+<p>In Fallout 2 CE's FID-to-path logic, a packed critter rotation field of <tt>0</tt> resolves to <tt>.frm</tt>. Nonzero packed rotation fields resolve to <tt>.frN</tt> by subtracting one from the packed value. The higher-level FID builder usually forces rotation <tt>0</tt> for non-critter art and most non-death critter animations. Directional lookup is mainly preserved for knockdown/death critter animations, where the requested object rotation can resolve to <tt>.fr0</tt>, <tt>.fr1</tt>, and so on.</p>
+
+<p>If two consecutive entries in <tt>data_offsets</tt> are equal, the engine can reuse the already-read frame data for that rotation. This is common for art that is not actually directional.</p>
+
+<h2>Positioning Model</h2>
+
+<p>The logical anchor of an FRM is normally the center of the bottom edge of the visible frame. For a static frame with no offsets, a top-left draw position can be approximated as:</p>
+
+<pre>
+left = anchor_x - (width / 2)
+top  = anchor_y - height
+</pre>
+
+<p>The header's <tt>x_offsets</tt> and <tt>y_offsets</tt> give a base adjustment for each rotation. Each frame record also has <tt>x</tt> and <tt>y</tt> offsets used while animations advance. The engine applies those offsets to keep feet, doors, weapon swings, death animations, and other moving frames visually anchored as dimensions change.</p>
+
+<p>When playing an animation forward, CE advances frames and applies each frame's stored offset. When playing an animation in reverse, it subtracts the previous frame offset. This means per-frame offsets are motion deltas in the animation stream, not just standalone crop origins.</p>
+
+<h2>Timing And Action Frames</h2>
+
+<p>The <tt>fps</tt> field controls animation timing. Fallout 2 CE computes frame duration as:</p>
+
+<pre>
+ticks_per_frame = 1000 / fps
+</pre>
+
+<p>If <tt>fps</tt> is zero, CE treats it as <tt>10</tt>. Combat speed preferences can add to walking animation FPS in combat, depending on player/NPC state and settings.</p>
+
+<p>The <tt>action_frame</tt> field is exposed by the art layer. It is best treated as an animation metadata marker: the frame on which the gameplay action visually happens. Tools should preserve it even if they do not use it for simple preview playback.</p>
+
+<h2>FID Relationship</h2>
+
+<p>FRM files are rarely referenced by path in game data. Most references are packed art FIDs stored in <a href="pro.html">PRO</a> files, <a href="map.html">MAP</a> objects, scripts, interface state, and save data.</p>
+
+<pre>
+bits 28..30  rotation / directional file selector
+bits 24..27  art object type
+bits 16..23  animation type
+bits 12..15  weapon animation code
+bits  0..11  art LST index
+</pre>
+
+<p>The art object type selects the art list family, and the low 12 bits select the line in that list. For most non-critter art, the LST entry is already a complete FRM filename. For critters and talking heads, the LST entry is a base name and the engine appends animation/fidget suffixes.</p>
+
+<h2>Critter Filename Construction</h2>
+
+<p>Critter entries in <tt>critters.lst</tt> are base names, not full filenames. The engine constructs the final filename from:</p>
+
+<ul>
+<li>the base name from <tt>critters.lst</tt>, such as <tt>hmjmps</tt>;</li>
+<li>a weapon-animation letter, usually <tt>a</tt> for no weapon or <tt>d..m</tt> for weapon classes;</li>
+<li>an animation letter derived from the animation type;</li>
+<li><tt>.frm</tt> or a directional <tt>.frN</tt> extension.</li>
+</ul>
+
+<p>For example, a critter base name can combine with action letters to produce names like <tt>hmjmpsaa.frm</tt> or directional variants such as <tt>hmjmpsaa.fr0</tt>. The exact suffix pair depends on the animation and weapon code. See <a href="anim_names.html">Animation Names</a> and the weapon animation values in <a href="pro.html">PRO</a>.</p>
+
+<table>
+<tr><th>Weapon animation code</th><th>Letter</th><th>Typical meaning</th></tr>
+<tr><td>0</td><td>none / <tt>a</tt> path for many base animations</td><td>No weapon.</td></tr>
+<tr><td>1</td><td><tt>d</tt></td><td>Knife.</td></tr>
+<tr><td>2</td><td><tt>e</tt></td><td>Club.</td></tr>
+<tr><td>3</td><td><tt>f</tt></td><td>Sledgehammer.</td></tr>
+<tr><td>4</td><td><tt>g</tt></td><td>Spear.</td></tr>
+<tr><td>5</td><td><tt>h</tt></td><td>Pistol.</td></tr>
+<tr><td>6</td><td><tt>i</tt></td><td>SMG.</td></tr>
+<tr><td>7</td><td><tt>j</tt></td><td>Rifle/shotgun class.</td></tr>
+<tr><td>8</td><td><tt>k</tt></td><td>Laser rifle/big gun class in CE naming.</td></tr>
+<tr><td>9</td><td><tt>l</tt></td><td>Minigun.</td></tr>
+<tr><td>10</td><td><tt>m</tt></td><td>Launcher.</td></tr>
+</table>
+
+<p>Some death/effect animations alias to another critter base. CE uses the extra fields in <tt>critters.lst</tt> to find an anonymous/alias critter for animations such as electrify, burned-to-nothing, fire dance, and called-shot pictures.</p>
+
+<h2>Talking Heads</h2>
+
+<p>Talking heads are also FRM-based, but their filenames are generated differently from world critters. The head FID's animation field selects reaction/fidget/phoneme groups. The engine appends two letters from internal head-animation code tables, and for fidget variants it can append a fidget number before <tt>.frm</tt>.</p>
+
+<p>The companion <tt>heads.lst</tt> metadata stores the count of good, neutral, and bad fidgets for each head. <a href="lip.html">LIP</a> files drive mouth/phoneme timing, while FRM files provide the actual talking-head frames.</p>
+
+<h2>Validation Rules</h2>
+
+<p>A strict FRM reader should check at least these conditions:</p>
+
+<ul>
+<li><tt>version</tt> is normally <tt>4</tt>.</li>
+<li><tt>frames_per_direction</tt> is greater than zero.</li>
+<li>Each unique <tt>data_offsets</tt> entry points inside the frame area.</li>
+<li>Each frame has enough bytes for its 12-byte header and pixel payload.</li>
+<li><tt>size</tt> should equal <tt>width * height</tt> for normal Fallout art.</li>
+<li>The serialized unique directions should not read beyond <tt>frame_area_size</tt> or the file size.</li>
+<li>Pixel indexes are bytes, so every value is already in <tt>0..255</tt>; interpretation depends on the active palette.</li>
+</ul>
+
+<p>For compatibility, a reader may choose to tolerate <tt>frame_area_size = 0</tt>. Fallout 2 CE handles this by substituting the file size before allocating its art-cache block, a workaround added for malformed mod files.</p>
+
+<h2>Reading Algorithm</h2>
+
+<pre>
+read header
+base = 0x3E
+for rotation in 0..5:
+    if rotation != 0 and data_offsets[rotation] == data_offsets[rotation - 1]:
+        reuse previous rotation frames
+        continue
+
+    seek base + data_offsets[rotation]
+    for frame in 0..frames_per_direction - 1:
+        read width, height, size, x, y
+        read size bytes of pixels
+</pre>
+
+<p>This is the logical disk algorithm. CE's cache loader reads unique directions in order and then stores the frames in a larger in-memory block that includes alignment padding.</p>
+
+<h2>Writing Notes</h2>
+
+<ul>
+<li>Write big-endian numeric fields.</li>
+<li>Keep frame records tightly packed on disk.</li>
+<li>Set <tt>size = width * height</tt> unless deliberately preserving malformed data.</li>
+<li>Set repeated <tt>data_offsets</tt> only when rotations truly share the same frame records.</li>
+<li>Use <tt>.fr0</tt> through <tt>.fr5</tt> only for directional critter files expected by the target engine's FID path builder.</li>
+<li>Preserve <tt>fps</tt>, <tt>action_frame</tt>, base rotation offsets, and per-frame offsets when round-tripping existing art.</li>
+<li>When importing from PNG or another RGB format, remap colors through the target <a href="pal.html">PAL</a> rather than writing arbitrary RGB bytes.</li>
+<li>Avoid palette index <tt>0</tt> for visible pixels in transparent object art.</li>
+</ul>
+
+<h2>Inter-File Dependencies</h2>
+
+<table>
+<tr><th>Format/file</th><th>Relationship</th></tr>
+<tr><td><a href="pal.html">PAL</a></td><td>Supplies RGB colors, RGB555 lookup, lighting/blending tables, and color-cycling behavior for indexed FRM pixels.</td></tr>
+<tr><td><a href="lst.html">LST</a></td><td>Art FIDs resolve to art LST lines before they resolve to FRM filenames or critter/head base names.</td></tr>
+<tr><td><a href="pro.html">PRO</a></td><td>Prototype records store object art FIDs and inventory art FIDs.</td></tr>
+<tr><td><a href="map.html">MAP</a></td><td>Map objects store current FID, frame, rotation, screen offsets, and object state that determines which FRM is drawn.</td></tr>
+<tr><td><a href="savegame.html">Savegame</a></td><td>Saved objects preserve current animation/frame/FID state, so changing art lists can affect existing saves.</td></tr>
+<tr><td><a href="lip.html">LIP</a></td><td>Talking-head lip-sync timing selects mouth/phoneme animation frames; FRM stores the visual frames.</td></tr>
+<tr><td><a href="dat.html">DAT</a></td><td>FRMs are usually loaded from <tt>master.dat</tt>, <tt>critter.dat</tt>, patch DATs, or loose <tt>data</tt> paths.</td></tr>
+<tr><td><a href="cfg.html">CFG/INI</a></td><td><tt>fallout2.cfg</tt> controls art cache size, language lookup, resource roots, and palette color cycling.</td></tr>
+</table>
+
+<h2>Implementation Notes</h2>
+
+<ul>
+<li>The on-disk <tt>Art</tt> header has six X offsets, six Y offsets, six data offsets, and one frame-area size. Fallout 2 CE's in-memory <tt>Art</tt> struct has an extra <tt>padding[6]</tt> array that is not present on disk.</li>
+<li>The low 12 bits of a FID limit a normal art list to indexes <tt>0..4095</tt>.</li>
+<li>Art list entries are stored in fixed 13-byte slots in CE: up to 12 characters plus a null terminator.</li>
+<li>For rendering previews, <tt>artRender</tt> in CE draws frame 0, rotation 0 with transparent blitting and preserves aspect ratio if the destination is smaller than the frame.</li>
+<li>For animation previews, apply both the base rotation offset and the per-frame offsets. A previewer that ignores offsets can appear to jitter or slide incorrectly.</li>
+<li>Static one-frame FRMs can still have meaningful offsets. Do not assume offsets are only for multi-frame animations.</li>
+<li>FRM has no embedded path, name, type, palette name, or compression marker. Context comes from FID, LST, directory, and calling code.</li>
+</ul>
+
+<h2>Source Code Map</h2>
+
+<table>
+<tr><th>Source</th><th>Relevant behavior</th></tr>
+<tr><td>Fallout 2 CE <tt>art.h</tt></td><td>In-memory <tt>Art</tt> and <tt>ArtFrame</tt> structures, art APIs, weapon animation enum.</td></tr>
+<tr><td>Fallout 2 CE <tt>art.cc</tt></td><td>Art list loading, FID-to-path construction, FRM header/frame reading and writing, data-size workaround, cache integration.</td></tr>
+<tr><td>Fallout 2 CE <tt>obj_types.h</tt></td><td>Rotation enum, art object type enum, FID type macro.</td></tr>
+<tr><td>Fallout 2 CE <tt>animation.h</tt></td><td>Animation type enum and FID animation field macro.</td></tr>
+<tr><td>Fallout 2 CE <tt>animation.cc</tt></td><td>Animation timing from FRM FPS, frame advancement, forward/reverse frame offset application.</td></tr>
+</table>
+
+<h2>References</h2>
+
+<p>
+<a href="https://fallout.wiki/wiki/FRM_File_Format">FRM File Format - The Fallout Wiki</a><br/>
+<a href="https://sucs.org/~grepwood/teamx/frm_2.html">TeamX FRM Image File Format notes</a><br/>
+<a href="https://fodev.net/files/fo2/frm.html">FRM files - FODEV mirror</a><br/>
+<a href="https://fallout.wiki/wiki/File_Identifiers">File Identifiers - The Fallout Wiki</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.h">Fallout 2 CE art.h</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.cc">Fallout 2 CE art.cc</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/obj_types.h">Fallout 2 CE obj_types.h</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/animation.h">Fallout 2 CE animation.h</a><br/>
+<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/animation.cc">Fallout 2 CE animation.cc</a><br/>
+<a href="https://github.com/rotators/frm2png/">frm2png source</a>
+</p>
+
+<h2>Tools</h2>
+
+<p>
+<a href="https://github.com/rotators/frm2png/archive/0.1.2.zip">frm2png</a> -
+<a href="https://github.com/rotators/frm2png/">source code</a><br/>
+<a href="https://fodev.net/files/archive/fo2/Titanium%20FRM%20Browser%201.3%20(en).zip">Titanium FRM Browser</a><br/>
+<a href="https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics">TeamX graphics tools</a>
+</p>
+
+<h2>History</h2>
+
+<p>
+2026-05-07 - Expanded with source-backed layout notes, FID/path relationships, directional suffix behavior, timing, offsets, validation rules, and implementation notes.<br/>
+2020-01-18 - Ported from <a href="https://falloutmods.fandom.com/wiki/FRM_File_Format">Vault-Tec Labs FRM File Format</a>.
+</p>
+
+</div>
 </body>
 </html>

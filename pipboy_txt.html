@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pip-Boy Text Data Files</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div style="width: 1200px; margin: auto;">
+<h1>Pip-Boy Text Data Files</h1>
+
+<p>The Pip-Boy status screen combines two small text configuration files with normal <a href="msg.html">MSG</a> message lists and the current game-global variable array. <tt>data\quests.txt</tt> decides which quest descriptions appear under each location. <tt>data\holodisk.txt</tt> decides which holodisk entries appear in the DATA column. The visible strings themselves are stored in <tt>game\map.msg</tt>, <tt>game\quests.msg</tt>, and <tt>game\pipboy.msg</tt>.</p>
+
+<p>These files are not save files. They are loaded when the Pip-Boy window opens, then interpreted against the current <a href="gam.html">GVAR</a> values from the running game or save slot.</p>
+
+<h2>Related files</h2>
+
+<table>
+<tr><th>File</th><th>Role</th></tr>
+<tr><td><tt>data\quests.txt</tt></td><td>Quest-to-location table. Each row points at a location name, a quest text line, and one GVAR used for visibility and completion state.</td></tr>
+<tr><td><tt>data\holodisk.txt</tt></td><td>Holodisk registry. Each row points at one GVAR, one displayed title, and the first MSG id of the holodisk body.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\map.msg</tt></td><td>Location names used by the quest list. Quest rows store message ids from this file.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\quests.msg</tt></td><td>Quest descriptions shown after choosing a location in the Status tab.</td></tr>
+<tr><td><tt>text\&lt;language&gt;\game\pipboy.msg</tt></td><td>Pip-Boy UI labels, holodisk titles, and holodisk body text.</td></tr>
+<tr><td><tt>data\vault13.gam</tt> and saves</td><td>Define and store the GVAR indexes used by both text config files.</td></tr>
+</table>
+
+<h2>Loading sequence</h2>
+
+<p>Fallout 2 CE loads the Pip-Boy text data while opening the Pip-Boy window:</p>
+
+<ol>
+<li>Read <tt>data\holodisk.txt</tt> into a holodisk description array.</li>
+<li>Load <tt>game\pipboy.msg</tt> for UI labels and holodisk text.</li>
+<li>Load the Pip-Boy interface FRMs.</li>
+<li>Load <tt>game\quests.msg</tt>.</li>
+<li>Read <tt>data\quests.txt</tt> into a quest description array and sort it by location id.</li>
+</ol>
+
+<p>The source comment above the quest structure says <tt>data\quest.txt</tt>, but the loader opens <tt>data\quests.txt</tt>. Tools should use the actual plural path.</p>
+
+<h2>Shared text syntax</h2>
+
+<p>Both <tt>quests.txt</tt> and <tt>holodisk.txt</tt> are line-oriented text files read with a 256-byte buffer. The parser trims leading whitespace, skips lines whose first non-space character is <tt>#</tt>, and splits data with spaces, tabs, or commas as delimiters. Values are parsed with <tt>atoi</tt>, so use plain decimal integers.</p>
+
+<table>
+<tr><th>Syntax feature</th><th>Behavior</th></tr>
+<tr><td>Leading whitespace</td><td>Ignored before comment detection and token parsing.</td></tr>
+<tr><td><tt>#</tt> comments</td><td>Only skipped when <tt>#</tt> is the first non-space character on the line.</td></tr>
+<tr><td>Separators</td><td>Any run of spaces, tabs, or commas separates fields. The common comma-separated style is conventional, not required.</td></tr>
+<tr><td>Missing fields</td><td>The line is ignored once a required token is missing.</td></tr>
+<tr><td>Extra fields</td><td>Ignored by the loader after the required fields are parsed.</td></tr>
+<tr><td>Inline comments</td><td>Unsafe unless they are after all required numeric fields. A trailing <tt>#</tt> token is not special to the tokenizer.</td></tr>
+<tr><td>Line length</td><td>Keep each physical line below 256 bytes for engine-equivalent behavior.</td></tr>
+</table>
+
+<h2>quests.txt format</h2>
+
+<pre>
+# location, description, gvar_index, display_threshold, completed_threshold
+1500, 100, 9, 2, 6
+1500, 110, 183, 1, 3
+</pre>
+
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td><tt>location</tt></td><td>Message id in <tt>game\map.msg</tt>. The engine uses this as the displayed location heading and as the grouping/sorting key.</td></tr>
+<tr><td><tt>description</tt></td><td>Message id in <tt>game\quests.msg</tt> for the quest description.</td></tr>
+<tr><td><tt>gvar_index</tt></td><td>Index into the game-global variable array.</td></tr>
+<tr><td><tt>display_threshold</tt></td><td>The quest is visible when <tt>global_var(gvar_index) &gt;= display_threshold</tt>.</td></tr>
+<tr><td><tt>completed_threshold</tt></td><td>The visible quest is drawn as completed when <tt>global_var(gvar_index) &gt;= completed_threshold</tt>.</td></tr>
+</table>
+
+<p>After loading, quest rows are sorted by <tt>location</tt>. The Status tab then draws each visible location once, using the first visible quest for that location as the representative row. When the player chooses a location, the engine displays all visible quest rows in that sorted location group.</p>
+
+<p>Completed quests are not removed. They are rendered with strike-through styling and a dimmer color. If a quest should disappear after completion, that behavior has to be implemented through scripts and GVAR choices; <tt>quests.txt</tt> itself only knows the two thresholds.</p>
+
+<h2>Quest display behavior</h2>
+
+<table>
+<tr><th>Situation</th><th>Result</th></tr>
+<tr><td>No visible quests</td><td>The Status tab displays message <tt>203</tt> from <tt>pipboy.msg</tt>.</td></tr>
+<tr><td>At least one holodisk is known</td><td>Quest locations are drawn in the left column and holodisks in the right DATA column.</td></tr>
+<tr><td>No known holodisks</td><td>The Status heading and quest locations are centered instead of using the two-column layout.</td></tr>
+<tr><td>Quest selected</td><td>The detail page title is <tt>map.msg[location]</tt> followed by <tt>pipboy.msg[210]</tt>.</td></tr>
+<tr><td>Quest description wraps</td><td>The engine word-wraps the numbered description to the Pip-Boy content width and applies completion styling to every wrapped line.</td></tr>
+</table>
+
+<p>The <tt>location</tt> field is a message id, not necessarily a map index. In vanilla Fallout 2, city names commonly live in the <tt>1500 + city_index</tt> range of <tt>map.msg</tt>, but the quest loader only sees the final message number.</p>
+
+<h2>holodisk.txt format</h2>
+
+<pre>
+# gvar_index, name, description
+42, 300, 301
+</pre>
+
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td><tt>gvar_index</tt></td><td>Index into the game-global variable array. The holodisk appears when this value is non-zero.</td></tr>
+<tr><td><tt>name</tt></td><td>Message id in <tt>game\pipboy.msg</tt> for the title shown in the DATA list and on the first page of the disk.</td></tr>
+<tr><td><tt>description</tt></td><td>First message id in <tt>game\pipboy.msg</tt> for the disk body text.</td></tr>
+</table>
+
+<p>Holodisks are displayed in file order. Unlike quests, the holodisk array is not sorted after loading. The list includes only rows whose GVAR value is not zero.</p>
+
+<h2>Holodisk body text</h2>
+
+<p>A holodisk body is a run of consecutive <tt>pipboy.msg</tt> entries starting at the row's <tt>description</tt> id. The body ends at a message whose text is exactly <tt>**END-DISK**</tt>. Paragraph breaks are represented by a message whose text is exactly <tt>**END-PAR**</tt>.</p>
+
+<pre>
+{300}{}{Security Disk}
+{301}{}{First displayed line.}
+{302}{}{**END-PAR**}
+{303}{}{Second paragraph line.}
+{304}{}{**END-DISK**}
+</pre>
+
+<table>
+<tr><th>Marker or limit</th><th>Behavior</th></tr>
+<tr><td><tt>**END-DISK**</tt></td><td>Stops rendering the holodisk. The marker itself is not displayed.</td></tr>
+<tr><td><tt>**END-PAR**</tt></td><td>Adds a blank line and is not displayed.</td></tr>
+<tr><td>500 message ids</td><td>The engine scans at most 500 ids from the starting description id while searching for the end marker.</td></tr>
+<tr><td>35 lines per page</td><td>Holodisk text paginates after 35 message entries. Paragraph markers count as a line for pagination.</td></tr>
+<tr><td>First page</td><td>The holodisk title is drawn from <tt>pipboy.msg[name]</tt>.</td></tr>
+<tr><td>Later pages</td><td>Later pages continue from the calculated body offset and show the page counter.</td></tr>
+</table>
+
+<p>The page counter uses message <tt>212</tt> from <tt>pipboy.msg</tt>, normally the word "of". Navigation labels are also hardcoded message ids in <tt>pipboy.msg</tt>: <tt>200</tt> for More, <tt>201</tt> for Back, and <tt>214</tt> for Done.</p>
+
+<h2>GVAR dependencies</h2>
+
+<p>Both tables depend on game-global variable indexes, so they must be edited together with scripts and <tt>vault13.gam</tt> index allocation. The name beside a variable in <tt>vault13.gam</tt> is only documentation for humans; the Pip-Boy loaders store the numeric index from the text file and read the current integer from the runtime array.</p>
+
+<table>
+<tr><th>Use</th><th>GVAR rule</th></tr>
+<tr><td>Quest becomes visible</td><td><tt>GVAR &gt;= display_threshold</tt>.</td></tr>
+<tr><td>Quest appears completed</td><td><tt>GVAR &gt;= completed_threshold</tt>.</td></tr>
+<tr><td>Holodisk becomes visible</td><td><tt>GVAR != 0</tt>.</td></tr>
+</table>
+
+<p>For save editors, the current values are in <tt>SAVE.DAT</tt>, not in <tt>vault13.gam</tt>. For mods, append new GVARs where possible and keep old indexes stable, because scripts, quest rows, holodisk rows, and existing saves all refer to numbers.</p>
+
+<h2>Inter-file dependencies</h2>
+
+<table>
+<tr><th>Dependency</th><th>What can go wrong</th></tr>
+<tr><td><tt>quests.txt</tt> -> <tt>map.msg</tt></td><td>A missing location id displays the MSG fallback string instead of a location heading.</td></tr>
+<tr><td><tt>quests.txt</tt> -> <tt>quests.msg</tt></td><td>A missing description id produces a bad quest line in the detail page.</td></tr>
+<tr><td><tt>holodisk.txt</tt> -> <tt>pipboy.msg</tt></td><td>Missing title or body ids make the DATA list or disk text unreadable.</td></tr>
+<tr><td>Holodisk body -> end marker</td><td>Without <tt>**END-DISK**</tt> within 500 ids, the engine logs an error and can scan unrelated message ids.</td></tr>
+<tr><td>Text rows -> GVAR indexes</td><td>Wrong indexes make quests or holodisks appear too early, too late, completed incorrectly, or never.</td></tr>
+<tr><td>Scripts -> GVAR thresholds</td><td>Scripts must set progression values that match the thresholds used by the tables.</td></tr>
+</table>
+
+<h2>Editing notes</h2>
+
+<ul>
+<li>Keep quest rows for the same location together after sorting by location id. The engine sorts by location, but preserving grouped source text makes reviews much easier.</li>
+<li>Use monotonic quest state values when possible, because both visibility and completion are threshold checks.</li>
+<li>Set <tt>completed_threshold</tt> higher than or equal to <tt>display_threshold</tt> unless an already-completed first appearance is intentional.</li>
+<li>Keep holodisk body ids contiguous and reserve enough space for translations that may need more lines.</li>
+<li>Do not reuse holodisk sentinel strings as visible text. Exact marker text has control meaning.</li>
+<li>Validate every referenced MSG id and GVAR index after adding or removing rows.</li>
+<li>When localizing, keep the config numbers stable and translate the MSG text, not the numeric references.</li>
+</ul>
+
+<h2>Validation checklist</h2>
+
+<ul>
+<li>Every <tt>quests.txt</tt> data line has five numeric fields.</li>
+<li>Every <tt>holodisk.txt</tt> data line has three numeric fields.</li>
+<li>Quest location ids exist in <tt>map.msg</tt>.</li>
+<li>Quest description ids exist in <tt>quests.msg</tt>.</li>
+<li>Holodisk title and body ids exist in <tt>pipboy.msg</tt>.</li>
+<li>Every holodisk body reaches <tt>**END-DISK**</tt> within 500 ids.</li>
+<li>Every referenced GVAR index exists in the target game-global array.</li>
+<li>Scripts can actually set the GVAR values required by the display and completion thresholds.</li>
+<li>Save-game testing covers both a fresh game state and a state where some referenced GVARs are already set.</li>
+</ul>
+
+<h2>Source-backed function map</h2>
+
+<table>
+<tr><th>Function</th><th>Relationship to these files</th></tr>
+<tr><td><tt>pipboyWindowInit</tt></td><td>Initializes the Pip-Boy window, loads <tt>pipboy.msg</tt>, and calls the holodisk and quest loaders.</td></tr>
+<tr><td><tt>questInit</tt></td><td>Loads <tt>game\quests.msg</tt>, parses <tt>data\quests.txt</tt>, and sorts quest rows by location.</td></tr>
+<tr><td><tt>pipboyWindowRenderQuestLocationList</tt></td><td>Draws visible quest locations using <tt>map.msg</tt> and the quest display thresholds.</td></tr>
+<tr><td><tt>pipboyWindowHandleStatus</tt></td><td>Handles the Status tab, selected quest locations, completed quest strike-through, holodisk selection, and navigation.</td></tr>
+<tr><td><tt>holodiskInit</tt></td><td>Parses <tt>data\holodisk.txt</tt>.</td></tr>
+<tr><td><tt>pipboyWindowRenderHolodiskList</tt></td><td>Draws known holodisks whose GVAR value is non-zero.</td></tr>
+<tr><td><tt>pipboyRenderHolodiskText</tt></td><td>Reads holodisk body lines from <tt>pipboy.msg</tt>, handles markers, pagination, and More/Done labels.</td></tr>
+</table>
+
+<h2>Source references</h2>
+
+<ul>
+<li><a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/pipboy.cc">Fallout 2 CE <tt>pipboy.cc</tt></a> - quest and holodisk loaders, Status tab rendering, GVAR checks, holodisk pagination, and Pip-Boy MSG usage.</li>
+<li><a href="https://fallout.wiki/wiki/Quests.txt_File_Format">Quests.txt File Format on The Fallout Wiki</a> - classic field description and examples.</li>
+<li><a href="https://falloutmod.fandom.com/wiki/Objects_in_Fallout_2">Objects in Fallout 2 on Fallout Mod Wiki</a> - high-level relationship among holodisks, quests, GVARs, and Pip-Boy message files.</li>
+</ul>
+
+<hr/>
+<h2>History</h2>
+<p>
+2026-05-08 - Documented Pip-Boy quest and holodisk text data with Fallout 2 CE source-backed behavior by <a href="https://github.com/OpenAI">OpenAI</a>
+</p>
+
+</div>
+</body>
+</html>
