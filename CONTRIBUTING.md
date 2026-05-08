@@ -86,11 +86,10 @@ over large formatting churn.
 - Do not reformat generated reference tables unless the content actually needs
   to change.
 
-## Markdown Migration
+## Markdown Sources
 
-Pages are being migrated gradually from root-level HTML into Markdown sources
-under `content/pages`. Migrated pages should preserve their public URLs with
-frontmatter:
+Documentation pages live as Markdown sources under `content/pages`. Pages should
+preserve their public URLs with frontmatter:
 
 ```markdown
 ---
@@ -100,7 +99,7 @@ description: Short page summary for generated metadata.
 ---
 ```
 
-Migration guidelines:
+Source guidelines:
 
 - Keep the original page title and heading order unless there is a clear reason
   to improve them.
@@ -116,8 +115,7 @@ Migration guidelines:
   renderer.
 - Leave complex generated or interactive pages as legacy HTML until the
   generator has a better source model for them.
-- Compare the generated `_site/<page>.html` with the original page before
-  removing or replacing any root-level HTML source.
+- Review the generated `_site/<page>.html` before publishing changes.
 
 Currently migrated pages are `aaf.html`, `acm.html`, `ai_txt.html`, `anim_names.html`, `bio.html`,
 `cfg.html`, `criticals.html`, `dat.html`, `elevators.html`, `fallout2_re.html`,

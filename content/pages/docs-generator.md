@@ -7,15 +7,13 @@ description: Notes for the static documentation generator migration.
 # Documentation Generator
 
 This page is generated from Markdown by the local C# documentation generator.
-It documents the migration path from hand-authored HTML to Markdown sources and
-shared templates.
+It documents the Markdown source and shared template pipeline.
 
 The generator is intentionally small:
 
-- it copies existing legacy HTML pages into the output directory
 - it renders Markdown pages from `content/pages`
-- generated pages overwrite copied legacy pages with the same output path
 - the shared layout lives in `content/templates/layout.html`
+- shared assets and data files are copied from the repository root
 - the output directory is `_site`
 
 Run it from the repository root:
@@ -26,7 +24,7 @@ dotnet run --project tools/FoDocs.Generator -- --clean
 
 The generated site is written to `_site`.
 
-## Current Migration Status
+## Generated Pages
 
 The following pages have Markdown sources:
 
@@ -75,9 +73,9 @@ The following pages have Markdown sources:
 | `worldmap_dat.html` | `content/pages/worldmap_dat.md` |
 | `docs-generator.html` | `content/pages/docs-generator.md` |
 
-## Migration Notes
+## Source Notes
 
-Migrated pages can keep their old public URLs by setting `output` in frontmatter:
+Pages keep their public URLs by setting `output` in frontmatter:
 
 ```markdown
 ---
@@ -86,12 +84,10 @@ output: dat.html
 ---
 ```
 
-Large generated or interactive pages can stay as legacy HTML until they have a
-better source representation.
-
 Simple Markdown is supported today: headings, paragraphs, links, inline code,
 fenced code blocks, ordered and unordered lists, pipe tables, fenced `raw-html`
-blocks for page-specific interactive islands, fenced `fallout-palette` blocks
+blocks for page-specific interactive islands, fenced `toc` blocks for floating
+page navigation, fenced `fallout-palette` blocks
 for compact color palette data, fenced `symbol-table` blocks for large symbol
 references backed by `content/data`, and fenced `tsv-table` blocks for generated
 reference tables. The renderer is deliberately conservative and has no external

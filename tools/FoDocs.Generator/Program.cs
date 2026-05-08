@@ -131,7 +131,7 @@ internal sealed record SiteOptions(
 
 internal sealed class SiteGenerator(SiteOptions options)
 {
-    private static readonly string[] RootFilePatterns = ["*.html", "*.css", "*.sym", "*.txt"];
+    private static readonly string[] RootFilePatterns = ["*.css", "*.sym", "*.txt"];
     private static readonly string[] PassthroughDirectories = ["img", "highslide", "symbols"];
     private static readonly string[] ExcludedDirectoryNames = [".git", "content", "tools", "_site"];
 
