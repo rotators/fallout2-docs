@@ -96,6 +96,10 @@ preserve their public URLs with frontmatter:
 title: DAT File Format
 output: dat.html
 description: Short page summary for generated metadata.
+# Optional: use the viewport for large reference tables.
+width: full
+# Optional: generate a floating TOC from h2-h4 headings.
+toc: auto
 ---
 ```
 
@@ -110,11 +114,13 @@ Source guidelines:
   `c`, or `powershell`.
 - Use a fenced `toc` block for curated floating page navigation. The block
   accepts normal Markdown list links and renders as the shared floating menu.
+- Use `toc: auto` for long pages whose `h2` through `h4` headings make a useful
+  generated floating menu.
+- Use `width: full` only for generated references or other pages with very wide
+  tables. Normal prose-heavy pages should keep the default article width.
 - Percent-encode literal parentheses in Markdown link URLs, for example
   `%28en%29`, because plain `)` terminates links in the current lightweight
   renderer.
-- Leave complex generated or interactive pages as legacy HTML until the
-  generator has a better source model for them.
 - Review the generated `_site/<page>.html` before publishing changes.
 
 Currently migrated pages are `aaf.html`, `acm.html`, `ai_txt.html`, `anim_names.html`, `bio.html`,

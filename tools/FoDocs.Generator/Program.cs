@@ -229,7 +229,9 @@ internal sealed class SiteGenerator(SiteOptions options)
               </head>
               <body>
               <main id="main">
+                  <div{{ pageClassAttribute }}>
               {{ content }}
+                  </div>
               </main>
               </body>
               </html>
@@ -248,6 +250,7 @@ internal sealed class SiteGenerator(SiteOptions options)
         var html = layout
             .Replace("{{ title }}", Html.Escape(page.Title), StringComparison.Ordinal)
             .Replace("{{ description }}", Html.Escape(page.Description ?? ""), StringComparison.Ordinal)
+            .Replace("{{ pageClassAttribute }}", FormatPageClassAttribute(page.PageClass), StringComparison.Ordinal)
             .Replace("{{ content }}", page.BodyHtml, StringComparison.Ordinal)
             .Replace("{{ generatedAt }}", DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm:ss 'UTC'"), StringComparison.Ordinal);
 
@@ -313,6 +316,11 @@ internal sealed class SiteGenerator(SiteOptions options)
         }
     }
 
+    private static string FormatPageClassAttribute(string? pageClass) =>
+        string.IsNullOrWhiteSpace(pageClass)
+            ? ""
+            : $" class=\"{Html.EscapeAttribute(pageClass)}\"";
+
     private static string EnsureTrailingSeparator(string path) =>
         path.EndsWith(Path.DirectorySeparatorChar) ? path : path + Path.DirectorySeparatorChar;
 }
@@ -337,17 +345,39 @@ internal sealed record MarkdownPage(
             new PageMetadata(
                 Title: title,
                 OutputPath: metadata.GetValueOrDefault("output", defaultOutput).Replace('\\', '/'),
-                Description: metadata.GetValueOrDefault("description")),
+                Description: metadata.GetValueOrDefault("description"),
+                PageClass: ResolvePageClass(metadata),
+                AutoToc: HasAutoToc(metadata)),
             body);
     }
 
     public GeneratedPage Render(DirectoryInfo contentRoot) =>
-        new(Metadata.Title, Metadata.OutputPath, Metadata.Description, MarkdownRenderer.Render(Markdown, contentRoot));
+        new(
+            Metadata.Title,
+            Metadata.OutputPath,
+            Metadata.Description,
+            Metadata.PageClass,
+            MarkdownRenderer.Render(Markdown, contentRoot, Metadata.AutoToc));
+
+    private static string? ResolvePageClass(Dictionary<string, string> metadata)
+    {
+        if (metadata.TryGetValue("width", out var width) &&
+            string.Equals(width, "full", StringComparison.OrdinalIgnoreCase))
+        {
+            return "page-full";
+        }
+
+        return null;
+    }
+
+    private static bool HasAutoToc(Dictionary<string, string> metadata) =>
+        metadata.TryGetValue("toc", out var toc) &&
+        string.Equals(toc, "auto", StringComparison.OrdinalIgnoreCase);
 }
 
-internal sealed record PageMetadata(string Title, string OutputPath, string? Description);
+internal sealed record PageMetadata(string Title, string OutputPath, string? Description, string? PageClass, bool AutoToc);
 
-internal sealed record GeneratedPage(string Title, string OutputPath, string? Description, string BodyHtml);
+internal sealed record GeneratedPage(string Title, string OutputPath, string? Description, string? PageClass, string BodyHtml);
 
 internal sealed record PaletteColor(int Index, string Hex, int R, int G, int B, string? Note);
 
@@ -392,12 +422,13 @@ internal static class FrontMatter
 
 internal static partial class MarkdownRenderer
 {
-    public static string Render(string markdown, DirectoryInfo contentRoot)
+    public static string Render(string markdown, DirectoryInfo contentRoot, bool autoToc = false)
     {
         var lines = markdown.ReplaceLineEndings("\n").Split('\n');
         var html = new StringBuilder();
         var paragraph = new List<string>();
         var headingIds = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var headings = new List<HeadingInfo>();
 
         for (var index = 0; index < lines.Length; index++)
         {
@@ -459,7 +490,7 @@ internal static partial class MarkdownRenderer
                 continue;
             }
 
-            if (TryRenderHeading(trimmed, html, headingIds) || TryRenderTable(lines, ref index, html))
+            if (TryRenderHeading(trimmed, html, headingIds, headings) || TryRenderTable(lines, ref index, html))
             {
                 FlushParagraph();
                 continue;
@@ -483,7 +514,9 @@ internal static partial class MarkdownRenderer
         }
 
         FlushParagraph();
-        return html.ToString();
+        return autoToc
+            ? RenderAutoFloatingToc(headings) + html
+            : html.ToString();
 
         void FlushParagraph()
         {
@@ -513,7 +546,11 @@ internal static partial class MarkdownRenderer
         return null;
     }
 
-    private static bool TryRenderHeading(string trimmed, StringBuilder html, Dictionary<string, int> headingIds)
+    private static bool TryRenderHeading(
+        string trimmed,
+        StringBuilder html,
+        Dictionary<string, int> headingIds,
+        List<HeadingInfo> headings)
     {
         var match = HeadingRegex().Match(trimmed);
         if (!match.Success)
@@ -528,6 +565,11 @@ internal static partial class MarkdownRenderer
         html.Append('<').Append('h').Append(level).Append(" id=\"").Append(id).Append("\">")
             .Append(text)
             .Append("</h").Append(level).AppendLine(">");
+        if (level is >= 2 and <= 4)
+        {
+            headings.Add(new HeadingInfo(level, id, plainText));
+        }
+
         return true;
     }
 
@@ -630,6 +672,27 @@ internal static partial class MarkdownRenderer
             .ToString();
     }
 
+    private static string RenderAutoFloatingToc(IReadOnlyList<HeadingInfo> headings)
+    {
+        if (headings.Count == 0)
+        {
+            return "";
+        }
+
+        var minLevel = headings.Min(heading => heading.Level);
+        var lines = headings.Select(heading =>
+            new TocLine(
+                Indent: (heading.Level - minLevel) * 4,
+                Ordered: false,
+                Text: $"[{heading.Text}](#{heading.Id})")).ToList();
+        var index = 0;
+        return new StringBuilder()
+            .AppendLine("<nav class=\"floating-toc\" aria-label=\"Table of contents\">")
+            .Append(RenderTocList(lines, ref index, lines[0].Indent))
+            .AppendLine("</nav>")
+            .ToString();
+    }
+
     private static IReadOnlyList<TocLine> ParseTocLines(string source)
     {
         var lines = new List<TocLine>();
@@ -690,6 +753,8 @@ internal static partial class MarkdownRenderer
     }
 
     private sealed record TocLine(int Indent, bool Ordered, string Text);
+
+    private sealed record HeadingInfo(int Level, string Id, string Text);
 
     private static string RenderFalloutPalette(string source)
     {

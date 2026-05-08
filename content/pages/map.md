@@ -2,6 +2,7 @@
 title: MAP File Format
 output: map.html
 description: Fallout and Fallout 2 MAP file layout, clean versus saved maps, tiles, scripts, objects, inventory objects, coordinates, dependencies, validation, and writing notes.
+toc: auto
 ---
 
 # MAP File Format

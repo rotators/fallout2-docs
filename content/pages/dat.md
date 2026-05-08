@@ -2,6 +2,7 @@
 title: DAT File Format
 output: dat.html
 description: Fallout DAT archive formats, resource lookup behavior, DAT2 zlib entries, DAT1 LZSS blocks, and writer validation notes.
+toc: auto
 ---
 
 # DAT File Format

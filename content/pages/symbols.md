@@ -2,6 +2,7 @@
 title: Fallout2.exe
 output: symbols.html
 description: Fallout 2 executable metadata, function symbols, and variable symbols.
+width: full
 ---
 
 # Fallout2.exe

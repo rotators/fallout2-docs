@@ -2,6 +2,7 @@
 title: AI.TXT File Format
 output: ai_txt.html
 description: Fallout and Fallout 2 AI.TXT combat AI packet format, parser behavior, runtime fields, party member AI semantics, and save compatibility notes.
+toc: auto
 ---
 # AI.TXT
 

@@ -2,6 +2,7 @@
 title: SSL Script Source Format
 output: ssl.html
 description: Fallout and Fallout 2 SSL script source format, build workflow, syntax, procedures, script categories, compiler behavior, sfall extensions, and authoring guidance.
+toc: auto
 ---
 
 # SSL Script Source Format

@@ -2,6 +2,7 @@
 title: INT File Format
 output: int.html
 description: Fallout and Fallout 2 compiled script bytecode format, procedure tables, identifiers, opcode reference, sfall extensions, script lifecycle, and disassembly notes.
+toc: auto
 ---
 
 # INT File Format

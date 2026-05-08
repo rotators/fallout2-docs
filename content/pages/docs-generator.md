@@ -81,13 +81,21 @@ Pages keep their public URLs by setting `output` in frontmatter:
 ---
 title: DAT File Format
 output: dat.html
+width: full
+toc: auto
 ---
 ```
 
+The optional `width: full` setting lets generated reference pages use the full
+viewport width for wide tables. Omit it for normal prose-heavy pages.
+The optional `toc: auto` setting generates a floating menu from `h2` through
+`h4` headings.
+
 Simple Markdown is supported today: headings, paragraphs, links, inline code,
 fenced code blocks, ordered and unordered lists, pipe tables, fenced `raw-html`
-blocks for page-specific interactive islands, fenced `toc` blocks for floating
-page navigation, fenced `fallout-palette` blocks
+blocks for page-specific interactive islands, fenced `toc` blocks for curated
+floating page navigation, frontmatter `toc: auto` for generated floating page
+navigation, fenced `fallout-palette` blocks
 for compact color palette data, fenced `symbol-table` blocks for large symbol
 references backed by `content/data`, and fenced `tsv-table` blocks for generated
 reference tables. The renderer is deliberately conservative and has no external

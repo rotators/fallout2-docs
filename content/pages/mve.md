@@ -2,6 +2,7 @@
 title: MVE File Format
 output: mve.html
 description: Interplay MVE movie container used by Fallout, including lookup behavior, headers, chunks, opcodes, audio, palette, video block modes, subtitles, and savegame relationship.
+toc: auto
 ---
 
 # MVE File Format

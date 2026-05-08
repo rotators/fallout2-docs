@@ -2,6 +2,7 @@
 title: World-map Text Configuration Files
 output: worldmap_config.html
 description: Fallout and Fallout 2 world-map text configuration files: maps.txt, city.txt, worldmap.txt, terrain, tiles, encounters, message lookups, and validation notes.
+toc: auto
 ---
 
 # World-map Text Configuration Files

@@ -2,6 +2,7 @@
 title: CFG/INI Configuration Files
 output: cfg.html
 description: Fallout and Fallout 2 CFG and INI parser behavior, fallout2.cfg, mapper2.cfg, ddraw.ini, f2_res.ini, movie CFG sidecars, and cross-format dependencies.
+toc: auto
 ---
 
 # CFG/INI Configuration Files

@@ -2,6 +2,7 @@
 title: MSG File Format
 output: msg.html
 description: Fallout MSG brace-triplet text files, parser behavior, important message paths, PRO/MAP/script dependencies, repository ids, and editing notes.
+toc: auto
 ---
 
 # MSG File Format

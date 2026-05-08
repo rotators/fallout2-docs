@@ -2,6 +2,7 @@
 title: PRO File Format
 output: pro.html
 description: Fallout PRO binary prototype records, lookup through prototype lists, shared fields, item/critter/scenery layouts, flags, scripts, and editing notes.
+toc: auto
 ---
 
 # PRO File Format

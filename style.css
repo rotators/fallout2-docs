@@ -27,12 +27,21 @@ a:hover {
     text-decoration: underline;
 }
 
-a {
-    display: inline !important;
+h1 {
+    color: #E0E0E0;
+    font-size: 20px;
+    line-height: 26px;
+    margin: 0 0 16px 0;
+    text-align: center;
 }
 
-h1 {
-    text-align: center;
+h2 {
+    border-bottom: 1px solid #474C44;
+    color: #F49205;
+    font-size: 16px;
+    line-height: 22px;
+    margin: 20px 0 8px 0;
+    padding: 0 0 2px 0;
 }
 
 h3 a:link, h3 a:visited {
@@ -47,34 +56,80 @@ h3 {
     border-bottom: 1px dotted #474C44;
     color: #F49205;
     font-size: 14px;
-    margin: 0px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 0px;
+    line-height: 20px;
+    margin: 12px 0 6px 0;
+    padding: 0px 0 1px 0;
 
+}
+
+code {
+    background: #10170f;
+    border: 1px solid #263126;
+    color: #E0E0E0;
+    padding: 0 3px;
+    white-space: nowrap;
 }
 
 table {
     border-collapse: collapse;
+    box-sizing: border-box;
+    display: block;
     margin: 3px;
+    max-width: 100%;
+    overflow-x: auto;
     padding: 3px;
     width: 100%;
 }
 
 table th {
     border-bottom: 1px solid #535b5aba;
+    color: #F49205;
+    font-weight: bold;
+    padding: 4px 5px;
     text-align: left;
+    vertical-align: bottom;
 }
 
 table td {
+    border-bottom: 1px dotted #263126;
+    line-height: 18px;
     margin: 3px;
-    padding: 3px;
+    padding: 4px 5px;
+    vertical-align: top;
+}
+
+.data-table,
+.symbol-table {
+    border: 1px solid #263126;
+    font-size: 12px;
+}
+
+.data-table th,
+.symbol-table th {
+    background: #11170f;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+    z-index: 2;
+}
+
+.data-table td,
+.symbol-table td {
+    font-family: Consolas, 'Lucida Console', monospace;
+    font-size: 12px;
+    line-height: 17px;
+    white-space: nowrap;
+}
+
+.data-table tbody tr:nth-child(even) td,
+.symbol-table tbody tr:nth-child(even) td {
+    background: #071006;
 }
 
 p {
-    margin: 5px;
+    margin: 6px 0;
     padding: 0px;
-    }
+}
 
 hr {
     height : 1px;
@@ -84,8 +139,20 @@ hr {
 
 pre {
     background: #222; 
-    padding: 10px;
     border: 1px solid #555;
+    box-sizing: border-box;
+    line-height: 18px;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+pre code {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    padding: 0;
+    white-space: pre;
 }
 
 .floating-toc,
@@ -125,7 +192,7 @@ pre {
 
 .floating-toc a,
 .index-toc a {
-    display: block !important;
+    display: block;
 }
 
 .viewer-panel {
@@ -283,7 +350,7 @@ pre {
     border: 2px solid transparent;
     box-sizing: border-box;
     cursor: pointer;
-    display: inline-block !important;
+    display: inline-block;
     height: 25px;
     position: relative;
     width: 25px;
@@ -333,10 +400,17 @@ pre {
     }
 }
 
-@media (min-width: 1540px) {
+@media (min-width: 1280px) {
+    #main > div:has(.floating-toc),
+    #main > div:has(.index-toc) {
+        margin-left: max(330px, calc(50vw - 500px));
+        margin-right: auto;
+        width: min(1000px, calc(100vw - 380px));
+    }
+
     .floating-toc,
     .index-toc {
-        left: calc(50vw - 754px);
+        left: max(50px, calc(50vw - 754px));
         margin: 0;
         max-height: calc(100vh - 100px);
         position: fixed;
@@ -345,17 +419,15 @@ pre {
     }
 }
 
-#main div {
+#main > div {
     margin: auto;
     width: 1000px;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 21px;
 }
 
-#main a {
-    margin: auto;
-    text-align: left;
-    display: table-row;
+#main > div.page-full {
+    width: calc(100vw - 100px);
 }
 
 @media (max-width: 1100px) {
@@ -363,12 +435,9 @@ pre {
         margin: 16px;
     }
 
-    #main div {
+    #main > div,
+    #main > div.page-full {
         width: auto;
     }
 
-    table {
-        display: block;
-        overflow-x: auto;
-    }
 }
