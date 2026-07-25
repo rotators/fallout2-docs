@@ -1,10 +1,13 @@
 ---
-title: Fallout 2 symbols.
+title: Fallout 2 Structures and Enums
 output: structs.html
 description: Fallout 2 enum and structure reference extracted from sfall FalloutEngine headers.
+width: full
 ---
 
-From [https://github.com/phobos2077/sfall/blob/master/sfall/FalloutEngine/Enums.h](https://github.com/phobos2077/sfall/blob/master/sfall/FalloutEngine/Enums.h)
+# Fallout 2 Structures and Enums
+
+Reference extracted from [sfall `FalloutEngine/Enums.h`](https://github.com/phobos2077/sfall/blob/master/sfall/FalloutEngine/Enums.h).
 
 ```c
 enum Animation : long

@@ -1,18 +1,43 @@
 ---
-title: Symbols
+title: High-Resolution Patch Symbols
 output: hrp.html
 description: Fallout 2 high-resolution patch f2_res.dll metadata and symbol offset table for version 4.1.8.
+width: full
 ---
+
+# High-Resolution Patch Symbols
 
 This information is based on version 4.1.8 released 2014-03-08.
 
-### Metadata
+## Metadata
 
-<p><b>Filename:</b> f2_res.dll<br/><b>MD5:</b> e1686ce133b25c5d34f307c79c445fd4<br/><b>SHA-1:</b> 0a7177ee07b3b258d9929aafb1f68ee7a1a17ddd<br/><b>SHA-256:</b> 2d3c52cf624b22958db7fa44e3db71c2d0478503da5ceb40f0636dea1202fb5a<br/><b>PEiD:</b> Microsoft Visual C++ v7.1 DLL</p>
+| Field | Value |
+| --- | --- |
+| Filename | `f2_res.dll` |
+| MD5 | `e1686ce133b25c5d34f307c79c445fd4` |
+| SHA-1 | `0a7177ee07b3b258d9929aafb1f68ee7a1a17ddd` |
+| SHA-256 | `2d3c52cf624b22958db7fa44e3db71c2d0478503da5ceb40f0636dea1202fb5a` |
+| PEiD | Microsoft Visual C++ v7.1 DLL |
+| PE format | PE32, Intel 386 |
+| Preferred image base | `0x10000000` |
+| Size of image | `0x00077000` |
 
-### Symbols
+## Address Basis
 
-| Offset | Name |
+The address basis was verified directly against the version 4.1.8 DLL identified by all three hashes above. Values in the table are preferred 32-bit virtual addresses, not RVAs or file offsets.
+
+To convert a table value to an RVA, subtract the preferred image base:
+
+```text
+RVA = preferred virtual address - 0x10000000
+0x10001290 -> RVA 0x00001290
+```
+
+The DLL contains relocation data, so Windows can load it at a different base. For a relocated module, calculate the runtime address as `actual module base + RVA`. Convert an RVA to a file offset through the PE section table; simply subtracting the image base does not produce a file offset.
+
+## Symbols
+
+| Preferred virtual address | Name |
 | --- | --- |
 | 0x10001290 | GetIntConfig |
 | 0x10001340 | get_int_ddraw_config |

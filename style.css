@@ -126,6 +126,27 @@ table td {
     background: #071006;
 }
 
+.data-table .col-address,
+.symbol-table .col-address,
+.data-table .col-line {
+    color: #E0E0E0;
+    text-align: right;
+}
+
+.data-table .col-name,
+.symbol-table .col-name {
+    min-width: 220px;
+}
+
+.data-table .col-code {
+    min-width: 520px;
+}
+
+.data-table .col-source {
+    color: #AEB8AA;
+    min-width: 180px;
+}
+
 p {
     margin: 6px 0;
     padding: 0px;

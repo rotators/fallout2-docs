@@ -925,13 +925,13 @@ internal static partial class MarkdownRenderer
                 .Append(Html.Escape(section))
                 .AppendLine("</h3>");
             html.AppendLine("<table class=\"symbol-table\">");
-            html.AppendLine("<thead><tr><th>Offset</th><th>Name</th></tr></thead>");
+            html.AppendLine("<thead><tr><th class=\"col-address\">Preferred virtual address</th><th class=\"col-name\">Name</th></tr></thead>");
             html.AppendLine("<tbody>");
             foreach (var row in rows)
             {
-                html.Append("<tr><td>")
+                html.Append("<tr><td class=\"col-address\">")
                     .Append(Html.Escape(row.Offset))
-                    .Append("</td><td>")
+                    .Append("</td><td class=\"col-name\">")
                     .Append(Html.Escape(row.Name))
                     .AppendLine("</td></tr>");
             }
@@ -985,7 +985,11 @@ internal static partial class MarkdownRenderer
         html.Append("<thead><tr>");
         foreach (var header in headers)
         {
-            html.Append("<th>").Append(Html.Escape(header)).Append("</th>");
+            html.Append("<th class=\"")
+                .Append(Html.EscapeAttribute(GetTsvColumnClass(header)))
+                .Append("\">")
+                .Append(Html.Escape(header))
+                .Append("</th>");
         }
         html.AppendLine("</tr></thead>");
         html.AppendLine("<tbody>");
@@ -1003,7 +1007,11 @@ internal static partial class MarkdownRenderer
             for (var index = 0; index < headers.Length; index++)
             {
                 var cell = index < cells.Length ? cells[index] : "";
-                html.Append("<td>").Append(Html.Escape(cell)).Append("</td>");
+                html.Append("<td class=\"")
+                    .Append(Html.EscapeAttribute(GetTsvColumnClass(headers[index])))
+                    .Append("\">")
+                    .Append(Html.Escape(cell))
+                    .Append("</td>");
             }
             html.AppendLine("</tr>");
         }
@@ -1011,6 +1019,45 @@ internal static partial class MarkdownRenderer
         html.AppendLine("</tbody>");
         html.AppendLine("</table>");
         return html.ToString();
+    }
+
+    private static string GetTsvColumnClass(string header)
+    {
+        var normalized = header.Trim().ToLowerInvariant();
+        if (normalized == "fallout 2 re"
+            || normalized.Contains("offset", StringComparison.Ordinal)
+            || normalized.Contains("address", StringComparison.Ordinal)
+            || normalized.Contains("addr", StringComparison.Ordinal))
+        {
+            return "col-address";
+        }
+
+        if (normalized.Contains("line", StringComparison.Ordinal))
+        {
+            return "col-line";
+        }
+
+        if (normalized.Contains("source", StringComparison.Ordinal)
+            || normalized.Contains("file", StringComparison.Ordinal))
+        {
+            return "col-source";
+        }
+
+        if (normalized.Contains("code", StringComparison.Ordinal)
+            || normalized.Contains("signature", StringComparison.Ordinal)
+            || normalized.Contains("prototype", StringComparison.Ordinal))
+        {
+            return "col-code";
+        }
+
+        if (normalized.Contains("name", StringComparison.Ordinal)
+            || normalized.Contains("function", StringComparison.Ordinal)
+            || normalized.Contains("symbol", StringComparison.Ordinal))
+        {
+            return "col-name";
+        }
+
+        return "col-text";
     }
 
     private static string ReadRequiredBlockValue(string source, string key)

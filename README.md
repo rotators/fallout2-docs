@@ -72,6 +72,15 @@ dotnet run --project tools/FoDocs.Generator -- --clean
 The output is written to `_site/`. Generated files and .NET build artifacts are
 ignored by Git.
 
+Validate the generated site:
+
+```powershell
+tools\Validate-Site.ps1
+```
+
+The validation script checks generated pages, local links and anchors, automatic
+TOCs, full-width page flags, and leftover root-level generated HTML files.
+
 Current generated pages:
 
 - `aaf.html` from `content/pages/aaf.md`

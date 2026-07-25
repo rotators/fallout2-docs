@@ -130,15 +130,15 @@ All numeric fields are signed 32-bit integers stored in big-endian byte order. T
 
 ## Tools
 
-<a href="https://fodev.net/files/archive/fo2/cgcd.zip">CGCD</a> - <a href="https://github.com/rotators/cgcd">Source</a><br/>
-<a href="http://www.synalysis.net/formats.xml">Grammar on synalysis.net to edit .gcd files easily</a>.
+- [CGCD](https://fodev.net/files/archive/fo2/cgcd.zip) - [source](https://github.com/rotators/cgcd)
+- [Synalysis grammar collection](http://www.synalysis.net/formats.xml)
 
 ## Source code
 
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/critter.cc">Fallout 2 Community Edition GCD reader/writer - C++</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h">Fallout 2 Community Edition CritterProtoData structure - C++</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/skill_defs.h">Fallout 2 Community Edition skill indexes - C++</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/trait_defs.h">Fallout 2 Community Edition trait indexes - C++</a>
+- [Fallout 2 Community Edition GCD reader/writer](https://github.com/alexbatalov/fallout2-ce/blob/main/src/critter.cc)
+- [Fallout 2 Community Edition CritterProtoData structure](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h)
+- [Fallout 2 Community Edition skill indexes](https://github.com/alexbatalov/fallout2-ce/blob/main/src/skill_defs.h)
+- [Fallout 2 Community Edition trait indexes](https://github.com/alexbatalov/fallout2-ce/blob/main/src/trait_defs.h)
 
 ## History
 

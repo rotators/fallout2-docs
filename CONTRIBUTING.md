@@ -170,6 +170,7 @@ When changing the generator, templates, or migrated Markdown pages, run:
 ```powershell
 dotnet build tools/FoDocs.Generator/FoDocs.Generator.csproj
 dotnet run --project tools/FoDocs.Generator -- --clean
+tools\Validate-Site.ps1
 ```
 
 For migrated pages, also compare the original and generated heading outlines:

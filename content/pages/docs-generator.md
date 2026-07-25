@@ -24,6 +24,15 @@ dotnet run --project tools/FoDocs.Generator -- --clean
 
 The generated site is written to `_site`.
 
+Validate the generated output with:
+
+```powershell
+tools\Validate-Site.ps1
+```
+
+The validation script checks local generated pages, internal links and anchors,
+automatic floating TOCs, full-width page flags, and leftover root-level HTML.
+
 ## Generated Pages
 
 The following pages have Markdown sources:

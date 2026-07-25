@@ -1,14 +1,16 @@
 ---
-title: Savegame Structure
+title: Fallout 2 Savegame Structure
 output: savegame.html
-description: Fallout and Fallout 2 save slot structure, SAVE.DAT header and handler order, map/prototype sidecars, sfall sidecar notes, and compatibility guidance.
+description: Fallout 2 save slot structure, SAVE.DAT header and handler order, map/prototype sidecars, sfall sidecar notes, and Fallout 1 compatibility boundaries.
 ---
 
-# Savegame Structure
+# Fallout 2 Savegame Structure
 
-Fallout and Fallout 2 savegames are slot directories, not a single archive file. The central file is `SAVE.DAT`, but visited maps, automap data, companion prototype overrides, backups, and sfall/CE extension files can live beside it in the same `SAVEGAME\SLOT##` folder.
+Fallout 2 savegames are slot directories, not a single archive file. The central file is `SAVE.DAT`, but visited maps, automap data, companion prototype overrides, backups, and sfall/CE extension files can live beside it in the same `SAVEGAME\SLOT##` folder.
 
 `SAVE.DAT` is not a normal Fallout [DAT](dat.html) archive. It is a big-endian binary stream written as a header followed by 27 save/load handler sections. The handler sections have no section id or length prefix in the file; the engine knows the order from its save/load handler table.
+
+Fallout 1 uses the same broad slot concept and the same fixed header shape, but its handler order is not the same as Fallout 2. The detailed handler table and handler descriptions on this page are for Fallout 2 version `1.2R` and Fallout 2 Community Edition unless a Fallout 1 difference is stated explicitly.
 
 ## Slot Directory
 
@@ -34,14 +36,14 @@ The map and prototype sidecar files in a save slot are gzip-compressed. The deco
 
 ## SAVE.DAT Header
 
-The header is fixed-size: `0x7563` bytes, or decimal `30051`. After the header, the 27 handler sections follow immediately.
+The header is fixed-size in both Fallout 1 CE and Fallout 2 CE: `0x7563` bytes, or decimal `30051`. After the header, the game-specific handler sections follow immediately.
 
 | Offset | Size | Field | Description |
 |---|---|---|---|
-| `0x0000` | `24` | Signature buffer | Contains `FALLOUT SAVE FILE`. Fallout 2 CE writes a 24-byte buffer and validates only the first 18 bytes. |
-| `0x0018` | `2` | Version word 0 | CE writes the major version word and expects `1` when loading normal Fallout 2 saves. |
-| `0x001A` | `2` | Version word 1 | CE writes the minor version word and expects `2`. |
-| `0x001C` | `1` | Release byte | CE expects ASCII `R`. Together the version check is effectively `1.2R`. |
+| `0x0000` | `24` | Signature buffer | Contains `FALLOUT SAVE FILE`. Both CE implementations write a 24-byte buffer and validate only the first 18 bytes. |
+| `0x0018` | `2` | Version word 0 | Major version. Both CE implementations write and expect `1`. |
+| `0x001A` | `2` | Version word 1 | Minor version: Fallout 1 writes `1`; Fallout 2 writes and expects `2`. |
+| `0x001C` | `1` | Release byte | Both CE implementations write ASCII `R`. The complete version is `1.1R` for Fallout 1 and `1.2R` for Fallout 2. |
 | `0x001D` | `32` | Character name | Current dude/player name, fixed buffer. |
 | `0x003D` | `30` | Save description | User-entered slot description, fixed buffer. The UI limits input to 29 characters plus terminator. |
 | `0x005B` | `2` | Real day | Local real-world day of month when saved. |
@@ -56,13 +58,37 @@ The header is fixed-size: `0x7563` bytes, or decimal `30051`. After the header, 
 | `0x0071` | `2` | Map index | Current map index from the map system. |
 | `0x0073` | `16` | Current map save filename | Current map header name converted to a `.SAV` filename. |
 | `0x0083` | `29792` | Preview image | Load/save thumbnail: `224 * 133` bytes of 8-bit indexed pixels. |
-| `0x7503` | `128` | Reserved | CE writes zero bytes and skips them when loading. |
+| `0x74E3` | `128` | Reserved | Both CE implementations write zero bytes and skip them when loading. |
 
 The preview is captured from the isometric window and stored as raw indexed pixels. It is not an FRM, RIX, or image file with its own header.
 
-## SAVE.DAT Handler Order
+The final offsets follow directly from the write order in both CE implementations: the fields before the preview occupy `0x83` bytes, the preview occupies `224 * 133 = 0x7460` bytes, and the reserved block therefore begins at `0x83 + 0x7460 = 0x74E3`. Adding the final `0x80` reserved bytes places the first handler byte at `0x7563`.
 
-After the header, `SAVE.DAT` contains 27 sections in hardcoded order. The file does not store section names or sizes. Fallout 2 CE logs the size read/written for each handler during debug builds, but those sizes are diagnostic output, not part of the format.
+## Fallout 1 Compatibility
+
+Fallout 1 and Fallout 2 use the same `0x7563`-byte header layout, with the version difference noted above. Their `SAVE.DAT` bodies must not be decoded with the same handler table.
+
+Handler slots `0` through `14` have the same broad sequence in Fallout 1 CE and Fallout 2 CE. Beginning at slot `15`, Fallout 1 stores the queue immediately, while Fallout 2 postpones the queue until slot `24`. This shifts the intervening sections by one position. The code-level save-handler comparison is:
+
+| # | Fallout 1 CE | Fallout 2 CE |
+|---|---|---|
+| `15` | `queue_save` | `traitsSave` |
+| `16` | `trait_save` | `automapSave` |
+| `17` | `automap_save` | `preferencesSave` |
+| `18` | `save_options` | `characterEditorSave` |
+| `19` | `editor_save` | `wmWorldMap_save` |
+| `20` | `save_world_map` | `pipboySave` |
+| `21` | `save_pipboy` | `gameMoviesSave` |
+| `22` | `gmovie_save` | `skillsUsageSave` |
+| `23` | `skill_use_slot_save` | `partyMembersSave` |
+| `24` | `partyMemberSave` | `queueSave` |
+| `25` | `intface_save` | `interfaceSave` |
+
+Both tables end with an empty/finalization handler at slot `26`, but the bytes in slots `15` through `24` are not interchangeable. A parser should inspect the header version before selecting a handler schema: `1.1R` indicates the Fallout 1 layout and `1.2R` the Fallout 2 layout documented below.
+
+## Fallout 2 SAVE.DAT Handler Order
+
+After the header, a Fallout 2 `SAVE.DAT` contains 27 sections in hardcoded order. The file does not store section names or sizes. Fallout 2 CE logs the size read/written for each handler during debug builds, but those sizes are diagnostic output, not part of the format.
 
 | # | Save handler | Load handler | Contents |
 |---|---|---|---|
@@ -222,6 +248,7 @@ The main `SAVE.DAT` map handler only lists and copies those sidecar files. The a
 
 ## Compatibility Notes
 
+- Do not use the Fallout 2 handler table for a Fallout 1 `1.1R` save. The handler order diverges at slot `15`.
 - Do not reorder the 27 handler sections. There are no section tags in `SAVE.DAT`.
 - Preserve the duplicate global-variable section unless targeting an engine that explicitly removed it.
 - Changing [GAM](gam.html) global variable counts can make handlers 2 and 4 misalign.
@@ -236,12 +263,13 @@ The main `SAVE.DAT` map handler only lists and copies those sidecar files. The a
 
 1. Open `SAVE.DAT` as an uncompressed binary file.
 2. Read and validate the fixed `0x7563`-byte header.
-3. Decode handler sections in exact engine order.
-4. For handler 3, collect the saved map filenames and inspect the corresponding compressed `.SAV` files in the slot.
-5. Decompress saved map files before parsing them with the [MAP format](map.html).
-6. Decompress saved party PRO files before parsing them with the [PRO format](pro.html).
-7. Load or model the same supporting tables as the game: [GAM](gam.html), [PARTY.TXT](party_txt.html), [AI.TXT](ai_txt.html), [SCRIPTS.LST](scripts_lst.html), worldmap config, and message files.
-8. Treat unknown or module-owned sections as runtime state, not as independent named resources.
+3. Check the header version and select the matching game schema. The handler table below applies to Fallout 2 `1.2R`, not Fallout 1 `1.1R`.
+4. Decode handler sections in exact engine order.
+5. For handler 3, collect the saved map filenames and inspect the corresponding compressed `.SAV` files in the slot.
+6. Decompress saved map files before parsing them with the [MAP format](map.html).
+7. Decompress saved party PRO files before parsing them with the [PRO format](pro.html).
+8. Load or model the same supporting tables as the game: [GAM](gam.html), [PARTY.TXT](party_txt.html), [AI.TXT](ai_txt.html), [SCRIPTS.LST](scripts_lst.html), worldmap config, and message files.
+9. Treat unknown or module-owned sections as runtime state, not as independent named resources.
 
 ## Source Code Map
 
@@ -261,16 +289,21 @@ The main `SAVE.DAT` map handler only lists and copies those sidecar files. The a
 
 ## References
 
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/loadsave.cc">Fallout 2 Community Edition loadsave.cc</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/loadsave.h">Fallout 2 Community Edition loadsave.h</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/object.cc">Fallout 2 Community Edition object.cc</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc">Fallout 2 Community Edition scripts.cc</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc">Fallout 2 Community Edition worldmap.cc</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/party_member.cc">Fallout 2 Community Edition party_member.cc</a><br/>
-<a href="https://github.com/alexbatalov/fallout2-ce/blob/main/src/queue.cc">Fallout 2 Community Edition queue.cc</a><br/>
-<a href="https://fallout.wiki/wiki/SAVE.DAT_File_Format">SAVE.DAT File Format - The Fallout Wiki</a><br/>
-<a href="https://falloutmods.fandom.com/wiki/SAV_File_Format">SAV File Format - Vault-Tec Labs</a>
+- [Fallout 1 Community Edition loadsave.cc](https://github.com/alexbatalov/fallout1-ce/blob/main/src/game/loadsave.cc)
+- [Fallout 1 Community Edition version.h](https://github.com/alexbatalov/fallout1-ce/blob/main/src/game/version.h)
+- [Fallout 2 Community Edition loadsave.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/loadsave.cc)
+- [Fallout 2 Community Edition loadsave.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/loadsave.h)
+- [Fallout 2 Community Edition version.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/version.h)
+- [Fallout 2 Community Edition object.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/object.cc)
+- [Fallout 2 Community Edition scripts.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc)
+- [Fallout 2 Community Edition worldmap.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc)
+- [Fallout 2 Community Edition party_member.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/party_member.cc)
+- [Fallout 2 Community Edition queue.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/queue.cc)
+- [SAVE.DAT File Format - The Fallout Wiki](https://fallout.wiki/wiki/SAVE.DAT_File_Format)
+- [SAV File Format - Vault-Tec Labs](https://falloutmods.fandom.com/wiki/SAV_File_Format)
 
 ## History
+
+2026-07-25 - Verified the fixed header layout against Fallout 1 CE and Fallout 2 CE, corrected the reserved block offset to `0x74E3`, and documented the incompatible Fallout 1/Fallout 2 handler orders.
 
 2026-05-07 - Added slot-level savegame structure, `SAVE.DAT` header, handler order, map/proto sidecars, sfall sidecar notes, and source-backed compatibility guidance.

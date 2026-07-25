@@ -1,4 +1,4 @@
-section	offset	name
+section	virtual_address	name
 Functions	0x410003	___begtext
 Functions	0x410010	abil_init_
 Functions	0x410058	abil_resize_

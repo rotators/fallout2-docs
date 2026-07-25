@@ -6,28 +6,31 @@ description: Main index for Fallout 1 and Fallout 2 reversing, modding, file for
 
 ```toc
 1. [Fallout2.exe](#fo2exe)
-2. [File formats](#formats)
-3. [Artwork](#artwork)
-4. [Animation](#animation)
-5. [Scripting](#scripting)
-6. [Watcom](#watcom)
-7. [ASM](#asm)
-8. [Reversing tools](#revtools)
-9. [IDA](#ida)
-10. [Fallout tools](#fo2tools)
-11. [sfall](#sfall)
+2. [f2_res.dll](#f2res)
+3. [Modding](#modding)
+4. [File formats](#formats)
+5. [Artwork](#artwork)
+6. [Animation](#animation)
+7. [Scripting](#scripting)
+8. [Worldmap](#worldmap)
+9. [Watcom](#watcom)
+10. [ASM](#asm)
+11. [Reversing tools](#revtools)
+12. [IDA](#ida)
+13. [Fallout tools](#fo2tools)
+14. [sfall](#sfall)
     - [Binary distros](#sfall-bin)
     - [Source code](#sfall-src)
     - [DirectX](#sfall-dx)
     - [sfall dev](#sfall-dev)
-12. [Projects](#fo_projects)
-13. [Misc](#misc)
-14. [Buy](#buy)
+15. [Projects](#fo_projects)
+16. [Misc](#misc)
+17. [Buy](#buy)
 ```
 
 # Fallout 1 & 2 reversing and modding resource
 
-Updated 2026-03-01
+Updated 2026-05-09
 
 You can find additional information and code at [github.com/rotators](https://github.com/rotators)
 
@@ -49,6 +52,8 @@ You can find additional information and code at [github.com/rotators](https://gi
 
 [Fallout_1_and_2_IDA68.rar - IDA database](https://rotators.fodev.net/ghosthack/scrapheap/reversing/ida/Fallout_1_and_2_IDA68.rar)
 
+<a id="f2res"></a>
+
 ## f2_res.dll (High resolution patch)
 
 [Symbols](hrp.html)
@@ -68,35 +73,35 @@ You can find additional information and code at [github.com/rotators](https://gi
 | Format | Tools |
 | --- | --- |
 | [AI.TXT - Description of combat parameters for the player and all NPC classes in the game](ai_txt.html) | [Fallout 2 - Proto Manager](https://www.nma-fallout.com/resources/fallout-2-proto-manager.73/) |
-| [PARTY.TXT - Party-member registry, combat-control option whitelist, and companion level-up data.](party_txt.html) | Texteditor |
-| [Pip-Boy text data - quests.txt, holodisk.txt, quest status, holodisk text, and GVAR-controlled display rules.](pipboy_txt.html) | Texteditor |
+| [PARTY.TXT - Party-member registry, combat-control option whitelist, and companion level-up data.](party_txt.html) | Text editor |
+| [Pip-Boy text data - quests.txt, holodisk.txt, quest status, holodisk text, and GVAR-controlled display rules.](pipboy_txt.html) | Text editor |
 | [ACM - Interplay compressed audio for music, speech, and sound effects.](acm.html) | Use [libacm](https://github.com/markokr/libacm), [acm2wav](https://fodev.net/files/mirrors/teamx-utils/acm2wav.rar) or [Game Audio Player](https://fodev.net/files/archive/gap.zip) for playback. |
 | [AAF - The AAF Font File Format is used to store fonts.](aaf.html) | [Fallout Service Box: Font Editor](https://fodev.net/files/mirrors/teamx-utils/FSB_0.21.rar) |
-| [BIO - Story for premade characters (GCD).](bio.html) | Texteditor |
-| [CFG/INI - Runtime configuration files, parser behavior, sfall INI settings, high-resolution options, and movie sidecars.](cfg.html) | Texteditor |
-| [Critical hit tables - Executable combat tables, sfall/CE override INI layout, damage flags, and combat message dependencies.](criticals.html) | Texteditor, hex editor |
+| [BIO - Story for premade characters (GCD).](bio.html) | Text editor |
+| [CFG/INI - Runtime configuration files, parser behavior, sfall INI settings, high-resolution options, and movie sidecars.](cfg.html) | Text editor |
+| [Critical hit tables - Executable combat tables, sfall/CE override INI layout, damage flags, and combat message dependencies.](criticals.html) | Text editor, hex editor |
 | [DAT - Archive containers for Fallout 1/2 resources, including DAT1 and DAT2 layouts.](dat.html) | [Dat Explorer 1.43](https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar), [many others](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat) |
-| [Elevators.ini - sfall/CE elevator destination tables, interface templates, and script activation rules.](elevators.html) | Texteditor |
+| [Elevators.ini - sfall/CE elevator destination tables, interface templates, and script activation rules.](elevators.html) | Text editor |
 | [FON - Fonts used for text on the world map](fon.html) | [FON editor](https://fodev.net/files/mirrors/teamx-utils/fonedit1.0.rar) |
 | [FRM - Indexed art, animation frames, rotations, offsets, FID lookup, and palette-dependent rendering.](frm.html) | [Titanium FRM browser](https://fodev.net/files/archive/fo2/Titanium%20FRM%20Browser%201.3%20%28en%29.zip), [Graphics viewer 1.36](https://fodev.net/files/mirrors/teamx-utils/viewer.rar) [and many others.](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics) |
 | [INT - Compiled script bytecode for Fallout and Fallout 2 SSL scripts.](int.html) | use int2ssl.exe included in [sfall modderspack](https://sourceforge.net/projects/sfall/files/Modders%20pack/modderspack_4.3.4.7z/download) to decompile or [source repo](https://github.com/phobos2077/int2ssl). |
 | [SSL - Source language and build format for Fallout and Fallout 2 scripts.](ssl.html) | [sfall SSLC](https://sfall-team.github.io/sfall/sslc/), [Fallout 2 script library](https://fallout.fandom.com/wiki/Fallout_2_script_library) |
-| [SCRIPTS.LST - Indexed registry for compiled INT scripts, dialogue MSG binding, and script local-variable metadata.](scripts_lst.html) | Texteditor |
-| [Savegame structure - SAVE.DAT, saved map sidecars, party PRO sidecars, automap data, and sfall save extensions.](savegame.html) | Hex editor, gzip tools |
+| [SCRIPTS.LST - Indexed registry for compiled INT scripts, dialogue MSG binding, and script local-variable metadata.](scripts_lst.html) | Text editor |
+| [Fallout 2 savegame structure - SAVE.DAT, saved map sidecars, party PRO sidecars, automap data, sfall extensions, and Fallout 1 compatibility boundaries.](savegame.html) | Hex editor, gzip tools |
 | [GCD File Format - Premade characters.](gcd.html) | [CGCD](https://github.com/rotators/cgcd) |
-| [GAM - GAM files are indexed text files. They contain global variables for each core Fallout game and its maps](gam.html) | Texteditor |
+| [GAM - GAM files are indexed text files. They contain global variables for each core Fallout game and its maps](gam.html) | Text editor |
 | [LIP - Talking-head lip-sync timing for speech audio.](lip.html) | [LIP editor](https://fodev.net/files/mirrors/teamx-utils/LIPEditor0.96b.rar), [wav2lip](https://fodev.net/files/mirrors/teamx-utils/wav2lip.rar) |
-| [LST - Line-indexed tables, art FID resolution, critter/head metadata, and filename construction.](lst.html) | Texteditor |
+| [LST - Line-indexed tables, art FID resolution, critter/head metadata, and filename construction.](lst.html) | Text editor |
 | [MAP - Maps used for locations.](map.html) | [Patched BIS mapper](https://www.nma-fallout.com/resources/bis-mapper.55/) |
-| [MSG - Text message lists for dialogue, object names, UI strings, map names, and combat text.](msg.html) | Texteditor |
+| [MSG - Text message lists for dialogue, object names, UI strings, map names, and combat text.](msg.html) | Text editor |
 | [MSK - World-map walk masks that mark blocked terrain pixels.](msk.html) | [MSK tools](https://fodev.net/files/mirrors/teamx-utils/MSKTools.rar), [msk2bmp](https://fodev.net/files/mirrors/teamx-utils/msk2bmp.rar) |
-| [PAL/COL - Fallout palette files, RGB555 lookup, color tables, and animated palette ranges.](pal.html) | Fallout default color sheet |
+| [PAL/COL - Fallout palette files, RGB555 lookup, color tables, and animated palette ranges.](pal.html) | [Fallout default color sheet](fo_colors.html) |
 | [PRO - Prototype, every item, critter, wall, tile, and piece of scenery has its own corresponding PRO file.](pro.html) | [Fallout 2 - Proto Manager](https://www.nma-fallout.com/resources/fallout-2-proto-manager.73/) |
 | [RIX - ColoRIX indexed bitmap format used for startup/loading splash screens.](rix.html) | [Graphics viewer 1.36 to load/save](https://fodev.net/files/mirrors/teamx-utils/viewer.rar) |
 | [MVE - Interplay movie container for intro, ending, logo, credits, and cutscene videos.](mve.html) | [Various](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#video) |
-| [SVE - Frame-numbered subtitle cue lists for MVE movies.](sve.html) | Texteditor |
+| [SVE - Frame-numbered subtitle cue lists for MVE movies.](sve.html) | Text editor |
 | [Worldmap.dat - Serialized world-map state and related world map definition files.](worldmap_dat.html) | [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap) |
-| [World-map text config - maps.txt, city.txt, and worldmap.txt editable world-map definitions.](worldmap_config.html) | Texteditor, [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap) |
+| [World-map text config - maps.txt, city.txt, and worldmap.txt editable world-map definitions.](worldmap_config.html) | Text editor, [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap) |
 
 <a id="artwork"></a>
 
@@ -266,6 +271,7 @@ Mirror: [DirectX SDK Collection](https://github.com/NovaRain/DXSDK_Collection)
 ## Misc
 
 - [List of Fallout 1 & 2 mods](mods.html)
+- [Documentation generator notes](docs-generator.html)
 - [GDC - Classic Game Postmortem: Fallout](https://www.youtube.com/watch?v=T2OxO-4YLRk)
 - [The Nearly Ultimate Fallout Guide](https://lemmings19.github.io/fallout-1-walkthrough/)
 - [The Nearly Ultimate Fallout 2 Guide](https://twinysam.github.io/fallout2guide/)
@@ -276,5 +282,7 @@ Mirror: [DirectX SDK Collection](https://github.com/NovaRain/DXSDK_Collection)
 
 ## Buy
 
-- Fallout| [GOG](https://www.gog.com/game/fallout) | [SteamDB](https://steamdb.info/app/38400/) | [Epic](https://store.epicgames.com/en-US/p/fallout)
-- Fallout 2| [GOG](https://www.gog.com/game/fallout_2) | [SteamDB](https://steamdb.info/app/38410/) | [Epic](https://store.epicgames.com/sv/p/fallout-2)
+| Game | Stores |
+| --- | --- |
+| Fallout | [GOG](https://www.gog.com/game/fallout), [SteamDB](https://steamdb.info/app/38400/), [Epic](https://store.epicgames.com/en-US/p/fallout) |
+| Fallout 2 | [GOG](https://www.gog.com/game/fallout_2), [SteamDB](https://steamdb.info/app/38410/), [Epic](https://store.epicgames.com/sv/p/fallout-2) |
