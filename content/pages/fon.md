@@ -180,15 +180,15 @@ bd  ==>  10111101  ==>   #.####.#
 
 ### Source code
 
-[Fallout 2 Community Edition FON loader and renderer - C++](https://github.com/alexbatalov/fallout2-ce/blob/main/src/text_font.cc)
+[Fallout 2 Community Edition FON loader and renderer - C++](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/text_font.cc)
 
-[Fallout 2 Community Edition font manager declarations - C++](https://github.com/alexbatalov/fallout2-ce/blob/main/src/text_font.h)
+[Fallout 2 Community Edition font manager declarations - C++](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/text_font.h)
 
-[Fallout 2 Community Edition AAF interface font manager - C++](https://github.com/alexbatalov/fallout2-ce/blob/main/src/font_manager.cc)
+[Fallout 2 Community Edition AAF interface font manager - C++](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/font_manager.cc)
 
-[Fallout 2 Community Edition window manager font initialization - C++](https://github.com/alexbatalov/fallout2-ce/blob/main/src/window_manager.cc)
+[Fallout 2 Community Edition window manager font initialization - C++](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/window_manager.cc)
 
-[Fallout 2 Community Edition worldmap font usage - C++](https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc)
+[Fallout 2 Community Edition worldmap font usage - C++](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/worldmap.cc)
 ## History
 
 2020-01-16 - Ported from [https://falloutmods.fandom.com/wiki/FON_File_Format](https://falloutmods.fandom.com/wiki/FON_File_Format)

@@ -430,10 +430,10 @@ The original `city.txt` comments say that city names are kept in the world-map m
 
 ## Source references
 
-- [Fallout 2 CE `worldmap.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc) - `maps.txt`, `city.txt`, and `worldmap.txt` loading, parser limits, random encounter selection, travel, and placement behavior.
-- [Fallout 2 CE `worldmap.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.h) - map flags, city indexes/states, and encounter flags.
-- [Fallout 2 CE `config.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/config.cc) - INI-style config parser, semicolon comments, duplicate-key replacement, and integer parsing behavior.
-- [Fallout 2 CE `string_parsers.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/string_parsers.cc) - comma-separated token parsing, case normalization, and keyed integer parsing.
+- [Fallout 2 CE `worldmap.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/worldmap.cc) - `maps.txt`, `city.txt`, and `worldmap.txt` loading, parser limits, random encounter selection, travel, and placement behavior.
+- [Fallout 2 CE `worldmap.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/worldmap.h) - map flags, city indexes/states, and encounter flags.
+- [Fallout 2 CE `config.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/config.cc) - INI-style config parser, semicolon comments, duplicate-key replacement, and integer parsing behavior.
+- [Fallout 2 CE `string_parsers.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/string_parsers.cc) - comma-separated token parsing, case normalization, and keyed integer parsing.
 - [The Fallout Wiki `Worldmap.txt` File Format](https://fallout.wiki/wiki/Worldmap.txt_File_Format) - classic world-map terrain and encounter reference.
 - [The Fallout Wiki `MAPS.TXT` File Format](https://fallout.wiki/wiki/MAPS.TXT_File_Format) - classic map-list notes and field meanings.
 - [Vault-Tec Labs `CITY.TXT` File Format](https://falloutmods.fandom.com/wiki/CITY.TXT_File_Format) - classic area and entrance notes.

@@ -234,6 +234,101 @@ For non-player critters, the critical table kill type is read from the target cr
 
 The player character does not use the critter PRO kill type path for incoming criticals. CE checks whether the defender is `gDude` and uses the separate player critical table.
 
+## Weapon Critical Failures
+
+The following describes Fallout 2's executable failure table as represented by Fallout 2 CE. It contains seven rows and five severity columns. Each entry is a single damage-flag bitmask; there are no per-entry damage multipliers, defensive stat checks, or message ids. The `FailureEffect` field in the successful-critical override format above has a different purpose: it applies when the defender fails a stat check after being critically hit.
+
+### Selecting the Table
+
+The attacking weapon's [PRO](pro.html) field `crit_fail_table` (CE: `criticalFailureType`) selects row `0..6`. This is a signed big-endian 32-bit field at weapon PRO offset `0x0061`. It belongs to the weapon, so the defender's kill type and hit location do not select this table.
+
+`weaponGetCriticalFailureType` returns `-1` for a null weapon, and the failure handler maps `-1` to row `0`. A weapon PRO containing `-1` receives the same fallback. Other out-of-range values are not clamped before indexing in the inspected CE handler; editors should accept only `-1` or `0..6`. Table numbers should not be inferred from weapon animation, caliber, or damage type.
+
+### Failure Chance and Severity
+
+First, an attack must become a critical failure. In CE's ordinary `randomRoll` path, a miss with margin `roll - toHit` has a second percentage roll against the integer quotient `(roll - toHit) / 10`. This is not a fixed 10% chance per missed attack. Combat also has other routes, including Jinxed promoting an ordinary failure with a 50% roll.
+
+Once the failure handler runs, it rolls a fresh percentage die for severity:
+
+```text
+severity = random(1, 100) - 5 * (attackerLuck - 5)
+flags = failureTable[weaponTable][severityIndex]
+```
+
+| Modified severity | Index | Probability at Luck 5, conditional on reaching this roll |
+|---|---|---|
+| `<= 20` | `0` | 20% |
+| `21..50` | `1` | 30% |
+| `51..75` | `2` | 25% |
+| `76..95` | `3` | 20% |
+| `> 95` | `4` | 5% |
+
+Higher Luck reduces severity by five per point above five. At Luck 10 the roll spans `-24..75`, making indices 3 and 4 unreachable through this calculation. At Luck 1 it spans `21..120`, making index 0 unreachable. Better Criticals and Heavy Handed's successful-critical severity modifier are not used here.
+
+### Complete Failure Matrix
+
+Names below omit the `DAM_` prefix. A plus sign means bitwise OR of flags; `0` means no additional failure effect. These are the literal CE `_cf_table` entries, not names assigned to weapon classes by an editor.
+
+| Table | Index 0 | Index 1 | Index 2 | Index 3 | Index 4 |
+|---|---|---|---|---|---|
+| `0` | `0` | LOSE_TURN | LOSE_TURN | HURT_SELF + KNOCKED_DOWN | CRIP_RANDOM |
+| `1` | `0` | LOSE_TURN | DROP | RANDOM_HIT | HIT_SELF |
+| `2` | `0` | LOSE_AMMO | DROP | RANDOM_HIT | DESTROY |
+| `3` | LOSE_TURN | LOSE_TURN + LOSE_AMMO | DROP + LOSE_TURN | RANDOM_HIT | EXPLODE + LOSE_TURN |
+| `4` | DUD | DROP | DROP + HURT_SELF | RANDOM_HIT | EXPLODE |
+| `5` | LOSE_TURN | DUD | DESTROY | RANDOM_HIT | EXPLODE + LOSE_TURN + KNOCKED_DOWN |
+| `6` | `0` | LOSE_TURN | RANDOM_HIT | DESTROY | EXPLODE + LOSE_TURN + ON_FIRE |
+
+For binary inspection, the same table is shown below as integer masks. Rows correspond to table ids; columns correspond to severity indices.
+
+```text
+0: 00000000 00008000 00008000 00080002 00200000
+1: 00000000 00008000 00004000 00100000 00010000
+2: 00000000 00020000 00004000 00100000 00002000
+3: 00008000 00028000 0000C000 00100000 00009000
+4: 00040000 00004000 00084000 00100000 00001000
+5: 00008000 00040000 00002000 00100000 00009002
+6: 00000000 00008000 00100000 00002000 00009400
+```
+
+The original 32-bit executable representation occupies `7 * 5 * 4 = 140` bytes. An entry is at relative offset `4 * (table * 5 + index)` from the table base. The masks above are hexadecimal integer values: an x86 executable stores `00008000` as bytes `00 80 00 00`. This byte order differs from the big-endian selector field in the PRO. CE annotates the original table with address `0x517FA0`; this is an executable address reference, not a portable on-disk offset.
+
+### Applying Failure Flags
+
+The handler clears `DAM_HIT` first. It returns early for an invulnerable attacker or a zero table entry. Otherwise it adds `DAM_CRITICAL` and the selected flags to the attacker's results, then processes them:
+
+| Flag | Integer mask | Handling in the inspected CE source |
+|---|---|---|
+| `LOSE_TURN` | `0x00008000` | Sets the attacker's current combat AP to zero. |
+| `LOSE_AMMO` | `0x00020000` | For ranged attacks, sets ammunition expenditure to the weapon's remaining ammunition. For other attack types, clears this flag. |
+| `DROP` | `0x00004000` | Requests a weapon drop. The handler strips it for a no-drop critter or a hidden/integral weapon. |
+| `DESTROY` | `0x00002000` | The action code schedules weapon destruction. |
+| `HIT_SELF` | `0x00010000` | Calculates damage against the attacker with multiplier `2` (normal damage). Uses the attack's ammunition quantity for ranged attacks, otherwise one damage roll. |
+| `EXPLODE` | `0x00001000` | Calculates self-damage with one damage roll and multiplier `2`, then passes the explosion flag to the action code. The table contains no independent explosion damage value or radius. |
+| `HURT_SELF` | `0x00080000` | Distinct self-injury flag present in rows 0 and 4. The inspected failure handler has no damage-calculation branch for this bit; do not equate it with `HIT_SELF` or invent a damage amount from the table. |
+| `DUD` | `0x00040000` | Dud/misfire flag passed to action handling. The failure handler does not calculate self-damage for this bit alone. |
+| `RANDOM_HIT` | `0x00100000` | Calls the combat AI random-target selector. When a target is found, sets `DAM_HIT`, clears `DAM_CRITICAL`, targets the torso, and computes normal damage. |
+| `CRIP_RANDOM` | `0x00200000` | Replaced with one of the four limb-crippling flags, selected uniformly. It does not select blindness. |
+| `KNOCKED_DOWN` | `0x00000002` | Adds knockdown to the result. |
+| `ON_FIRE` | `0x00000400` | Adds the on-fire flag to the result. |
+
+If random-target selection fails, CE restores the original target pointer and leaves the attack without the successful random-hit conversion. A selected failure mask is therefore an input to further processing, not a guarantee that every named outcome occurs. In particular, the drop filter removes `DROP`; it does not also remove `DESTROY` or `EXPLODE`.
+
+For example, table 3 at severity 60 selects index 2, `DROP + LOSE_TURN` (`0xC000`). With a hidden weapon, the drop bit is removed, but the attacker still loses their remaining AP.
+
+### Time Gates and Overrides
+
+CE checks two distinct thresholds when `[Misc] RemoveCriticalTimelimits` is false:
+
+- The generic random-roll translator permits critical promotion when `gameTime / ticksPerDay >= 1`.
+- The combat failure handler suppresses player failure effects while `gameTime / ticksPerDay < 6`. This second check applies specifically to `gDude`; NPC failures do not use it.
+
+These checks use the engine's absolute game-time counter. They should not be described as a count of days since loading the current save. Other routes that promote an attack to critical failure still encounter the player-specific check when the handler runs. Setting `RemoveCriticalTimelimits=1` bypasses both gates, without changing the failure matrix or Luck formula.
+
+In the inspected CE implementation, `OverrideCriticalFile` loads the successful-critical records documented above; it does not load `_cf_table`. Changing the weapon PRO selector chooses an existing failure row. Replacing the matrix requires engine modification or a runtime-specific extension. Do not assume an arbitrary sfall version exposes the same editing facilities: its hooks and patches must be checked separately.
+
+Failure entries also have no `Message` or `FailMessage` member. Combat output is derived from the resulting attack state and the combat message system; the successful-critical message-id schema cannot be copied into a failure-table entry.
+
 ## Editing Notes
 
 - Use decimal or parser-supported integer syntax accepted by the target INI parser. Decimal values are safest for classic tools.
@@ -245,9 +340,13 @@ The player character does not use the critter PRO kill type path for incoming cr
 
 ## Sources
 
-- [Fallout 2 CE `combat.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/combat.cc) for the built-in tables, critical effect roll, override loader, sfall corrections, and damage application.
-- [Fallout 2 CE `combat_defs.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/combat_defs.h) for hit-location and critical-record structure definitions.
-- [Fallout 2 CE `proto_types.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h) for kill-type ids and the sfall extended kill-type count.
-- [Fallout 2 CE `obj_types.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/obj_types.h) for damage flag integer values.
+- [Fallout 2 CE `item.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/item.cc), `weaponGetCriticalFailureType`, for weapon PRO selection and the null-weapon sentinel.
+- [Fallout 2 CE `random.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/random.cc), `randomTranslateRoll`, for failure promotion and its game-time threshold.
+- [Fallout 2 CE `actions.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/actions.cc) for downstream weapon destruction, drop, and dud handling.
+
+- [Fallout 2 CE `combat.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/combat.cc) for the built-in tables, critical effect roll, override loader, sfall corrections, and damage application.
+- [Fallout 2 CE `combat_defs.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/combat_defs.h) for hit-location and critical-record structure definitions.
+- [Fallout 2 CE `proto_types.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto_types.h) for kill-type ids and the sfall extended kill-type count.
+- [Fallout 2 CE `obj_types.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/obj_types.h) for damage flag integer values.
 - [The Fallout Wiki critical hit table article](https://fallout.wiki/wiki/Critical_Hit_Tables) for the public table legend and vanilla executable-table interpretation.
 - [sfall combat scripting documentation](https://sfall.bgforge.net/combat/) for runtime critical-table script APIs.

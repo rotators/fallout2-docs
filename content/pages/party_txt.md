@@ -197,9 +197,9 @@ The selection popup also reads `custom.msg` lines `10` and `11` for its shared a
 
 ## Source References
 
-- [Fallout 2 CE `party_member.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/party_member.cc) - parser, active party state, save/load, support checks, and level-up behavior.
-- [Fallout 2 CE `game_dialog.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_dialog.cc) - party combat-control UI, hardcoded option lists, `custom.msg` loading, and AI setter calls.
-- [Fallout 2 CE `string_parsers.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/string_parsers.cc) - comma-separated integer and string-list parsing behavior.
+- [Fallout 2 CE `party_member.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/party_member.cc) - parser, active party state, save/load, support checks, and level-up behavior.
+- [Fallout 2 CE `game_dialog.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game_dialog.cc) - party combat-control UI, hardcoded option lists, `custom.msg` loading, and AI setter calls.
+- [Fallout 2 CE `string_parsers.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/string_parsers.cc) - comma-separated integer and string-list parsing behavior.
 - [Party.txt on The Fallout Wiki](https://fallout.wiki/wiki/Party.txt) - transcript of the shipped Fallout 2 party file and classic modding notes.
 
 ## History

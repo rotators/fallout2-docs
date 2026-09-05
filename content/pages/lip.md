@@ -198,9 +198,9 @@ Unless you are preserving known old data, new files should be written as version
 
 ## Source references
 
-- [Fallout 2 CE `lips.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/lips.cc) - LIP loading, validation, marker playback, and ACM path construction.
-- [Fallout 2 CE `lips.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/lips.h) - LIP runtime structures, flags, and phoneme count.
-- [Fallout 2 CE `game_dialog.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_dialog.cc) - MSG audio field handoff, reaction-to-phoneme-FRM selection, and phoneme-to-frame table.
-- [Fallout 2 CE `art.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.cc) and [`art.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.h) - talking-head animation ids, filename suffixes, and `heads.lst` parsing.
-- [Fallout 2 CE `db.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/db.cc) - binary integer/string reading behavior used by LIP.
+- [Fallout 2 CE `lips.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/lips.cc) - LIP loading, validation, marker playback, and ACM path construction.
+- [Fallout 2 CE `lips.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/lips.h) - LIP runtime structures, flags, and phoneme count.
+- [Fallout 2 CE `game_dialog.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game_dialog.cc) - MSG audio field handoff, reaction-to-phoneme-FRM selection, and phoneme-to-frame table.
+- [Fallout 2 CE `art.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/art.cc) and [`art.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/art.h) - talking-head animation ids, filename suffixes, and `heads.lst` parsing.
+- [Fallout 2 CE `db.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/db.cc) - binary integer/string reading behavior used by LIP.
 - [Vault-Tec Labs LIP File Format](https://falloutmods.fandom.com/wiki/LIP_File_Format) - classic TeamX/Anchorite notes on the version 2 layout, talking-head naming, and marker timing.

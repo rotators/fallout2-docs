@@ -151,7 +151,7 @@ Older notes split item `flags_ext` into lower flag bytes plus an attack-mode byt
 | Armor | `0` | `0x81` | `ac`, 7 damage resistances, 7 damage thresholds, `perk`, `male_fid`, `female_fid`. |
 | Container | `1` | `0x41` | `max_size`, `open_flags`. |
 | Drug | `2` | `0x7D` | 3 affected stats, 3 immediate amounts, first duration, 3 first delayed amounts, second duration, 3 second delayed amounts, addiction chance, withdrawal effect, withdrawal onset. |
-| Weapon | `3` | `0x7A` | Animation code, max damage, min damage, damage type, two ranges, projectile PID, minimum strength, two AP costs, critical failure type, perk, burst rounds, caliber, ammo type PID, ammo capacity, sound code byte. |
+| Weapon | `3` | `0x7A` | Animation code, max damage, min damage, damage type, two ranges, projectile PID, minimum strength, two AP costs, [critical failure table selector](criticals.html#weapon-critical-failures), perk, burst rounds, caliber, ammo type PID, ammo capacity, sound code byte. |
 | Ammo | `4` | `0x51` | Caliber, quantity, AC modifier, DR modifier, damage multiplier, damage divisor. |
 | Misc | `5` | `0x45` | Power type PID, power type, charges. |
 | Key | `6` | `0x3D` | Key code. |
@@ -159,6 +159,8 @@ Older notes split item `flags_ext` into lower flag bytes plus an attack-mode byt
 Weapon attack modes are often shown in editors as two 4-bit values: `0` none, `1` punch, `2` kick, `3` swing, `4` thrust, `5` throw, `6` fire single, `7` fire burst, and `8` flame. The lower nibble is attack mode 1 and the upper nibble is attack mode 2.
 
 Weapon animation codes select the critter weapon animation set: `0` none, `1` knife, `2` club, `3` sledgehammer, `4` spear, `5` pistol, `6` SMG, `7` rifle, `8` big gun, `9` minigun, and `10` rocket launcher.
+
+For custom readable items, [BooksFile](books.html) supplies a separate PID-to-skill registry. The default CE item-use dispatcher checks it for weapon and miscellaneous item subtypes; registering a PID does not create or configure its PRO. Reading messages use `proto.msg`, while the item name and description still use `pro_item.msg`.
 
 ### Critter
 
@@ -271,10 +273,10 @@ This subset is enough to distinguish many MAP object categories and script-beari
 
 ## Source References
 
-- [Fallout 2 CE - proto.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.cc)
-- [Fallout 2 CE - proto.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.h)
-- [Fallout 2 CE - proto_types.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h)
-- [Fallout 2 CE - db.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/db.cc)
+- [Fallout 2 CE - proto.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto.cc)
+- [Fallout 2 CE - proto.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto.h)
+- [Fallout 2 CE - proto_types.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto_types.h)
+- [Fallout 2 CE - db.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/db.cc)
 
 ## History
 

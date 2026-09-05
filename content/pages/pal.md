@@ -182,9 +182,9 @@ Same-basename FRM palette files are important for special screens. General world
 - [Pal Files - The Fallout Wiki](https://fallout.wiki/wiki/Pal_Files)
 - [PAL File Format - FODEV mirror](https://fodev.net/files/fo2/pal.html)
 - [TeamX FRM format notes](https://sucs.org/~grepwood/teamx/frm_2.html)
-- [Fallout 2 CE color.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/color.cc)
-- [Fallout 2 CE palette.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/palette.cc)
-- [Fallout 2 CE cycle.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/cycle.cc)
+- [Fallout 2 CE color.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/color.cc)
+- [Fallout 2 CE palette.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/palette.cc)
+- [Fallout 2 CE cycle.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/cycle.cc)
 - [Fallout default color palette table](fo_colors.html)
 
 ## History

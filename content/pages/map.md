@@ -459,14 +459,14 @@ A format-preserving editor should avoid silently converting a saved map into a c
 
 ## Source References
 
-- [Fallout 2 CE - map.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/map.cc)
-- [Fallout 2 CE - map.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/map.h)
-- [Fallout 2 CE - obj_types.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/obj_types.h)
-- [Fallout 2 CE - object.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/object.cc)
-- [Fallout 2 CE - proto.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.cc)
-- [Fallout 2 CE - proto_instance.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_instance.cc)
-- [Fallout 2 CE - scripts.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc)
-- [Fallout 2 CE - scripts.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.h)
+- [Fallout 2 CE - map.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/map.cc)
+- [Fallout 2 CE - map.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/map.h)
+- [Fallout 2 CE - obj_types.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/obj_types.h)
+- [Fallout 2 CE - object.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/object.cc)
+- [Fallout 2 CE - proto.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto.cc)
+- [Fallout 2 CE - proto_instance.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto_instance.cc)
+- [Fallout 2 CE - scripts.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.cc)
+- [Fallout 2 CE - scripts.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.h)
 
 ## History
 

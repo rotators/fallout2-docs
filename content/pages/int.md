@@ -1086,11 +1086,11 @@ Fallout 2's original script build pipeline used preprocessing before compilation
 ## Source References
 
 - [Vault-Tec Labs INT File Format](https://falloutmods.fandom.com/wiki/INT_File_Format) - TeamX-derived layout notes for bootstrap, procedure table, identifier table, string table, and initialization code.
-- [Fallout 2 CE `interpreter.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/interpreter.h) - opcode constants, procedure records, value tags, and runtime program structure.
-- [Fallout 2 CE `interpreter.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/interpreter.cc) - loader offsets, big-endian reads, string accessors, opcode dispatch, and procedure execution.
-- [Fallout 2 CE `interpreter_lib.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/interpreter_lib.cc) - UI, dialogue, movie, sound, and window opcode registrations.
-- [Fallout 2 CE `interpreter_extra.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/interpreter_extra.cc) - Fallout game-specific opcode registrations.
-- [Fallout 2 CE `scripts.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc) - `scripts.lst` loading, procedure lookup, script IDs, script local counts, and MSG lookup behavior.
+- [Fallout 2 CE `interpreter.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/interpreter.h) - opcode constants, procedure records, value tags, and runtime program structure.
+- [Fallout 2 CE `interpreter.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/interpreter.cc) - loader offsets, big-endian reads, string accessors, opcode dispatch, and procedure execution.
+- [Fallout 2 CE `interpreter_lib.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/interpreter_lib.cc) - UI, dialogue, movie, sound, and window opcode registrations.
+- [Fallout 2 CE `interpreter_extra.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/interpreter_extra.cc) - Fallout game-specific opcode registrations.
+- [Fallout 2 CE `scripts.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.cc) - `scripts.lst` loading, procedure lookup, script IDs, script local counts, and MSG lookup behavior.
 - [Fallout2 Opcode Playground](https://fodev.net/files/fo2/opcodes/) - opcode index and historical opcode naming notes.
 - [int2ssl](https://github.com/phobos2077/int2ssl) - decompiler source/tooling reference for recovering SSL-like source from INT bytecode.
 - [sfall opcode list](https://github.com/sfall-team/sfall/blob/master/artifacts/scripting/sfall%20opcode%20list.md) - maintained list of sfall opcode numbers and function signatures.

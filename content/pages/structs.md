@@ -1,13 +1,40 @@
 ---
 title: Fallout 2 Structures and Enums
 output: structs.html
-description: Fallout 2 enum and structure reference extracted from sfall FalloutEngine headers.
+description: Historical sfall-derived reference for Fallout 2 enums and 32-bit runtime-memory structures, with ABI and file-format interpretation notes.
 width: full
 ---
 
 # Fallout 2 Structures and Enums
 
-Reference extracted from [sfall `FalloutEngine/Enums.h`](https://github.com/phobos2077/sfall/blob/master/sfall/FalloutEngine/Enums.h).
+## Source and Status
+
+This is a historical snapshot derived from sfall's Fallout engine headers. The exact source revision used for the snapshot was not retained, and the declarations should not be assumed to match current sfall.
+
+Current sfall separates related declarations across files including:
+
+- [`FalloutEngine/Enums.h`](https://github.com/sfall-team/sfall/blob/master/sfall/FalloutEngine/Enums.h)
+- [`FalloutEngine/Structs.h`](https://github.com/sfall-team/sfall/blob/master/sfall/FalloutEngine/Structs.h)
+
+Names, field interpretations, gap fields, and function signatures are reverse-engineering aids rather than an official engine ABI. Confirm important declarations against the executable build and sfall revision used by your project.
+
+## ABI and Interpretation
+
+The structures primarily model the 32-bit Fallout 2 process memory expected by sfall:
+
+| Property | Assumption |
+|---|---|
+| Architecture | 32-bit x86 |
+| Pointer size | 4 bytes |
+| `long`, `unsigned long`, and `DWORD` | 4 bytes |
+| Byte order | Little-endian in process memory |
+| Packing | Follow each local `#pragma pack` directive exactly |
+
+Pointer fields such as `GameObject*`, `Program*`, `char*`, and `void*` are runtime process addresses. They are not portable identifiers or file offsets and are not meaningful across processes or runs.
+
+This page is not a general specification for serialized Fallout files. Some declarations resemble structures written to disk, but compiler layout, pointers, runtime-only fields, and fixups can make the in-memory form different from the serialized form. Use the dedicated [FRM](frm.html), [MAP](map.html), [PRO](pro.html), and [savegame](savegame.html) pages for file layouts and byte-level parsing guidance.
+
+## Declarations
 
 ```c
 enum Animation : long

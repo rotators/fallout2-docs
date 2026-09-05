@@ -258,11 +258,11 @@ Prototype LST files under `proto\...` map PID low bits to [PRO](pro.html) filena
 - [LST File Format - The Fallout Wiki](https://fallout.wiki/wiki/LST_File_Format)
 - [File Identifiers - The Fallout Wiki](https://fallout.wiki/wiki/File_Identifiers)
 - [Vault-Tec Labs LST File Format](https://falloutmods.fandom.com/wiki/LST_File_Format)
-- [Fallout 2 CE art.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.cc)
-- [Fallout 2 CE art.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.h)
-- [Fallout 2 CE obj_types.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/obj_types.h)
-- [Fallout 2 CE animation.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/animation.h)
-- [Fallout 2 CE scripts.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc)
+- [Fallout 2 CE art.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/art.cc)
+- [Fallout 2 CE art.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/art.h)
+- [Fallout 2 CE obj_types.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/obj_types.h)
+- [Fallout 2 CE animation.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/animation.h)
+- [Fallout 2 CE scripts.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.cc)
 
 ## History
 

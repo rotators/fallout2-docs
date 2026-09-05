@@ -116,9 +116,9 @@ Glyph pixels are bottom-aligned within the maximum glyph height. If a glyph is s
 
 ### Source code
 
-[Fallout 2 Community Edition AAF interface font manager - C++](https://github.com/alexbatalov/fallout2-ce/blob/main/src/font_manager.cc)
+[Fallout 2 Community Edition AAF interface font manager - C++](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/font_manager.cc)
 
-[Fallout 2 Community Edition FON text font manager - C++](https://github.com/alexbatalov/fallout2-ce/blob/main/src/text_font.cc)
+[Fallout 2 Community Edition FON text font manager - C++](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/text_font.cc)
 ## History
 
 2019-12-16 - Ported from [https://falloutmods.fandom.com/wiki/AAF_File_Format](https://falloutmods.fandom.com/wiki/AAF_File_Format) by [ghost](https://github.com/ghost2238) Patched by Anchorite (anchorite2001@yandex.ru) Created by Noid (noid@888.nu)

@@ -194,11 +194,11 @@ Keyboard selection uses the built-in label table for the chosen elevator/templat
 
 ## Source references
 
-- [Fallout 2 CE `elevator.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/elevator.cc) - built-in elevator tables, external config loading, image/template copying, UI behavior, and level selection.
-- [Fallout 2 CE `elevator.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/elevator.h) - built-in elevator id enum.
-- [Fallout 2 CE `scripts.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc) - elevator script request and transition handling.
-- [Fallout 2 CE `interpreter_extra.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/interpreter_extra.cc) - `METARULE_ELEVATOR` value `15`.
-- [Fallout 2 CE `proto_types.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h) - scenery elevator subtype and payload fields.
+- [Fallout 2 CE `elevator.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/elevator.cc) - built-in elevator tables, external config loading, image/template copying, UI behavior, and level selection.
+- [Fallout 2 CE `elevator.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/elevator.h) - built-in elevator id enum.
+- [Fallout 2 CE `scripts.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.cc) - elevator script request and transition handling.
+- [Fallout 2 CE `interpreter_extra.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/interpreter_extra.cc) - `METARULE_ELEVATOR` value `15`.
+- [Fallout 2 CE `proto_types.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto_types.h) - scenery elevator subtype and payload fields.
 - [NMA custom elevator discussion](https://www.nma-fallout.com/threads/cant-use-custom-made-elevator-from-elevator-ini-in-sfall-moddiers-folder.219495/) - practical sfall examples using `Image`, `ID*`, `Elevation*`, `Tile*`, and `metarule(15, X)`.
 
 ## History

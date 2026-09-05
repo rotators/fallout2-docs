@@ -86,7 +86,7 @@ way.
 
 ## Source References
 
-- [Fallout 2 CE - character_selector.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/character_selector.cc)
+- [Fallout 2 CE - character_selector.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/character_selector.cc)
 
 ## History
 

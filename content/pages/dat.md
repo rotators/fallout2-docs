@@ -297,10 +297,10 @@ The token flags are consumed least-significant bit first. If the current flag bi
 
 ## Source References
 
-- [Fallout 2 CE `dfile.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.cc) - DAT2 footer parsing, entry loading, zlib inflate, text-mode reads, seeks, and case-insensitive entry lookup.
-- [Fallout 2 CE `dfile.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/dfile.h) - in-memory DAT2 structures.
-- [Fallout 2 CE `xfile.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/xfile.cc) - resource root search order, DAT/directory opening, loose gzip detection, and file listing behavior.
-- [Fallout 2 CE `db.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/db.cc) - higher-level database/file API and big-endian game-data read helpers.
+- [Fallout 2 CE `dfile.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/dfile.cc) - DAT2 footer parsing, entry loading, zlib inflate, text-mode reads, seeks, and case-insensitive entry lookup.
+- [Fallout 2 CE `dfile.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/dfile.h) - in-memory DAT2 structures.
+- [Fallout 2 CE `xfile.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/xfile.cc) - resource root search order, DAT/directory opening, loose gzip detection, and file listing behavior.
+- [Fallout 2 CE `db.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/db.cc) - higher-level database/file API and big-endian game-data read helpers.
 - [Vault-Tec Labs DAT file format](https://falloutmods.fandom.com/wiki/DAT_file_format) - classic community DAT1/DAT2 documentation and credits.
 - [Fallout Wiki DAT file](https://fallout.fandom.com/wiki/DAT_file) - DAT archive overview and DAT2 community notes.
 - [Kaitai Struct Fallout 2 DAT specification](https://formats.kaitai.io/fallout2_dat/) - formal DAT2 parser specification useful for cross-checking field order.

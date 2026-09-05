@@ -78,6 +78,7 @@ You can find additional information and code at [github.com/rotators](https://gi
 | [ACM - Interplay compressed audio for music, speech, and sound effects.](acm.html) | Use [libacm](https://github.com/markokr/libacm), [acm2wav](https://fodev.net/files/mirrors/teamx-utils/acm2wav.rar) or [Game Audio Player](https://fodev.net/files/archive/gap.zip) for playback. |
 | [AAF - The AAF Font File Format is used to store fonts.](aaf.html) | [Fallout Service Box: Font Editor](https://fodev.net/files/mirrors/teamx-utils/FSB_0.21.rar) |
 | [BIO - Story for premade characters (GCD).](bio.html) | Text editor |
+| [Skill books - BooksFile configuration, PID and skill mappings, reading gains, and runtime differences.](books.html) | Text editor |
 | [CFG/INI - Runtime configuration files, parser behavior, sfall INI settings, high-resolution options, and movie sidecars.](cfg.html) | Text editor |
 | [Critical hit tables - Executable combat tables, sfall/CE override INI layout, damage flags, and combat message dependencies.](criticals.html) | Text editor, hex editor |
 | [DAT - Archive containers for Fallout 1/2 resources, including DAT1 and DAT2 layouts.](dat.html) | [Dat Explorer 1.43](https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar), [many others](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat) |
@@ -257,7 +258,7 @@ Mirror: [DirectX SDK Collection](https://github.com/NovaRain/DXSDK_Collection)
 | [Fallout 1 Reference Edition](https://github.com/alexbatalov/fallout1-re) | Fallout 1 RE project by Alexander Batalov. |
 | [Fallout 1 Community Edition](https://github.com/alexbatalov/fallout1-ce) | Fallout Community Edition is a fully working re-implementation of Fallout, with the same original gameplay, engine bugfixes, and some quality of life improvements, that works (mostly) hassle-free on multiple platforms. |
 | [Fallout 2 Reference Edition](https://github.com/alexbatalov/fallout2-re) | Fallout 2 RE project by Alexander Batalov. [Announcement post](https://medium.com/@alex.batalov/reverse-engineering-fallout-2-5dad1421de21) |
-| [Fallout 2 Community Edition](https://github.com/alexbatalov/fallout2-ce) | Fallout 2 Community Edition is a fully working re-implementation of Fallout 2, with the same original gameplay, engine bugfixes, and some quality of life improvements, that works (mostly) hassle-free on multiple platforms. |
+| [Fallout 2 Community Edition](https://github.com/fallout2-ce/fallout2-ce) | The preferred maintained fork of Fallout 2 Community Edition (FOR:CE) is a fully working re-implementation of Fallout 2, with the same original gameplay, engine bugfixes, and some quality of life improvements, that works (mostly) hassle-free on multiple platforms. |
 | [Fallout 2 Javascript port](https://github.com/ajxs/jsFO) | Inactive engine implementation |
 | [DarkFO, a post-nuclear RPG remake (of Fallout 2)](https://github.com/darkf/darkfo) | Inactive engine implementation in TypeScript and Python |
 | [falltergeist](https://github.com/falltergeist/falltergeist) | Opensource crossplatform Fallout 2 game engine written in C++ and SDL. |
@@ -282,7 +283,7 @@ Mirror: [DirectX SDK Collection](https://github.com/NovaRain/DXSDK_Collection)
 
 ## Buy
 
-| Game | Stores |
-| --- | --- |
-| Fallout | [GOG](https://www.gog.com/game/fallout), [SteamDB](https://steamdb.info/app/38400/), [Epic](https://store.epicgames.com/en-US/p/fallout) |
-| Fallout 2 | [GOG](https://www.gog.com/game/fallout_2), [SteamDB](https://steamdb.info/app/38410/), [Epic](https://store.epicgames.com/sv/p/fallout-2) |
+| Game | Storefronts | Databases |
+| --- | --- | --- |
+| Fallout | [GOG](https://www.gog.com/game/fallout), [Steam](https://store.steampowered.com/app/38400/), [Epic](https://store.epicgames.com/en-US/p/fallout) | [SteamDB](https://steamdb.info/app/38400/), [PCGamingWiki](https://www.pcgamingwiki.com/wiki/Fallout) |
+| Fallout 2 | [GOG](https://www.gog.com/game/fallout_2), [Steam](https://store.steampowered.com/app/38410/), [Epic](https://store.epicgames.com/en-US/p/fallout-2) | [SteamDB](https://steamdb.info/app/38410/), [PCGamingWiki](https://www.pcgamingwiki.com/wiki/Fallout_2) |

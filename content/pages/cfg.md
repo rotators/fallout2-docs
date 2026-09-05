@@ -173,6 +173,8 @@ The `master_dat`, `master_patches`, `critter_dat`, and `critter_patches` keys co
 
 ## ddraw.ini
 
+`[Misc] BooksFile` selects the loose [skill-book configuration](books.html), including custom PID, skill, and `proto.msg` reading-message mappings. sfall and CE differ in duplicate handling and empty replacement behavior; see that page before overriding vanilla books.
+
 `ddraw.ini` is sfall's main configuration file. Full sfall has many settings; Fallout 2 CE currently initializes and consumes a compatibility subset, mostly under `[Misc]` and `[Scripts]`.
 
 | Section | Keys recognized by CE source |
@@ -296,11 +298,11 @@ Movie CFG files are optional. Missing or incomplete sidecars do not prevent the 
 
 - [CFG File Format - The Fallout Wiki](https://fallout.wiki/wiki/CFG_File_Format_%28settings%29)
 - [CFG File Format - Vault-Tec Labs](https://falloutmods.fandom.com/wiki/CFG_File_Format_%28settings%29)
-- [Fallout 2 CE README configuration notes](https://github.com/alexbatalov/fallout2-ce/blob/main/README.md)
-- [Fallout 2 CE config.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/config.cc)
-- [Fallout 2 CE game_config.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_config.cc)
-- [Fallout 2 CE settings.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/settings.h)
-- [Fallout 2 CE sfall_config.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/sfall_config.cc)
+- [Fallout 2 CE README configuration notes](https://github.com/fallout2-ce/fallout2-ce/blob/main/README.md)
+- [Fallout 2 CE config.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/config.cc)
+- [Fallout 2 CE game_config.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game_config.cc)
+- [Fallout 2 CE settings.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/settings.h)
+- [Fallout 2 CE sfall_config.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/sfall_config.cc)
 - [sfall INI settings documentation](https://fakelshub.github.io/sfall-wiki/ini-settings/)
 - [Fallout 2 High Resolution Patch notes](https://falloutmods.fandom.com/wiki/Fallout_2_High_Resolution_Patch)
 

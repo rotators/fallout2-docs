@@ -200,9 +200,9 @@ For a web-based MVE player, use the decoder's displayed-frame counter as the aut
 ## References
 
 - [SVE File Format - Vault-Tec Labs](https://falloutmods.fandom.com/wiki/SVE_File_Format)
-- [Fallout 2 CE game_movie.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_movie.cc)
-- [Fallout 2 CE movie.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/movie.cc)
-- [Fallout 2 CE endgame.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/endgame.cc)
+- [Fallout 2 CE game_movie.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game_movie.cc)
+- [Fallout 2 CE movie.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/movie.cc)
+- [Fallout 2 CE endgame.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/endgame.cc)
 - [MVE File Format](mve.html)
 - [MSG File Format](msg.html)
 - [LIP File Format](lip.html)

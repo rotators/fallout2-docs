@@ -780,8 +780,8 @@ The following runtime functions are useful anchors when reading scripts, source 
 
 ## Source References
 
-- [Fallout 2 CE `combat_ai.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/combat_ai.cc) - runtime parser, recognized string tables, AI packet lookup, party custom AI save/load, and combat AI helpers.
-- [Fallout 2 CE `proto_types.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h) - critter prototype fields, including the AI packet reference.
+- [Fallout 2 CE `combat_ai.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/combat_ai.cc) - runtime parser, recognized string tables, AI packet lookup, party custom AI save/load, and combat AI helpers.
+- [Fallout 2 CE `proto_types.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto_types.h) - critter prototype fields, including the AI packet reference.
 - [AI.TXT File Format on The Fallout Wiki](https://fallout.wiki/wiki/AI.TXT_File_Format) - original format notes and parameter descriptions.
 - [AI.txt (Fallout 2) on Fallout Wiki/Fandom](https://fallout.fandom.com/wiki/AI.txt_%28Fallout_2%29) - transcript examples from the shipped Fallout 2 file.
 

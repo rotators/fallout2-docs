@@ -263,11 +263,11 @@ This is the logical disk algorithm. CE's cache loader reads unique directions in
 - [TeamX FRM Image File Format notes](https://sucs.org/~grepwood/teamx/frm_2.html)
 - [FRM files - FODEV mirror](https://fodev.net/files/fo2/frm.html)
 - [File Identifiers - The Fallout Wiki](https://fallout.wiki/wiki/File_Identifiers)
-- [Fallout 2 CE art.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.h)
-- [Fallout 2 CE art.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/art.cc)
-- [Fallout 2 CE obj_types.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/obj_types.h)
-- [Fallout 2 CE animation.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/animation.h)
-- [Fallout 2 CE animation.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/animation.cc)
+- [Fallout 2 CE art.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/art.h)
+- [Fallout 2 CE art.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/art.cc)
+- [Fallout 2 CE obj_types.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/obj_types.h)
+- [Fallout 2 CE animation.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/animation.h)
+- [Fallout 2 CE animation.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/animation.cc)
 - [frm2png source](https://github.com/rotators/frm2png/)
 
 ## Tools

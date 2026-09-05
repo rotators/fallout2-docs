@@ -294,8 +294,8 @@ Forced encounters are part of the world-map runtime API, but the queued forced-e
 
 ## Source references
 
-- [Fallout 2 CE `worldmap.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc) - world-map static configuration loading, binary save/load order, city/map helpers, subtile fog, and encounter parsing.
-- [Fallout 2 CE `worldmap.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.h) - map flags, city states, Fallout 2 city/map indexes, encounter flags, and public world-map APIs.
-- [Fallout 2 CE `db.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/db.cc) - big-endian int32 and bool read/write helpers used by the world-map state stream.
+- [Fallout 2 CE `worldmap.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/worldmap.cc) - world-map static configuration loading, binary save/load order, city/map helpers, subtile fog, and encounter parsing.
+- [Fallout 2 CE `worldmap.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/worldmap.h) - map flags, city states, Fallout 2 city/map indexes, encounter flags, and public world-map APIs.
+- [Fallout 2 CE `db.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/db.cc) - big-endian int32 and bool read/write helpers used by the world-map state stream.
 - [The Fallout Wiki `Worldmap.txt` File Format](https://fallout.wiki/wiki/Worldmap.txt_File_Format) - human-readable notes on the editable terrain and encounter definition file.
 - [Vault-Tec Labs `Worldmap.dat` File Format](https://falloutmods.fandom.com/wiki/Worldmap.dat_File_Format) - older cache/table description for vanilla generated data.

@@ -277,9 +277,9 @@ If a file starts with `WAVC`, a general-purpose tool should skip to the embedded
 
 ## Source References
 
-- [Fallout 2 CE `sound_decoder.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/sound_decoder.cc) - ACM header parsing, bitstream reader, filler table, inverse transform, and PCM output.
-- [Fallout 2 CE `audio_file.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/audio_file.cc) - compressed audio file wrapper, decoded byte-size handling, and seek behavior.
-- [Fallout 2 CE `game_sound.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_sound.cc) - Fallout music, speech, and SFX paths and ACM playback integration.
+- [Fallout 2 CE `sound_decoder.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/sound_decoder.cc) - ACM header parsing, bitstream reader, filler table, inverse transform, and PCM output.
+- [Fallout 2 CE `audio_file.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/audio_file.cc) - compressed audio file wrapper, decoded byte-size handling, and seek behavior.
+- [Fallout 2 CE `game_sound.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game_sound.cc) - Fallout music, speech, and SFX paths and ACM playback integration.
 - [FFmpeg `interplayacm.c`](https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/interplayacm.c) - independent Interplay ACM decoder, filler functions, block transform, and output model.
 - [MultimediaWiki Interplay ACM](https://wiki.multimedia.cx/index.php/Interplay_ACM) - concise header summary, broader game usage, and WAVC wrapper note.
 - [Vault-Tec Labs ACM File Format](https://falloutmods.fandom.com/wiki/ACM_File_Format) - Abel's original Fallout-oriented ACM notes.

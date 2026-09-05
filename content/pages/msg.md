@@ -75,7 +75,7 @@ A compatible reader can be simple: repeatedly skip characters until `{`, read by
 | `text\<language>\dialog\*.msg` | Script dialogue files, loaded lazily from the script filename. |
 | `text\<language>\game\combatai.msg` | Combat AI floats referenced by [AI.TXT](ai_txt.html), `AIBDYMSG.TXT`, and `AIGENMSG.TXT`. |
 | `text\<language>\game\combat.msg` | General combat messages, including message ids referenced by [critical hit tables](criticals.html). |
-| `text\<language>\game\item.msg` | Shared item-use messages, book text hooks, explosive messages, and other item-system strings. |
+| `text\<language>\game\item.msg` | Shared item-system strings. Skill-book reading messages instead use `proto.msg`; see [BooksFile](books.html). |
 | `text\<language>\game\stat.msg`, `skill.msg`, `perk.msg`, `trait.msg` | Displayed names and descriptions for character stats, skills, perks, and traits. |
 | `text\<language>\game\pipboy.msg` | Pip-Boy UI labels, holodisk titles, and holodisk body text used with [`holodisk.txt`](pipboy_txt.html). |
 | `text\<language>\game\quests.msg` | Quest description lines displayed through [`quests.txt`](pipboy_txt.html). |
@@ -228,11 +228,11 @@ These filters are applied by the script dialogue loading path. They should not b
 
 ## Source references
 
-- [Fallout 2 CE `message.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/message.cc) - MSG loading, field parsing, duplicate replacement, bad-word filtering, gender-word filtering, and message-list repository behavior.
-- [Fallout 2 CE `message.h`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/message.h) - message item structures, field buffer size, and standard/proto message list ids.
-- [Fallout 2 CE `proto.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto.cc) - `pro_*.msg` loading and PRO name/description lookup.
-- [Fallout 2 CE `map.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/map.cc) - `map.msg` loading and map/city name lookup formulas.
-- [Fallout 2 CE `pipboy.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/pipboy.cc) - `pipboy.msg` and `quests.msg` loading for Pip-Boy status and holodisk text.
-- [Fallout 2 CE `scripts.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc) - `script.msg` loading, lazy `dialog\*.msg` loading, and `message_str` speech handling.
-- [Fallout 2 CE `sfall_opcodes.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/sfall_opcodes.cc) - `message_str_game` repository lookups.
-- [Fallout 2 CE `game_dialog.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game_dialog.cc) and [`lips.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/lips.cc) - dialogue audio-field and speech/lip-sync lookup behavior.
+- [Fallout 2 CE `message.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/message.cc) - MSG loading, field parsing, duplicate replacement, bad-word filtering, gender-word filtering, and message-list repository behavior.
+- [Fallout 2 CE `message.h`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/message.h) - message item structures, field buffer size, and standard/proto message list ids.
+- [Fallout 2 CE `proto.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto.cc) - `pro_*.msg` loading and PRO name/description lookup.
+- [Fallout 2 CE `map.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/map.cc) - `map.msg` loading and map/city name lookup formulas.
+- [Fallout 2 CE `pipboy.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/pipboy.cc) - `pipboy.msg` and `quests.msg` loading for Pip-Boy status and holodisk text.
+- [Fallout 2 CE `scripts.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.cc) - `script.msg` loading, lazy `dialog\*.msg` loading, and `message_str` speech handling.
+- [Fallout 2 CE `sfall_opcodes.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/sfall_opcodes.cc) - `message_str_game` repository lookups.
+- [Fallout 2 CE `game_dialog.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game_dialog.cc) and [`lips.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/lips.cc) - dialogue audio-field and speech/lip-sync lookup behavior.

@@ -139,7 +139,7 @@ For a BMP-to-MSK workflow, use a thresholded 1-bit or grayscale source image at 
 
 ## Source references
 
-- [Fallout 2 CE `worldmap.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/worldmap.cc) - `walk_mask_name` loading, `data\*.msk` path construction, fixed `13200`-byte reads, and movement blocking checks.
+- [Fallout 2 CE `worldmap.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/worldmap.cc) - `walk_mask_name` loading, `data\*.msk` path construction, fixed `13200`-byte reads, and movement blocking checks.
 - [The Fallout Wiki MSK File Format](https://fallout.wiki/wiki/MSK_File_Format) - classic one-bit mask description and location notes.
 - [Vault-Tec Labs MSK File Format](https://falloutmods.fandom.com/wiki/MSK_File_Format) - older TeamX-derived notes and tool references.
 - [No Mutants Allowed worldmap quick question](https://www.nma-fallout.com/threads/worldmap-quick-question.154894/) - ABel's note describing `352 x 300` masks, unused row padding, and set bits as sea/blocked terrain.

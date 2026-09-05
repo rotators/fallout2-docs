@@ -159,7 +159,7 @@ Fallout fades from black to the RIX palette, then blits the indexed pixel buffer
 
 ## Source References
 
-- [Fallout 2 CE `game.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game.cc) - splash filename search, `RIX3` signature check, palette read, pixel read, scaling behavior, and splash index range.
+- [Fallout 2 CE `game.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game.cc) - splash filename search, `RIX3` signature check, palette read, pixel read, scaling behavior, and splash index range.
 - [RIX.TXT](https://www.fileformat.info/format/rix/spec/e384b123f2bf49108c71b7a3d595bfc8/view.htm) - original-style RIX header, palette type, storage type, and extension notes.
 - [Encyclopedia of Graphics File Formats RIX summary](https://www.fileformat.info/format/rix/egff.htm) - broader ColoRIX family notes, palette/storage variants, and little-endian numeric format.
 - [The Fallout Wiki RIX File Format](https://fallout.wiki/wiki/RIX_File_Format) - Fallout-specific RIX splash-screen notes inherited from older modding documentation.

@@ -176,7 +176,7 @@ For save editors, the current values are in `SAVE.DAT`, not in `vault13.gam`. Fo
 
 ## Source references
 
-- [Fallout 2 CE `pipboy.cc`](https://github.com/alexbatalov/fallout2-ce/blob/main/src/pipboy.cc) - quest and holodisk loaders, Status tab rendering, GVAR checks, holodisk pagination, and Pip-Boy MSG usage.
+- [Fallout 2 CE `pipboy.cc`](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/pipboy.cc) - quest and holodisk loaders, Status tab rendering, GVAR checks, holodisk pagination, and Pip-Boy MSG usage.
 - [Quests.txt File Format on The Fallout Wiki](https://fallout.wiki/wiki/Quests.txt_File_Format) - classic field description and examples.
 - [Objects in Fallout 2 on Fallout Mod Wiki](https://falloutmod.fandom.com/wiki/Objects_in_Fallout_2) - high-level relationship among holodisks, quests, GVARs, and Pip-Boy message files.
 

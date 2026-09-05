@@ -150,10 +150,10 @@ Save slots also carry compressed saved maps, party member PRO snapshots, automap
 
 ## Source References
 
-- [Fallout 2 CE - game.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/game.cc)
-- [Fallout 2 CE - map.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/map.cc)
-- [Fallout 2 CE - scripts.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc)
-- [Fallout 2 CE - loadsave.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/loadsave.cc)
+- [Fallout 2 CE - game.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/game.cc)
+- [Fallout 2 CE - map.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/map.cc)
+- [Fallout 2 CE - scripts.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.cc)
+- [Fallout 2 CE - loadsave.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/loadsave.cc)
 
 ## History
 

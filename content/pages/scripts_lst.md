@@ -214,9 +214,9 @@ The behavior above is backed by Fallout 2 CE source. Important functions and str
 
 ## References
 
-- [Fallout 2 Community Edition scripts.cc](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.cc)
-- [Fallout 2 Community Edition scripts.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/scripts.h)
-- [Fallout 2 Community Edition obj_types.h](https://github.com/alexbatalov/fallout2-ce/blob/main/src/obj_types.h)
+- [Fallout 2 Community Edition scripts.cc](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.cc)
+- [Fallout 2 Community Edition scripts.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/scripts.h)
+- [Fallout 2 Community Edition obj_types.h](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/obj_types.h)
 - [Generic LST file documentation](lst.html)
 - [MAP File Format](map.html)
 - [PRO File Format](pro.html)

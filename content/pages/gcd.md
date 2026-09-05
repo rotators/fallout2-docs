@@ -135,10 +135,10 @@ All numeric fields are signed 32-bit integers stored in big-endian byte order. T
 
 ## Source code
 
-- [Fallout 2 Community Edition GCD reader/writer](https://github.com/alexbatalov/fallout2-ce/blob/main/src/critter.cc)
-- [Fallout 2 Community Edition CritterProtoData structure](https://github.com/alexbatalov/fallout2-ce/blob/main/src/proto_types.h)
-- [Fallout 2 Community Edition skill indexes](https://github.com/alexbatalov/fallout2-ce/blob/main/src/skill_defs.h)
-- [Fallout 2 Community Edition trait indexes](https://github.com/alexbatalov/fallout2-ce/blob/main/src/trait_defs.h)
+- [Fallout 2 Community Edition GCD reader/writer](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/critter.cc)
+- [Fallout 2 Community Edition CritterProtoData structure](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/proto_types.h)
+- [Fallout 2 Community Edition skill indexes](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/skill_defs.h)
+- [Fallout 2 Community Edition trait indexes](https://github.com/fallout2-ce/fallout2-ce/blob/main/src/trait_defs.h)
 
 ## History
 
