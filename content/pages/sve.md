@@ -160,8 +160,8 @@ When subtitles are enabled but the derived SVE file is missing, Fallout 2 CE dis
 | [MVE](mve.html) | The video/audio container. SVE is external and same-basename, not embedded in the MVE stream. |
 | [MSG](msg.html) | Dialogue and game-message text. MSG uses brace-delimited numbered records; SVE uses line-based frame cues. |
 | [LIP](lip.html) | Talking-head mouth timing. LIP synchronizes phoneme/mouth shapes to speech; SVE synchronizes plain text to movie frames. |
-| Endgame narrator `.txt` | Ending slideshow subtitle files also use colon-separated lines, but their parser ignores the number before the colon and computes display timing from speech duration or text length. They are not SVE movie subtitles. |
-| `credits.txt` | The scrolling credits system is separate from SVE. A `credits.SVE` can accompany `credits.mve`, but `credits.txt` is used by the credits screen logic. |
+| [Endgame narrator `.txt`](endings.html) | Slideshow text ignores the prefix before the colon and derives timing from speech/text length. Death screens use a separate whole-file reader. Neither is SVE movie subtitles. |
+| [credits.txt and quotes.txt](credits.html) | Scrolling text with first-column style markers, not frame cues. A `credits.SVE` can accompany `credits.mve`, but does not control this text renderer. |
 
 ## Authoring Notes
 

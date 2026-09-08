@@ -30,7 +30,7 @@ description: Main index for Fallout 1 and Fallout 2 reversing, modding, file for
 
 # Fallout 1 & 2 reversing and modding resource
 
-Updated 2026-05-09
+Updated 2026-09-08
 
 You can find additional information and code at [github.com/rotators](https://github.com/rotators)
 
@@ -79,6 +79,8 @@ You can find additional information and code at [github.com/rotators](https://gi
 | [AAF - The AAF Font File Format is used to store fonts.](aaf.html) | [Fallout Service Box: Font Editor](https://fodev.net/files/mirrors/teamx-utils/FSB_0.21.rar) |
 | [BIO - Story for premade characters (GCD).](bio.html) | Text editor |
 | [Skill books - BooksFile configuration, PID and skill mappings, reading gains, and runtime differences.](books.html) | Text editor |
+| [Ending configuration - endgame.txt, enddeath.txt, slideshow resources, narrator text, and selection rules.](endings.html) | Text editor |
+| [Credits and quotes - credits.txt and quotes.txt markers, fonts, localization, scrolling, and final-sequence overrides.](credits.html) | Text editor |
 | [CFG/INI - Runtime configuration files, parser behavior, sfall INI settings, high-resolution options, and movie sidecars.](cfg.html) | Text editor |
 | [Critical hit tables - Executable combat tables, sfall/CE override INI layout, damage flags, and combat message dependencies.](criticals.html) | Text editor, hex editor |
 | [DAT - Archive containers for Fallout 1/2 resources, including DAT1 and DAT2 layouts.](dat.html) | [Dat Explorer 1.43](https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar), [many others](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat) |

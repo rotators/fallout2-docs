@@ -53,7 +53,7 @@ can stay simpler.
 Pages that describe engine behavior should include references when possible.
 Good references include:
 
-- Fallout 2 Community Edition source files
+- Fallout 2 Community Edition source files: use [fallout2-ce/fallout2-ce](https://github.com/fallout2-ce/fallout2-ce) for new research, and identify the fork and revision when behavior is version-specific. Preserve older source attributions unless their claims have been rechecked.
 - sfall source, artifacts, or documentation
 - original Interplay/BIS tools or scripts
 - established community format notes

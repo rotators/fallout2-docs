@@ -129,6 +129,12 @@ Current generated pages:
 Source work should happen under `content/pages`, and the generated `_site/`
 directory is the best target for checking pages before publishing.
 
+## Publishing
+
+`publish.bat` builds, validates, and incrementally publishes the site using the
+small PHP endpoint in `tools/publish/`. See [setup and dry-run instructions](tools/publish/README.md)
+for VPS installation, authentication, and optional deletion of obsolete files.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for writing conventions, source/reference

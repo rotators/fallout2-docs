@@ -11,6 +11,8 @@ MVE is Interplay's full-motion video container used by Fallout, Fallout 2, and s
 
 This page describes the Interplay MVE format used by Fallout's `.mve` movies. Do not confuse it with unrelated files that happen to use an `.mve` extension, such as the Wing Commander III MVE format.
 
+For the separate FRM-based slideshow and death narration tables, see [Ending Configuration](endings.html). Their narrator text is not frame-timed SVE data.
+
 ## Format Properties
 
 | Property | Description |
