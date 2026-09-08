@@ -5,58 +5,55 @@ description: Main index for Fallout 1 and Fallout 2 reversing, modding, file for
 ---
 
 ```toc
-1. [Fallout2.exe](#fo2exe)
-2. [f2_res.dll](#f2res)
+1. [Start here](#start-here)
+2. [Engine source](#engine-source)
 3. [Modding](#modding)
 4. [File formats](#formats)
 5. [Artwork](#artwork)
 6. [Animation](#animation)
 7. [Scripting](#scripting)
 8. [Worldmap](#worldmap)
-9. [Watcom](#watcom)
-10. [ASM](#asm)
-11. [Reversing tools](#revtools)
-12. [IDA](#ida)
-13. [Fallout tools](#fo2tools)
-14. [sfall](#sfall)
+9. [Fallout tools](#fo2tools)
+10. [sfall](#sfall)
     - [Binary distros](#sfall-bin)
     - [Source code](#sfall-src)
     - [DirectX](#sfall-dx)
     - [sfall dev](#sfall-dev)
-15. [Projects](#fo_projects)
-16. [Misc](#misc)
-17. [Buy](#buy)
+11. [Projects](#fo_projects)
+12. [Misc](#misc)
+13. [Buy](#buy)
 ```
 
 # Fallout 1 & 2 reversing and modding resource
 
-Updated 2026-09-08
+Updated {{ documentationUpdated }}
 
 You can find additional information and code at [github.com/rotators](https://github.com/rotators)
 
-<a id="fo2exe"></a>
+## Start here
 
-## Fallout2.exe
+- [Modding guide](#modding) — tutorials for creating and changing mods.
+- [File formats](#formats) — references for reading and editing game resources.
+- [Scripting](#scripting) — script source, compiled scripts, and opcode references.
+- [Tools](tools.html) — editors, viewers, and converters.
+- [Engine source](#engine-source) — Community Edition and Reference Edition projects.
 
-[Structures](structs.html)
+## Engine source
 
-[Sfall references](sfall_refs.html)
+Use Community Edition (CE) to explore or modify a playable engine with platform
+support and fixes. Use Reference Edition (RE) to study reverse-engineered
+original engine code. When checking behavior, distinguish original logic from
+changes made by a particular CE fork.
 
-[Fallout 2 RE references](fallout2_re.html)
+| Project | Purpose | Activity checked 2026-09-08 |
+| --- | --- | --- |
+| [FOR:CE / Fallout 2 CE](https://github.com/fallout2-ce/fallout2-ce) | Playable engine with platform support and fixes | Active; [latest default-branch commit](https://github.com/fallout2-ce/fallout2-ce/commits) 2026-09-07. |
+| [Fallout 1 CE](https://github.com/alexbatalov/fallout1-ce) | Playable Fallout 1 reimplementation | No recent default-branch activity; [latest commit](https://github.com/alexbatalov/fallout1-ce/commits) 2025-01-15. |
+| [Fallout 1 RE](https://github.com/alexbatalov/fallout1-re) | Original engine code reference | Reference project; [latest commit](https://github.com/alexbatalov/fallout1-re/commits) 2023-01-30. |
+| [Fallout 2 RE](https://github.com/alexbatalov/fallout2-re) | Original engine code reference | Reference project; [latest commit](https://github.com/alexbatalov/fallout2-re/commits) 2023-01-20. |
 
-[Function and variable offsets](symbols.html)
-
-[Call structure](https://rotators.fodev.net/atom/F2_function_structure.txt)
-
-[x64dbg database](https://github.com/rotators/sfall/blob/rotators/db/Fallout2.dd32)
-
-[Fallout_1_and_2_IDA68.rar - IDA database](https://rotators.fodev.net/ghosthack/scrapheap/reversing/ida/Fallout_1_and_2_IDA68.rar)
-
-<a id="f2res"></a>
-
-## f2_res.dll (High resolution patch)
-
-[Symbols](hrp.html)
+For original executable offsets and historical tools, see
+[legacy reverse-engineering resources](legacy-reversing.html).
 
 <a id="modding"></a>
 
@@ -70,41 +67,67 @@ You can find additional information and code at [github.com/rotators](https://gi
 
 ## File formats
 
-| Format | Tools |
-| --- | --- |
-| [AI.TXT - Description of combat parameters for the player and all NPC classes in the game](ai_txt.html) | [Fallout 2 - Proto Manager](https://www.nma-fallout.com/resources/fallout-2-proto-manager.73/) |
-| [PARTY.TXT - Party-member registry, combat-control option whitelist, and companion level-up data.](party_txt.html) | Text editor |
-| [Pip-Boy text data - quests.txt, holodisk.txt, quest status, holodisk text, and GVAR-controlled display rules.](pipboy_txt.html) | Text editor |
-| [ACM - Interplay compressed audio for music, speech, and sound effects.](acm.html) | Use [libacm](https://github.com/markokr/libacm), [acm2wav](https://fodev.net/files/mirrors/teamx-utils/acm2wav.rar) or [Game Audio Player](https://fodev.net/files/archive/gap.zip) for playback. |
-| [AAF - The AAF Font File Format is used to store fonts.](aaf.html) | [Fallout Service Box: Font Editor](https://fodev.net/files/mirrors/teamx-utils/FSB_0.21.rar) |
-| [BIO - Story for premade characters (GCD).](bio.html) | Text editor |
-| [Skill books - BooksFile configuration, PID and skill mappings, reading gains, and runtime differences.](books.html) | Text editor |
-| [Ending configuration - endgame.txt, enddeath.txt, slideshow resources, narrator text, and selection rules.](endings.html) | Text editor |
-| [Credits and quotes - credits.txt and quotes.txt markers, fonts, localization, scrolling, and final-sequence overrides.](credits.html) | Text editor |
-| [CFG/INI - Runtime configuration files, parser behavior, sfall INI settings, high-resolution options, and movie sidecars.](cfg.html) | Text editor |
-| [Critical hit tables - Executable combat tables, sfall/CE override INI layout, damage flags, and combat message dependencies.](criticals.html) | Text editor, hex editor |
-| [DAT - Archive containers for Fallout 1/2 resources, including DAT1 and DAT2 layouts.](dat.html) | [Dat Explorer 1.43](https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar), [many others](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat) |
-| [Elevators.ini - sfall/CE elevator destination tables, interface templates, and script activation rules.](elevators.html) | Text editor |
-| [FON - Fonts used for text on the world map](fon.html) | [FON editor](https://fodev.net/files/mirrors/teamx-utils/fonedit1.0.rar) |
-| [FRM - Indexed art, animation frames, rotations, offsets, FID lookup, and palette-dependent rendering.](frm.html) | [Titanium FRM browser](https://fodev.net/files/archive/fo2/Titanium%20FRM%20Browser%201.3%20%28en%29.zip), [Graphics viewer 1.36](https://fodev.net/files/mirrors/teamx-utils/viewer.rar) [and many others.](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics) |
-| [INT - Compiled script bytecode for Fallout and Fallout 2 SSL scripts.](int.html) | use int2ssl.exe included in [sfall modderspack](https://sourceforge.net/projects/sfall/files/Modders%20pack/modderspack_4.3.4.7z/download) to decompile or [source repo](https://github.com/phobos2077/int2ssl). |
-| [SSL - Source language and build format for Fallout and Fallout 2 scripts.](ssl.html) | [sfall SSLC](https://sfall-team.github.io/sfall/sslc/), [Fallout 2 script library](https://fallout.fandom.com/wiki/Fallout_2_script_library) |
-| [SCRIPTS.LST - Indexed registry for compiled INT scripts, dialogue MSG binding, and script local-variable metadata.](scripts_lst.html) | Text editor |
-| [Fallout 2 savegame structure - SAVE.DAT, saved map sidecars, party PRO sidecars, automap data, sfall extensions, and Fallout 1 compatibility boundaries.](savegame.html) | Hex editor, gzip tools |
-| [GCD File Format - Premade characters.](gcd.html) | [CGCD](https://github.com/rotators/cgcd) |
-| [GAM - GAM files are indexed text files. They contain global variables for each core Fallout game and its maps](gam.html) | Text editor |
-| [LIP - Talking-head lip-sync timing for speech audio.](lip.html) | [LIP editor](https://fodev.net/files/mirrors/teamx-utils/LIPEditor0.96b.rar), [wav2lip](https://fodev.net/files/mirrors/teamx-utils/wav2lip.rar) |
-| [LST - Line-indexed tables, art FID resolution, critter/head metadata, and filename construction.](lst.html) | Text editor |
-| [MAP - Maps used for locations.](map.html) | [Patched BIS mapper](https://www.nma-fallout.com/resources/bis-mapper.55/) |
-| [MSG - Text message lists for dialogue, object names, UI strings, map names, and combat text.](msg.html) | Text editor |
-| [MSK - World-map walk masks that mark blocked terrain pixels.](msk.html) | [MSK tools](https://fodev.net/files/mirrors/teamx-utils/MSKTools.rar), [msk2bmp](https://fodev.net/files/mirrors/teamx-utils/msk2bmp.rar) |
-| [PAL/COL - Fallout palette files, RGB555 lookup, color tables, and animated palette ranges.](pal.html) | [Fallout default color sheet](fo_colors.html) |
-| [PRO - Prototype, every item, critter, wall, tile, and piece of scenery has its own corresponding PRO file.](pro.html) | [Fallout 2 - Proto Manager](https://www.nma-fallout.com/resources/fallout-2-proto-manager.73/) |
-| [RIX - ColoRIX indexed bitmap format used for startup/loading splash screens.](rix.html) | [Graphics viewer 1.36 to load/save](https://fodev.net/files/mirrors/teamx-utils/viewer.rar) |
-| [MVE - Interplay movie container for intro, ending, logo, credits, and cutscene videos.](mve.html) | [Various](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#video) |
-| [SVE - Frame-numbered subtitle cue lists for MVE movies.](sve.html) | Text editor |
-| [Worldmap.dat - Serialized world-map state and related world map definition files.](worldmap_dat.html) | [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap) |
-| [World-map text config - maps.txt, city.txt, and worldmap.txt editable world-map definitions.](worldmap_config.html) | Text editor, [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap) |
+Browse by purpose. Each reference explains the format and its runtime differences.
+
+[Graphics and fonts](#graphics-and-fonts) · [Audio and video](#audio-and-video) · [Scripts and text](#scripts-and-text) · [Maps and world](#maps-and-world) · [Game data and saves](#game-data-and-saves)
+
+### Graphics and fonts
+
+| Format | Contents | Tools |
+| --- | --- | --- |
+| [AAF](aaf.html) | Interface fonts | [Fallout Service Box: Font Editor](https://fodev.net/files/mirrors/teamx-utils/FSB_0.21.rar) |
+| [FON](fon.html) | World-map fonts | [FON editor](https://fodev.net/files/mirrors/teamx-utils/fonedit1.0.rar) |
+| [FRM](frm.html) | Sprites and animation frames | [Titanium FRM browser](https://fodev.net/files/archive/fo2/Titanium%20FRM%20Browser%201.3%20%28en%29.zip), [Graphics viewer 1.36](https://fodev.net/files/mirrors/teamx-utils/viewer.rar) [and many others.](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#graphics) |
+| [PAL/COL](pal.html) | Palettes and color lookup tables | [Fallout default color sheet](fo_colors.html) |
+| [RIX](rix.html) | Startup and splash images | [Graphics viewer 1.36 to load/save](https://fodev.net/files/mirrors/teamx-utils/viewer.rar) |
+
+### Audio and video
+
+| Format | Contents | Tools |
+| --- | --- | --- |
+| [ACM](acm.html) | Music, speech, and sound effects | Use [libacm](https://github.com/markokr/libacm), [acm2wav](https://fodev.net/files/mirrors/teamx-utils/acm2wav.rar) or [Game Audio Player](https://fodev.net/files/archive/gap.zip) for playback. |
+| [LIP](lip.html) | Talking-head lip sync | [LIP editor](https://fodev.net/files/mirrors/teamx-utils/LIPEditor0.96b.rar), [wav2lip](https://fodev.net/files/mirrors/teamx-utils/wav2lip.rar) |
+| [MVE](mve.html) | Movies and cutscenes | [Various](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#video) |
+| [SVE](sve.html) | Movie subtitles | Text editor |
+
+### Scripts and text
+
+| Format | Contents | Tools |
+| --- | --- | --- |
+| [SSL](ssl.html) | Script source language | [sfall SSLC](https://sfall-team.github.io/sfall/sslc/), [Fallout 2 script library](https://fallout.fandom.com/wiki/Fallout_2_script_library) |
+| [INT](int.html) | Compiled scripts | use int2ssl.exe included in [sfall modderspack](https://sourceforge.net/projects/sfall/files/Modders%20pack/modderspack_4.3.4.7z/download) to decompile or [source repo](https://github.com/phobos2077/int2ssl). |
+| [SCRIPTS.LST](scripts_lst.html) | Script registry | Text editor |
+| [MSG](msg.html) | Dialogue and interface text | Text editor |
+| [BIO](bio.html) | Premade character biographies | Text editor |
+| [Pip-Boy text](pipboy_txt.html) | Quests and holodisks | Text editor |
+| [Credits and quotes](credits.html) | Credits text and scrolling | Text editor |
+
+### Maps and world
+
+| Format | Contents | Tools |
+| --- | --- | --- |
+| [MAP](map.html) | Location maps | [Patched BIS mapper](https://www.nma-fallout.com/resources/bis-mapper.55/) |
+| [MSK](msk.html) | World-map walk masks | [MSK tools](https://fodev.net/files/mirrors/teamx-utils/MSKTools.rar), [msk2bmp](https://fodev.net/files/mirrors/teamx-utils/msk2bmp.rar) |
+| [World-map configuration](worldmap_config.html) | Maps, cities, and terrain definitions | Text editor, [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap) |
+| [Worldmap.dat](worldmap_dat.html) | Serialized world-map state | [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap) |
+| [Elevators.ini](elevators.html) | Elevator destinations and interfaces | Text editor |
+
+### Game data and saves
+
+| Format | Contents | Tools |
+| --- | --- | --- |
+| [DAT](dat.html) | Resource archives | [Dat Explorer 1.43](https://fodev.net/files/mirrors/teamx-utils/dat_explorer.rar), [many others](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html#dat) |
+| [LST](lst.html) | Indexed resource lists | Text editor |
+| [PRO](pro.html) | Object prototypes | [Fallout 2 - Proto Manager](https://www.nma-fallout.com/resources/fallout-2-proto-manager.73/) |
+| [GCD](gcd.html) | Premade character data | [CGCD](https://github.com/rotators/cgcd) |
+| [GAM](gam.html) | Game and map global variables | Text editor |
+| [AI.TXT](ai_txt.html) | Combat AI parameters | [Fallout 2 - Proto Manager](https://www.nma-fallout.com/resources/fallout-2-proto-manager.73/) |
+| [PARTY.TXT](party_txt.html) | Party members and combat controls | Text editor |
+| [CFG/INI](cfg.html) | Engine and mod configuration | Text editor |
+| [Critical hit tables](criticals.html) | Combat effects and overrides | Text editor, hex editor |
+| [Skill books](books.html) | Book items and skill gains | Text editor |
+| [Ending configuration](endings.html) | Slideshows and death screens | Text editor |
+| [Savegames](savegame.html) | SAVE.DAT and supporting files | Hex editor, gzip tools |
 
 <a id="artwork"></a>
 
@@ -132,72 +155,6 @@ You can find additional information and code at [github.com/rotators](https://gi
 ## Worldmap
 
 [Fallout2 worldmap.txt interactive browser and parser](https://github.com/phobos2077/fallout2_worldmap)
-
-<a id="watcom"></a>
-
-## Watcom
-
-[Watcom](https://en.wikipedia.org/wiki/Watcom_C/C%2B%2B) is the compiler that was used to compile both Fallout 1 and 2.
-
-Watcom does not support the __fastcall keyword except to alias it to null. The register calling convention may be selected by command line switch. (However, IDA uses __fastcall anyway for uniformity.)
-
-Up to 4 registers are assigned to arguments in the order eax, edx, ebx, ecx. Arguments are assigned to registers from left to right.
-
-If any argument cannot be assigned to a register (say it is too large) it, and all subsequent arguments, are assigned to the stack. Arguments assigned to the stack are pushed from right to left. Names are mangled by adding a suffixed underscore.
-
-eax->func(edx, ebx, ecx, push...)
-
-func(eax, edx, ebx, ecx, push...)
-
-[Read more](https://web.archive.org/web/20150503230850/http://openwatcom.org/index.php/Calling_Conventions#Specifying_Calling_Conventions)
-
-<a id="asm"></a>
-
-## ASM
-
-[x86 reference](https://c9x.me/x86/)
-
-[x86 and amd64 instruction reference](https://www.felixcloutier.com/x86/)
-
-[x86 opcode table](http://ref.x86asm.net/coder32.html)
-
-[Online x86 / x64 Assembler and Disassembler](https://defuse.ca/online-x86-assembler.htm)
-
-<a id="revtools"></a>
-
-## Reversing tools
-
-[OllyDBG - debugger](https://www.ollydbg.de)
-
-[x64dbg - debugger](https://x64dbg.com/)
-
-[IDA 7 freeware - disassembler/debugger](https://www.hex-rays.com/products/ida/support/download_freeware/)
-
-[IDA 5 - Old version of IDA, suitable for DOS reversing](https://www.scummvm.org/news/20180331/)
-
-[PE explorer](https://www.heaventools.com/overview.htm)
-
-[HxD - Freeware Hex Editor and Disk Editor ( alternatives](https://mh-nexus.de/en/hxd/))
-
-[DLL Export Viewer v1.66](https://nirsoft.net/utils/dll_export_viewer.html)
-
-[Scylla - Imports viewer](https://github.com/NtQuery/Scylla)
-
-[idbutil - Tool for dumping data from IDA pro databases](https://github.com/nlitsme/pyidbutil)
-
-[Additional stuff](https://github.com/tylerha97/awesome-reversing)
-
-<a id="ida"></a>
-
-## IDA database
-
-[Fallout_1_and_2_IDA68.rar](https://rotators.fodev.net/ghosthack/scrapheap/reversing/ida/Fallout_1_and_2_IDA68.rar)
-
-[idbtool.exe](https://rotators.fodev.net/ghosthack/scrapheap/reversing/ida/idbtool.exe)
-
-`idbtool.exe --enums Fallout2.idb > enums.txt`
-
-`idbtool.exe --names Fallout2.idb > names.txt`
 
 <a id="fo2tools"></a>
 
@@ -255,23 +212,40 @@ Mirror: [DirectX SDK Collection](https://github.com/NovaRain/DXSDK_Collection)
 
 ## Projects
 
-| Project | Description |
-| --- | --- |
-| [Fallout 1 Reference Edition](https://github.com/alexbatalov/fallout1-re) | Fallout 1 RE project by Alexander Batalov. |
-| [Fallout 1 Community Edition](https://github.com/alexbatalov/fallout1-ce) | Fallout Community Edition is a fully working re-implementation of Fallout, with the same original gameplay, engine bugfixes, and some quality of life improvements, that works (mostly) hassle-free on multiple platforms. |
-| [Fallout 2 Reference Edition](https://github.com/alexbatalov/fallout2-re) | Fallout 2 RE project by Alexander Batalov. [Announcement post](https://medium.com/@alex.batalov/reverse-engineering-fallout-2-5dad1421de21) |
-| [Fallout 2 Community Edition](https://github.com/fallout2-ce/fallout2-ce) | The preferred maintained fork of Fallout 2 Community Edition (FOR:CE) is a fully working re-implementation of Fallout 2, with the same original gameplay, engine bugfixes, and some quality of life improvements, that works (mostly) hassle-free on multiple platforms. |
-| [Fallout 2 Javascript port](https://github.com/ajxs/jsFO) | Inactive engine implementation |
-| [DarkFO, a post-nuclear RPG remake (of Fallout 2)](https://github.com/darkf/darkfo) | Inactive engine implementation in TypeScript and Python |
-| [falltergeist](https://github.com/falltergeist/falltergeist) | Opensource crossplatform Fallout 2 game engine written in C++ and SDL. |
-| [Fallout 2 tweaks](https://github.com/BGforgeNet/FO2tweaks) | A collection of convenience tweaks, common sense changes, and cheats for Fallout 2. It is highly configurable, any component can be used with or without others. Some components also allow fine tuning. |
-| [Fallout 2 map editor](https://github.com/JanSimek/geck-map-editor) | Fallout 2 map editor by Jan Simek |
-| [Klamath](https://github.com/adamkewley/klamath) | C++ utilities for working with Fallout 1/2 assets |
-| [Fallout et Tu (Fallout 1 in 2)](fo1in2.html) | A project that aims to bring Fallout 1 into the Fallout 2 engine. |
+Status checked 2026-09-08 against repository notices and default-branch commit
+history. “Active” indicates recent public development; a quiet repository may
+still be useful. These are dated observations, not a guarantee of support.
+CE and RE repositories are listed under [Engine source](#engine-source).
+
+### Actively maintained projects
+
+| Project | Description | Recent activity |
+| --- | --- | --- |
+| [Fallout 2 tweaks](https://github.com/BGforgeNet/FO2tweaks) | Configurable gameplay and convenience tweaks | [Latest commit](https://github.com/BGforgeNet/FO2tweaks/commits) 2026-08-22. |
+| [Gecko](https://github.com/JanSimek/gecko) | Fallout 2 map editor, formerly geck-map-editor | [Latest commit](https://github.com/JanSimek/gecko/commits) 2026-08-30. |
+| [Fallout et Tu](fo1in2.html) | Fallout 1 in the Fallout 2 engine | [Latest commit](https://github.com/rotators/Fo1in2/commits) 2026-09-07. |
+
+### Historical and dormant projects
+
+| Project | Description | Status |
+| --- | --- | --- |
+| [jsFO](https://github.com/ajxs/jsFO) | Experimental Fallout 2 implementation for the browser | Author states development has ceased; [latest commit](https://github.com/ajxs/jsFO/commits) 2022-07-27. |
+| [DarkFO](https://github.com/darkf/darkfo) | Fallout 2 remake in TypeScript and Python | Repository archived; [latest commit](https://github.com/darkf/darkfo/commits) 2019-03-07. |
+| [falltergeist](https://github.com/falltergeist/falltergeist) | Fallout 2 engine implementation in C++ and SDL | Dormant by default-branch activity; [latest commit](https://github.com/falltergeist/falltergeist/commits) 2022-07-15. Not archived. |
+| [Klamath](https://github.com/adamkewley/klamath) | Demo code for working with Fallout 1/2 assets | Repository archived; [latest commit](https://github.com/adamkewley/klamath/commits) 2021-04-07. |
 
 <a id="misc"></a>
 
 ## Misc
+
+<a id="fo2exe"></a>
+<a id="f2res"></a>
+<a id="watcom"></a>
+<a id="asm"></a>
+<a id="revtools"></a>
+<a id="ida"></a>
+
+[Legacy reverse-engineering resources](legacy-reversing.html) — original executable and high-resolution patch references, Watcom and assembly notes, debuggers, and historical IDA databases.
 
 - [List of Fallout 1 & 2 mods](mods.html)
 - [Documentation generator notes](docs-generator.html)

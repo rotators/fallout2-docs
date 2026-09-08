@@ -33,7 +33,28 @@ tools\Validate-Site.ps1
 The validation script checks local generated pages, internal links and anchors,
 automatic floating TOCs, full-width page flags, and leftover root-level HTML.
 
-## Generated Pages
+## Documentation update date
+
+The index's update date is generated from documentation inputs: `content/`,
+published CSS and root `.sym`/`.txt` files, and the `img/`, `highslide/`, and
+`symbols/` asset directories. Tooling changes and build output do not count.
+
+In a clean Git checkout, the date comes from the latest commit affecting those
+inputs, in UTC. Uncommitted edits and new files use their source modification
+times, bounded below by the committed date. A local deletion uses the date it
+is first observed by a build, since the deleted file has no timestamp.
+
+The ignored `.fodocs-cache/` directory remembers a content fingerprint and date
+for local edits. Unchanged rebuilds, including `--clean`, retain that date even
+if source timestamps change. A clean checkout always uses Git history. Without
+Git history, the generator warns and falls back to source timestamps and the
+same cache; that fallback cannot recover historical dates from a fresh archive.
+Keep the cache for stable local builds and use a full Git checkout in CI.
+
+After building the generator, run `python tools/Test-DocumentationDate.py` to
+check committed dates, local changes, rebuild stability, and unrelated commits.
+
+## Generated page list
 
 The following pages have Markdown sources:
 

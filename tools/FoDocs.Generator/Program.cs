@@ -131,6 +131,7 @@ internal sealed record SiteOptions(
 
 internal sealed class SiteGenerator(SiteOptions options)
 {
+    private string documentationUpdated = "";
     private static readonly string[] RootFilePatterns = ["*.css", "*.sym", "*.txt"];
     private static readonly string[] PassthroughDirectories = ["img", "highslide", "symbols"];
     private static readonly string[] ExcludedDirectoryNames = [".git", "content", "tools", "_site"];
@@ -143,6 +144,7 @@ internal sealed class SiteGenerator(SiteOptions options)
             return 1;
         }
 
+        documentationUpdated = DocumentationDate.Resolve(options);
         PrepareOutputDirectory();
         CopyLegacySiteFiles();
 
@@ -252,6 +254,7 @@ internal sealed class SiteGenerator(SiteOptions options)
             .Replace("{{ description }}", Html.Escape(page.Description ?? ""), StringComparison.Ordinal)
             .Replace("{{ pageClassAttribute }}", FormatPageClassAttribute(page.PageClass), StringComparison.Ordinal)
             .Replace("{{ content }}", page.BodyHtml, StringComparison.Ordinal)
+            .Replace("{{ documentationUpdated }}", documentationUpdated, StringComparison.Ordinal)
             .Replace("{{ generatedAt }}", DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm:ss 'UTC'"), StringComparison.Ordinal);
 
         File.WriteAllText(outputPath, html, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
