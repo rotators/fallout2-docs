@@ -7,6 +7,8 @@ toc: auto
 
 # Sound Effect Lookup and SNDLIST.LST
 
+**Tools:** [Audio converters and sound-list utilities](tools.html#audio).
+
 Fallout sound effects combine three separate mechanisms: gameplay selects a filename, the resource filesystem locates its audio, and the sound cache supplies encoded bytes and decoded-length metadata. `SNDLIST.LST` belongs to the cache layer; it does not assign sounds to weapons or gameplay events.
 
 The primary source is the preferred `fallout2-ce/fallout2-ce` fork at revision `0290b2c98d538902235339b406291a426529fda0`. That implementation scans sound files and does not read or write `SNDLIST.LST`. To document the actual disk format, this page separately uses the older `alexbatalov/fallout2-ce` reader at `e97087b9582f37075db347a89898887320753f8b`. These are source-derived observations checked on 2026-09-12, not tests of shipped archives or every original executable/sfall version.

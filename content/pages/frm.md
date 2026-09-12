@@ -6,6 +6,8 @@ description: Fallout FRM indexed-art format, frame layout, palette behavior, FID
 
 # FRM File Format
 
+**Tools:** [Sprite editors, viewers, and converters](tools.html#graphics).
+
 FRM files are Fallout and Fallout 2 indexed-color art containers. They store one or more raw 8-bit frames, optionally arranged into the six isometric rotations used by map objects and critters.
 
 The format is used for map objects, critter animations, tiles, walls, scenery, items, inventory art, interface screens, skilldex images, talking heads, and talking-head backgrounds. Movies use [MVE](mve.html), splash/loading images commonly use [RIX](rix.html), and FRM color data comes from external [PAL](pal.html) files.

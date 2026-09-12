@@ -6,6 +6,8 @@ description: Fallout GAM text files for initial global and map variables, parser
 
 # GAM File Format
 
+**Tools:** [Text editing](tools.html#text-and-configuration).
+
 GAM files are text files that define initial integer variables. Fallout uses one game-wide GAM file for global variables and optional per-map GAM files for map variables. The files are not save files by themselves; they seed runtime arrays that are later stored inside [saved game data](savegame.html) and saved maps.
 
 ## Locations

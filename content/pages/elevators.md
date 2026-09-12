@@ -6,6 +6,8 @@ description: Fallout 2 CE and sfall-compatible elevators.ini configuration, dest
 
 # Elevators.ini File Format
 
+**Tools:** [Mapping and elevator tools](tools.html#mapping).
+
 Elevator data controls the modal floor-selection window used by elevator scripts. In the original game the destination tables are hardcoded in the executable. Fallout 2 CE implements the sfall-compatible override path: `ddraw.ini` can name an external elevator config file with `[Misc] ElevatorsFile`, commonly `elevators.ini`.
 
 This file does not create the map trigger by itself. A script still has to request an elevator, usually with `metarule(15, elevator_id)`, and the destination map ids must match the indexes from [`data\maps.txt`](worldmap_config.html).

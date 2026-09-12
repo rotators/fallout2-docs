@@ -6,6 +6,8 @@ description: Fallout SVE subtitle cue files for MVE movies, including syntax, lo
 
 # SVE File Format
 
+**Tools:** [Subtitle text editing](tools.html#text-and-configuration), [movie tools](tools.html#video).
+
 SVE files are plain text subtitle cue lists for Fallout and Fallout 2 [MVE](mve.html) movies. They do not contain audio, video, palettes, or timing in seconds. Each subtitle is keyed by a movie frame number, and the movie player displays the text when playback reaches that frame.
 
 The format is intentionally small, but the engine behavior around it matters: subtitle files are looked up from the current language folder, parsed in file order, rendered with movie-specific palettes, and synchronized to decoded movie frame counts rather than wall-clock time.

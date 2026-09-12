@@ -7,6 +7,8 @@ toc: auto
 
 # Credits and Quotes Text
 
+**Tools:** [Text editing](tools.html#text-and-configuration).
+
 `credits.txt` and `quotes.txt` use the same line-based scrolling-text reader. A single optional character at the beginning of each line selects its style or makes it a comment. These files contain no record ids, timing fields, section headers, or declared line count.
 
 This reference follows [fallout2-ce/fallout2-ce](https://github.com/fallout2-ce/fallout2-ce), revision `0290b2c98d538902235339b406291a426529fda0`, inspected on 2026-09-05. Fork-specific configuration and screen-size behavior are identified below. Findings are source-derived; examples have not been tested with game assets or in-game playback.

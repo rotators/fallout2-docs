@@ -33,6 +33,20 @@ tools\Validate-Site.ps1
 The validation script checks local generated pages, internal links and anchors,
 automatic floating TOCs, full-width page flags, and leftover root-level HTML.
 
+## Markdown rendering
+
+Inline text supports links, backtick code spans, **bold** using paired double
+asterisks or underscores, and *emphasis* using single markers. Emphasis can be
+nested and used in headings, lists, table cells, and link labels. Underscores
+inside words and filenames stay literal. Backslash escapes preserve punctuation;
+code spans and fenced code preserve Markdown markers as written. Use longer
+backtick delimiters to include a backtick inside an inline code span.
+
+The renderer supports a deliberate Markdown subset, with custom fenced blocks
+for site data and raw HTML. It is not a full CommonMark implementation.
+After building the generator, run `python tools/Test-MarkdownRendering.py` to
+check rendering and block ordering.
+
 ## Documentation update date
 
 The index's update date is generated from documentation inputs: `content/`,

@@ -6,6 +6,8 @@ description: Fallout RIX splash-screen image format, header layout, embedded VGA
 
 # RIX File Format
 
+**Tools:** [RIX viewers and converters](tools.html#graphics).
+
 RIX files are ColoRIX indexed bitmap images. Fallout and Fallout 2 use a narrow subset of the format for startup/loading splash screens, stored under `art\splash` in `master.dat` or in the unpacked `data` tree.
 
 The wider ColoRIX format can describe several palette and storage variants, including compressed or planar data. Fallout's splash loader expects the simple VGA form: a `RIX3` signature, little-endian dimensions, a 256-color palette, and one linear byte per pixel. For Fallout modding tools, support that subset first.

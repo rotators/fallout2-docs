@@ -6,6 +6,8 @@ description: Fallout world-map walk mask format, dimensions, bit packing, moveme
 
 # MSK File Format
 
+**Tools:** [Worldmap image and mask tools](tools.html#worldmap-and-masks).
+
 MSK files are world-map walk masks. They mark pixels on a world-map tile that the party cannot cross, such as ocean or other deliberately blocked terrain. They are not display graphics, do not use the Fallout palette, and do not contain a header. They are fixed-size 1-bit masks used alongside the world-map FRM tiles defined in `data\worldmap.txt`.
 
 The important relationship is in `worldmap.txt`. A tile section can name a mask with `walk_mask_name`. The engine then looks for `data\<walk_mask_name>.msk`. If no mask name is present, the whole world-map tile is treated as walkable by the mask system.

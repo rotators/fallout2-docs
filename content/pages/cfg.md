@@ -7,6 +7,8 @@ toc: auto
 
 # CFG/INI Configuration Files
 
+**Tools:** [Text and configuration editing](tools.html#text-and-configuration).
+
 Fallout and Fallout 2 use several INI-style configuration files. Some are global runtime settings, such as `fallout2.cfg`. Others are extension configs, such as sfall's `ddraw.ini` and the high-resolution patch's `f2_res.ini`. A few resource-side files, such as movie `.cfg` files, reuse the same parser for local data.
 
 This page documents the shared parser behavior, the main game configuration keys, and the most important extension/config side effects that influence file lookup, language paths, subtitles, palettes, music, movies, scripts, and mod compatibility.

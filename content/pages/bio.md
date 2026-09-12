@@ -6,6 +6,8 @@ description: Fallout BIO premade-character biography text files, display behavio
 
 # BIO File Format
 
+**Tools:** [Text editing](tools.html#text-and-configuration).
+
 BIO files are plain text biographies shown on the premade character selection screen. They live in the `premade` directory and are paired with [GCD files](gcd.html) that use the same base name.
 
 In an unmodified Fallout 2 installation the three selectable premade characters are loaded from these base paths:

@@ -7,6 +7,8 @@ toc: auto
 
 # World-map Text Configuration Files
 
+**Tools:** [Encounter editors and worldmap viewers](tools.html#worldmap-and-masks), [text editing](tools.html#text-and-configuration).
+
 The Fallout and Fallout 2 world map is not defined by one file. The editable source data is split across three text configuration files:
 
 | File | Role |

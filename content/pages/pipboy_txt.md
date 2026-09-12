@@ -6,6 +6,8 @@ description: Fallout Pip-Boy quests.txt and holodisk.txt text data, message-list
 
 # Pip-Boy Text Data Files
 
+**Tools:** [Text and configuration editing](tools.html#text-and-configuration).
+
 The Pip-Boy status screen combines two small text configuration files with normal [MSG](msg.html) message lists and the current game-global variable array. `data\quests.txt` decides which quest descriptions appear under each location. `data\holodisk.txt` decides which holodisk entries appear in the DATA column. The visible strings themselves are stored in `game\map.msg`, `game\quests.msg`, and `game\pipboy.msg`.
 
 These files are not save files. They are loaded when the Pip-Boy window opens, then interpreted against the current [GVAR](gam.html) values from the running game or save slot.

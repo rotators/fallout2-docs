@@ -173,7 +173,7 @@ Related format: [MVE](mve.html).
 
 ## Text and configuration
 
-Plain-text editing is the normal workflow for [MSG](msg.html), [LST](lst.html), [GAM](gam.html), [BIO](bio.html), [CFG/INI](cfg.html), [AI.TXT](ai_txt.html), [PARTY.TXT](party_txt.html), [PIPBOY.TXT](pipboy_txt.html), [worldmap configuration](worldmap_config.html), [credits](credits.html), and text-based [book](books.html), [ending](endings.html), and [critical-hit](criticals.html) overrides.
+Plain-text editing is the normal workflow for [SVE movie subtitles](sve.html), [MSG](msg.html), [LST](lst.html), [GAM](gam.html), [BIO](bio.html), [CFG/INI](cfg.html), [AI.TXT](ai_txt.html), [PARTY.TXT](party_txt.html), [PIPBOY.TXT](pipboy_txt.html), [worldmap configuration](worldmap_config.html), [credits](credits.html), and text-based [book](books.html), [ending](endings.html), and [critical-hit](criticals.html) overrides.
 
 Use a text editor that preserves the required encoding and line endings. Follow the linked format page for syntax and identifiers. For SSL/MSG projects, [BGforge MLS](https://github.com/BGforgeNet/BGforge-MLS) and [sfall Script Editor](https://github.com/phobos2077/sfall_script_editor) add language-specific assistance. A dedicated GUI is not required for every text format.
 
@@ -206,7 +206,7 @@ Historical compiler source retained from the original directory:
 
 ## Saves
 
-Related formats: [savegame structure](savegame.html), [GCD](gcd.html), [SVE](sve.html). A SAVE.DAT editor does not automatically edit every sidecar or character-template format.
+Related formats: [savegame structure](savegame.html), [GCD](gcd.html). A SAVE.DAT editor does not automatically edit every sidecar or character-template format.
 
 | Tool | Use | Compatibility / limits |
 |---|---|---|
@@ -230,6 +230,6 @@ Original distribution and attribution:
 
 ## Coverage and contributions
 
-Some niches are covered by source references or manual workflows rather than a verified dedicated editor: raw worldmap.dat state, SVE exploration records, and complete save sidecar editing. Do not infer support for them from a tool's general Fallout label.
+Some niches are covered by source references or manual workflows rather than a verified dedicated editor: raw worldmap.dat state and complete save sidecar editing. Do not infer support for them from a tool's general Fallout label.
 
 When adding a tool, state the input/output formats, operation, target game/runtime, interface, project/download link, and any known limitation. Identify mirrors and forks. Record hands-on verification separately from a documentation review. The [TeamX mirror](https://fodev.net/files/mirrors/teamx-utils/!_INDEX_en.html) preserves additional historical utilities; listings here prioritize distinct tasks over duplicating every old version.

@@ -7,6 +7,8 @@ toc: auto
 
 # Skill Book Configuration
 
+**Tools:** [Text and configuration editing](tools.html#text-and-configuration).
+
 `BooksFile` names an optional INI file that maps item prototype ids to skills and reading-result messages. sfall adds this configuration to Fallout 2, and Fallout 2 CE implements a compatible subset with some different loader behavior. Vanilla Fallout 2 has five built-in mappings; it does not read this INI itself.
 
 The file changes which items count as skill books. Reading time, consumption, skill gains, and Comprehension remain engine behavior unless separately modified. The details below were checked against sfall's `Books.cpp`, its distributed `books.ini`, and Fallout 2 CE on 2026-09-05.

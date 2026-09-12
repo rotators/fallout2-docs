@@ -7,6 +7,8 @@ toc: auto
 
 # MSG File Format
 
+**Tools:** [Text editing](tools.html#text-and-configuration), [dialogue tools](tools.html#scripting).
+
 MSG files are Fallout and Fallout 2 text message lists. They store numbered strings for dialogue, object names and descriptions, UI labels, combat floats, map names, script errors, and editor-facing vocabulary. The files are plain text, but the engine parser is not line-oriented: it scans for brace-delimited fields and reads entries as repeated `{number}{audio}{text}` triplets.
 
 Most paths below are relative to `master.dat`, `critter.dat`, or an unpacked Fallout data directory. Runtime loading prepends `text\<language>\` to the path passed by the caller, so `game\misc.msg` is normally loaded from `text\english\game\misc.msg` in English installations.

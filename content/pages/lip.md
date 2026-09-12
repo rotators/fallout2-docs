@@ -6,6 +6,8 @@ description: Fallout talking-head LIP lip-sync files, binary layout, marker reco
 
 # LIP File Format
 
+**Tools:** [LIP editors and speech pipelines](tools.html#audio).
+
 LIP files are talking-head lip-sync files. They do not contain audio or image pixels. A LIP file stores a timed sequence of phoneme codes; the dialogue system uses those codes to choose frames from the current talking head's phoneme FRM while playing the matching speech ACM.
 
 In Fallout 2 dialogue, the path starts in a [MSG](msg.html) file. The MSG entry's audio field is passed to the lip-sync system, the current talking-head art base name selects a speech subdirectory, the LIP file supplies mouth timing, and the matching [ACM](acm.html) file supplies sound.

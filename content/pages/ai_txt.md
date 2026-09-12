@@ -6,6 +6,8 @@ toc: auto
 ---
 # AI.TXT
 
+**Tools:** [AI packet and prototype editors](tools.html#critters), [text editing](tools.html#text-and-configuration).
+
 The file consists of a description of combat parameters for the player and all NPC classes in the game. Descriptions are separated from one another with an empty line. Each description consists of the (unique) name of the class and settings. Below is a list of parameters in alphabetical order, which is how they are always written in the file. "string" means that the value should be text; "N" indicates a numeric value; and "mixed" can be either.
 
 There seems to be a mismatch between some of the string values used and what the engine actually looks for. Potentially incorrect values are indicated with a (*).

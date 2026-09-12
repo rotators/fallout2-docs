@@ -6,6 +6,8 @@ description: Fallout worldmap.dat binary state stream, city state records, subti
 
 # Worldmap.dat File Format
 
+**Tools:** [Save inspection tools and their limits](tools.html#saves), [parser development references](tools.html#libraries).
+
 `worldmap.dat` is the serialized state of the Fallout and Fallout 2 world map. It records where the party and car are, which towns and town-map entrances have been revealed, which world-map subtiles are fogged or visited, and which limited-use encounter entries have changed counters. It does not contain the full world map definition.
 
 The static world map definition is split across text files: `data\maps.txt` defines map indexes and map-level behavior, `data\city.txt` defines towns and entrances, and `data\worldmap.txt` defines terrain, tiles, encounter frequencies, random maps, and encounter tables. See [World-map Text Configuration Files](worldmap_config.html) for the editable source definitions.

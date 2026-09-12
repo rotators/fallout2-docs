@@ -6,6 +6,8 @@ description: Fallout and Fallout 2 ACM compressed audio file format, decoder not
 
 # ACM File Format
 
+**Tools:** [Audio decoders, encoders, and players](tools.html#audio).
+
 ACM is Interplay's compressed audio format. Fallout and Fallout 2 use it for music, speech, and sound effects. It is not related to Microsoft's Windows Audio Compression Manager despite sharing the same extension.
 
 An ACM file contains a 14-byte header followed by a little-endian bitstream. Decoding produces signed 16-bit PCM samples. The common Fallout rate is `22050 Hz`, with mono and stereo files both appearing in Interplay-era games. Modern decoders should read the channel count and sample rate from the header, but Fallout's own playback paths also make contextual assumptions about how the sound is used.

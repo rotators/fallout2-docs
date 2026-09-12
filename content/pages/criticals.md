@@ -6,6 +6,8 @@ description: Fallout and Fallout 2 critical hit table structure, sfall and CE ov
 
 # Critical Hit Tables
 
+**Tools:** [Text and configuration editing](tools.html#text-and-configuration).
+
 Fallout and Fallout 2 do not ship critical hit tables as a normal loose data file. The vanilla tables are compiled into the executable. sfall and Fallout 2 CE expose them as runtime-editable data through `ddraw.ini` and an optional INI-style override file, commonly named `CriticalOverrides.ini` or another filename selected by `[Misc] OverrideCriticalFile`.
 
 A critical hit table entry decides the damage multiplier, extra damage flags, optional defensive stat check, combat-message id, and alternate message/flags when that stat check fails. It is only used after an attack has already become a critical success; it does not by itself determine the chance to score a critical hit.

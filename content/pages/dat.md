@@ -7,6 +7,8 @@ toc: auto
 
 # DAT File Format
 
+**Tools:** [Archive browsers, extractors, and packers](tools.html#archives).
+
 DAT files are Fallout archive containers. They hold most of the game's loose resources: artwork, palettes, fonts, maps, prototypes, scripts, message files, sound effects, music, speech, movies, and assorted text configuration. The archive layer does not change the inner file formats; it only stores paths, compressed or uncompressed byte streams, and lookup metadata.
 
 There are two incompatible archive formats with the same `.dat` extension:

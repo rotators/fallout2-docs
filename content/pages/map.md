@@ -7,6 +7,8 @@ toc: auto
 
 # MAP File Format
 
+**Tools:** [Map editors and converters](tools.html#mapping).
+
 MAP files describe playable locations: header metadata, map variables, floor and roof tiles, active scripts, and placed objects. Fallout maps can contain up to three elevations. Each elevation has a 200 by 200 hex grid for objects and a 100 by 100 square grid for floor and roof tiles.
 
 In Fallout 2, map files are normally loaded from `maps\*.map`. When a save-game version exists, the engine checks for a matching `.sav` map first and loads that instead. The saved map has the same broad structure, but includes runtime state that a clean mapper-authored MAP may not contain. See [Savegame Structure](savegame.html) for the surrounding `SAVE.DAT` and slot sidecar layout.

@@ -6,6 +6,8 @@ description: Fallout line-indexed LST files, art-list parsing, FID layout, critt
 
 # LST File Format and FID Resolution
 
+**Tools:** [Text and list editing](tools.html#text-and-configuration).
+
 LST files are line-indexed tables. The first physical line is entry `0`, the second line is entry `1`, and so on. Many Fallout data structures store only an integer index; the matching LST file turns that index back into a filename, base name, script name, or other ordered entry.
 
 This page covers generic LST rules, the art LST/FID system, critter and talking-head filename construction, and common editing hazards. [`scripts.lst`](scripts_lst.html) is documented separately because its parser has script-specific metadata rules.

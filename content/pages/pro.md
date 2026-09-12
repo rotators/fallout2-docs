@@ -7,6 +7,8 @@ toc: auto
 
 # PRO File Format
 
+**Tools:** [Item and critter prototype editors](tools.html#critters).
+
 PRO files are binary prototype records. A prototype describes the default properties of an object: its PID, art FID, name and description message id, flags, script id, material, and type-specific data such as weapon damage, critter stats, or door key codes.
 
 Map objects and inventory entries usually store per-instance state separately. The PRO file is the shared template that the engine loads when it needs the object's base data.

@@ -7,6 +7,8 @@ toc: auto
 
 # SSL Script Source Format
 
+**Tools:** [Script editors, compilers, and dialogue tools](tools.html#scripting).
+
 SSL files are Fallout and Fallout 2 script source files. They are not loaded by the game engine at runtime. A script compiler turns `*.ssl` source into [INT](int.html) bytecode, and the engine loads the compiled `scripts\*.int` file when a map, object, critter, item, scenery, spatial trigger, global script, or hook needs to run script code.
 
 SSL is therefore a source format and build input rather than a game data format in the same sense as [MAP](map.html), [PRO](pro.html), [MSG](msg.html), or INT. Still, documenting it is useful because most script behavior is authored and reviewed at the SSL level, and because source conventions explain many otherwise opaque INT, MSG, and [`scripts.lst`](scripts_lst.html) relationships.

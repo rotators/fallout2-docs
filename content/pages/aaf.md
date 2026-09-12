@@ -6,6 +6,8 @@ description: Fallout and Fallout 2 AAF bitmap font file format, parser notes, ru
 
 # AAF File Format
 
+**Tools:** [Font editors and converters](tools.html#fonts).
+
 The AAF file format stores bitmap fonts used by Fallout and Fallout 2. This page describes the English-version files; localized releases may contain variations that are not covered here.
 
 An AAF file stores one glyph descriptor for each of the 256 byte values. Glyphs are usually proportional: each glyph has its own width and height. The glyph bitmap is stored as one byte per pixel, with values in the range `0` through `9`.

@@ -494,6 +494,10 @@ internal static partial class MarkdownRenderer
                 continue;
             }
 
+            if (HeadingRegex().IsMatch(trimmed) ||
+                (index + 1 < lines.Length && LooksLikeTableRow(lines[index]) && TableSeparatorRegex().IsMatch(lines[index + 1].Trim())))
+                FlushParagraph();
+
             if (TryRenderHeading(trimmed, html, headingIds, headings) || TryRenderTable(lines, ref index, html))
             {
                 FlushParagraph();
@@ -1102,48 +1106,7 @@ internal static partial class MarkdownRenderer
     private static IReadOnlyList<string> SplitTableCells(string line) =>
         line.Trim().Trim('|').Split('|').Select(cell => cell.Trim()).ToList();
 
-    private static string RenderInline(string text)
-    {
-        var output = new StringBuilder();
-        for (var i = 0; i < text.Length; i++)
-        {
-            if (text[i] == '`')
-            {
-                var end = text.IndexOf('`', i + 1);
-                if (end > i)
-                {
-                    output.Append("<code>").Append(Html.Escape(text[(i + 1)..end])).Append("</code>");
-                    i = end;
-                    continue;
-                }
-            }
-
-            if (text[i] == '[')
-            {
-                var closeText = text.IndexOf("](", i, StringComparison.Ordinal);
-                if (closeText > i)
-                {
-                    var closeUrl = text.IndexOf(')', closeText + 2);
-                    if (closeUrl > closeText)
-                    {
-                        var label = text[(i + 1)..closeText];
-                        var url = text[(closeText + 2)..closeUrl];
-                        output.Append("<a href=\"")
-                            .Append(Html.EscapeAttribute(url))
-                            .Append("\">")
-                            .Append(RenderInline(label))
-                            .Append("</a>");
-                        i = closeUrl;
-                        continue;
-                    }
-                }
-            }
-
-            output.Append(Html.Escape(text[i].ToString()));
-        }
-
-        return output.ToString();
-    }
+    private static string RenderInline(string text) => InlineMarkdownRenderer.Render(text);
 
     [GeneratedRegex("^(?<level>#{1,6})\\s+(?<text>.+)$")]
     private static partial Regex HeadingRegex();

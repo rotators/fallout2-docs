@@ -7,6 +7,8 @@ toc: auto
 
 # INT File Format
 
+**Tools:** [Compilers and decompilers](tools.html#scripting).
+
 INT files are compiled Fallout and Fallout 2 scripts. The source language is usually called SSL. The game does not execute SSL directly: the compiler turns it into an INT bytecode program, and the engine interpreter runs that program when a map, object, critter, item, spatial trigger, dialogue, or timed event asks for one of the script procedures.
 
 Most paths below are relative to `master.dat`, `critter.dat`, `patch000.dat`, or an unpacked Fallout data directory. Runtime scripts are normally loaded from `scripts\*.int` through [`scripts\scripts.lst`](scripts_lst.html). The matching source, when available to modders, is normally `*.ssl`; the matching dialogue text is often `text\ \dialog\*.msg`.

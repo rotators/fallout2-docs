@@ -6,6 +6,8 @@ description: Fallout default color.pal palette indices, RGB values, and animated
 
 # Fallout - Default color palette (color.pal)
 
+**Tools:** [Palette and graphics tools](tools.html#graphics).
+
 ```fallout-palette
 0|#0000FF|0|0|0|Index 0 is transparent!
 1|#ECECEC|236|236|236|

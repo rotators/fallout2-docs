@@ -6,6 +6,8 @@ description: Fallout scripts.lst registry format, script indexes, local_vars met
 
 # SCRIPTS.LST File Format
 
+**Tools:** [Script tools](tools.html#scripting), [text editing](tools.html#text-and-configuration).
+
 `scripts\scripts.lst` is the indexed registry for compiled Fallout and Fallout 2 scripts. Each physical line names one [INT](int.html) bytecode file, and the zero-based line number is used by MAP records, PRO records, script message lookups, decompiler headers, and modding tools.
 
 Although it looks like a normal [LST](lst.html) file, `scripts.lst` has its own parser rules. It uses `.int` filenames, strips the extension before storing the script name, and can carry `local_vars=N` metadata after a `#` marker.

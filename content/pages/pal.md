@@ -6,6 +6,8 @@ description: Fallout PAL palette layout, RGB555 lookup, NEWC color tables, runti
 
 # PAL/COL File Format and Color Tables
 
+**Tools:** [Palette and graphics tools](tools.html#graphics).
+
 PAL files are Fallout and Fallout 2 palette resources. They define a 256-entry indexed-color palette, a 15-bit RGB-to-palette-index lookup table, and optionally precomputed color transformation tables used by lighting and blending code.
 
 The "COL" part of this page refers to the engine's color tables and color-index behavior, not to a separate well-attested Fallout 1/2 `.COL` resource format. In the released games and current source references, palette files are `.pal`; color conversion, intensity, blending, and cycling are runtime systems built from PAL data.

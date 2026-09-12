@@ -6,6 +6,8 @@ description: Fallout 2 PARTY.TXT party-member registry, combat UI option whiteli
 
 # PARTY.TXT File Format
 
+**Tools:** [Text and configuration editing](tools.html#text-and-configuration).
+
 `PARTY.TXT` is Fallout 2's party-member registry. It lists objects that can become party members, defines which combat-control options the party UI may expose for each one, and provides the prototype chain used when companions level up. Savegames serialize party roster, companion level-up state, mutable party AI, and party prototype sidecars using this registry; see [Savegame Structure](savegame.html).
 
 The file is loaded from `data\party.txt`. Most paths and message references below are relative to `master.dat`, `critter.dat`, or an unpacked Fallout 2 data directory.

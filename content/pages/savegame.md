@@ -6,6 +6,8 @@ description: Fallout 2 save slot structure, SAVE.DAT header and handler order, m
 
 # Fallout 2 Savegame Structure
 
+**Tools:** [Save editors and inspection tools](tools.html#saves).
+
 Fallout 2 savegames are slot directories, not a single archive file. The central file is `SAVE.DAT`, but visited maps, automap data, companion prototype overrides, backups, and sfall/CE extension files can live beside it in the same `SAVEGAME\SLOT##` folder.
 
 `SAVE.DAT` is not a normal Fallout [DAT](dat.html) archive. It is a big-endian binary stream written as a header followed by 27 save/load handler sections. The handler sections have no section id or length prefix in the file; the engine knows the order from its save/load handler table.

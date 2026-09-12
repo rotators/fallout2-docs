@@ -7,6 +7,8 @@ toc: auto
 
 # Ending Configuration
 
+**Tools:** [Text and configuration editing](tools.html#text-and-configuration).
+
 `data\endgame.txt` defines the ending slideshow. `data\enddeath.txt` defines candidate death narrations. These are positional text tables, not INI files, MSG lists, or movie containers. A slideshow combines interface FRM art, a palette, speech, and optional text; it is not an MVE movie.
 
 This reference follows [fallout2-ce/fallout2-ce](https://github.com/fallout2-ce/fallout2-ce), revision `0290b2c98d538902235339b406291a426529fda0`, inspected on 2026-09-05. Loader quirks and selection defects below describe that source snapshot, not a promise that every original executable or sfall build behaves identically. Examples are constructed, not extracted game data; no in-game playback or shipped-data corpus was tested for this reference.

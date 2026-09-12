@@ -6,6 +6,8 @@ description: Fallout and Fallout 2 GCD starting character profile layout, Critte
 
 # GCD File Format
 
+**Tools:** [Premade-character generation with CGCD](tools.html#character-templates).
+
 GCD files contain starting character profiles. They are used together with [.BIO (biography) files](bio.html) to create premade characters.
 
 In addition to the theme characters `combat.gcd`, `stealth.gcd`, and `diplomat.gcd`, there are three other files: `demo.gcd`, `blank.gcd`, and `player.gcd`.
