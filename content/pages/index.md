@@ -83,6 +83,8 @@ Browse by purpose. Each reference explains the format and its runtime difference
 
 ### Audio and video
 
+See also [sound-effect lookup and SNDLIST.LST](sound_effects.html) for cache metadata, gameplay filenames, and PRO sound codes.
+
 | Format | Contents | Tools |
 | --- | --- | --- |
 | [ACM](acm.html) | Music, speech, and sound effects | Use [libacm](https://github.com/markokr/libacm), [acm2wav](https://fodev.net/files/mirrors/teamx-utils/acm2wav.rar) or [Game Audio Player](https://fodev.net/files/archive/gap.zip) for playback. |

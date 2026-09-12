@@ -8,10 +8,41 @@
     <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-    <main id="main">
+    {{ navigation }}
+    <main id="main" tabindex="-1">
         <div{{ pageClassAttribute }}>
 {{ content }}
         </div>
     </main>
+    <script>
+    (() => {
+        const header = document.querySelector('.site-header');
+        const button = header.querySelector('.browse-toggle');
+        const groups = [...header.querySelectorAll('details')];
+        header.classList.add('enhanced');
+        const close = () => {
+            groups.forEach(group => group.open = false);
+            button.setAttribute('aria-expanded', 'false');
+        };
+        button.addEventListener('click', () => {
+            button.setAttribute('aria-expanded', String(button.getAttribute('aria-expanded') !== 'true'));
+        });
+        groups.forEach(group => group.addEventListener('toggle', () => {
+            if (group.open) groups.forEach(other => { if (other !== group) other.open = false; });
+        }));
+        document.addEventListener('click', event => { if (!header.contains(event.target)) close(); });
+        header.addEventListener('keydown', event => {
+            if (event.key !== 'Escape') return;
+            const group = event.target.closest('details');
+            if (group && group.open) {
+                group.open = false;
+                group.querySelector('summary').focus();
+            } else {
+                close();
+                button.focus();
+            }
+        });
+    })();
+    </script>
 </body>
 </html>

@@ -12,6 +12,8 @@ This page covers generic LST rules, the art LST/FID system, critter and talking-
 
 ## General Rules
 
+These rules are not universal to the extension: [SNDLIST.LST](sound_effects.html) uses a count plus four lines per sound, and the preferred CE fork replaces that disk list with runtime discovery.
+
 | Rule | Description |
 |---|---|
 | Indexing | Zero-based. Entry `0` is the first physical line in the file. |

@@ -250,6 +250,7 @@ internal sealed class SiteGenerator(SiteOptions options)
         }
 
         var html = layout
+            .Replace("{{ navigation }}", SiteNavigation.Render(page.OutputPath), StringComparison.Ordinal)
             .Replace("{{ title }}", Html.Escape(page.Title), StringComparison.Ordinal)
             .Replace("{{ description }}", Html.Escape(page.Description ?? ""), StringComparison.Ordinal)
             .Replace("{{ pageClassAttribute }}", FormatPageClassAttribute(page.PageClass), StringComparison.Ordinal)

@@ -65,6 +65,8 @@ If narration or speech sounds too fast, try `Speech / narration mono`. That mode
 
 ## Where Fallout Uses It
 
+For gameplay filename selection, PRO sound characters, and legacy cache metadata, see [Sound Effect Lookup and SNDLIST.LST](sound_effects.html). ACM describes the audio encoding, not the event-to-filename mapping.
+
 | Folder | Use | Notes |
 | --- | --- | --- |
 | `sound\sfx\` | Interface, combat, ambient, scenery, weapon, and item sound effects. | Often loaded through the sound effects cache. |

@@ -245,6 +245,8 @@ Older format notes split wall and scenery `flags_ext` into two 16-bit halves: wa
 
 ## Action behavior
 
+Sound fields are filename character selectors, not SNDLIST row indices. Common item, weapon-specific, and scenery sound bytes have different callers; see [Sound Effect Lookup](sound_effects.html) for weapon variants, door/container names, and material-dependent impacts.
+
 Several common interactions are inferred from the PID type and flags rather than from a single named field:
 
 - An object can be used if extended flag `0x0800` is set, or if it is an item container.
